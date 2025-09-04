@@ -1,0 +1,18 @@
+[
+  {
+    "arguments": [
+      "/Users/matsb/.local/bin/avr-gcc",
+      "-O",
+      "-std=c11",
+      "-mmcu=atmega162",
+      "-ggdb",
+      "-c",
+      "-o",
+      "build/main.o",
+      "main.c"
+    ],
+    "directory": "/Users/matsb/Documents/Skole/NTNU/semester-3/TTK4155/Lab/Code/TTK4155-ProjectCode",
+    "file": "/Users/matsb/Documents/Skole/NTNU/semester-3/TTK4155/Lab/Code/TTK4155-ProjectCode/main.c",
+    "output": "/Users/matsb/Documents/Skole/NTNU/semester-3/TTK4155/Lab/Code/TTK4155-ProjectCode/build/main.o"
+  }
+]

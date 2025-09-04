@@ -15,21 +15,34 @@ int main() {
   USART_init();
   while (1) {
     _delay_ms(100);
-    USART_Transmit('k');
+    USART_Transmit('H');
+    USART_Transmit('e');
+    USART_Transmit('l');
+    USART_Transmit('l');
+    USART_Transmit('o');
+    USART_Transmit(' ');
+    USART_Transmit('W');
+    USART_Transmit('o');
+    USART_Transmit('r');
+    USART_Transmit('l');
+    USART_Transmit('d');
+    USART_Transmit('!');
+    USART_Transmit('\x0D');
+    USART_Transmit('\x0A');
   }
   return 0;
 }
 
 void USART_init() {
 
-  // UBRRH =  UBBR_Val >> 8;
-  UBRR0L = 31;
+  UBRR0H = (unsigned char)(31 >> 8);
+  UBRR0L = (unsigned char)31;
 
   // Enable RX & TX
   UCSR0B = (1 << RXEN0) | (1 << TXEN0);
 
   // Format 9600 8N1
-  UCSR0C = (1 << URSEL0)| (1<<USBS0)| (1 << UCSZ00) | (1 << UCSZ01);
+  UCSR0C = (1 << URSEL0) | (1 << USBS0) | (3 << UCSZ00);
 }
 
 void USART_Transmit(unsigned char data) {

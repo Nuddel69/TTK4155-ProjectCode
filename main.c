@@ -29,7 +29,7 @@ void USART_init() {
   UCSR0B = (1 << RXEN0) | (1 << TXEN0);
 
   // Format 9600 8N1
-  UCSR0C = (1 << URSEL0) | (1 << UCSZ00) | (1 << UCSZ01);
+  UCSR0C = (1 << URSEL0)| (1<<USBS0)| (1 << UCSZ00) | (1 << UCSZ01);
 }
 
 void USART_Transmit(unsigned char data) {

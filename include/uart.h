@@ -1,0 +1,7 @@
+#ifndef INCLUDE_INCLUDE_UART_H_
+#define INCLUDE_INCLUDE_UART_H_
+
+#define UART_BIT_STOP
+#define UART_BIT_START
+
+#endif // INCLUDE_INCLUDE_UART_H_

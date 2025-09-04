@@ -1,56 +1,53 @@
+#include "avr/common.h"
 #include "avr/io.h"
+#include <stddef.h>
 #include <util/delay.h>
 
-int main() {
-  //DDRB |= (1 << DDB5);
-  USART_init(9600);
-  while (1) {
-    /*
-    PORTB |= (1 << PB5);
-    _delay_ms(500);
-    PORTB &= ~(1 << PB5);
-    _delay_ms(500);
-    */
-    USART_Transmit('k');
+#define FOSC 4915200
+#define BAUD 9600
+#define UBRR 31
 
+void USART_init();
+void USART_Transmit(unsigned char data);
+
+int main() {
+  // DDRB |= (1 << DDB5);
+  USART_init();
+  while (1) {
+    _delay_ms(100);
+    USART_Transmit('k');
   }
   return 0;
 }
 
-void USART_init(BAUDRATE){
+void USART_init() {
 
-// Set baudrate, 31=9600,
-uint_8 UBBR_Val = (4.9152*10^6)/(16*BAUDRATE)-1;
+  // UBRRH =  UBBR_Val >> 8;
+  UBRR0L = 31;
 
-//UBRRH =  UBBR_Val >> 8;
-UBRRL =  UBBR_VAL;
+  // Enable RX & TX
+  UCSR0B = (1 << RXEN0) | (1 << TXEN0);
 
-UBBRH = UBBR_Val << 8;
-
-//Enable RX & TX
-UCSRB = (1<<RXEN)|(1<<TXEN);
-
-//Format 9600 8N1
-UCSRC = (1<<URSEL)|(1<<UCSZ0)|(1<<USCZ1);
+  // Format 9600 8N1
+  UCSR0C = (1 << URSEL0) | (1 << UCSZ00) | (1 << UCSZ01);
 }
 
-void USART_Transmit(unsigned char data)
-{
+void USART_Transmit(unsigned char data) {
 
-// Wait for empty transmit buffer
-while (!(UCSRA & (1<<UDRE)));
+  // Wait for empty transmit buffer
+  while (!(UCSR0A & (1 << UDRE0)))
+    ;
 
-// Put data into buffer, sends the data
-UDR = data;
+  // Put data into buffer, sends the data
+  UDR0 = data;
 }
 
+uint8_t USART_Receive(void) {
 
-uint8_t USART_Receive(void)
-{
+  // Wait for data to be received
+  while (!(UCSR0A & (1 << RXC0)))
+    ;
 
-// Wait for data to be received
-while (!(UCSRA & (1<<RXC)));
-
-// Get and return received data from buffer
-return UDR;
+  // Get and return received data from buffer
+  return UDR0;
 }

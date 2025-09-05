@@ -9,6 +9,7 @@ struct USART_config {
 };
 void USART_init(struct USART_config *config);
 void USART_Transmit(unsigned char data);
+void USART_SendString(char data[]);
 uint8_t USART_Receive(void);
 
 #endif // INCLUDE_INCLUDE_UART_H_

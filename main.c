@@ -14,20 +14,7 @@ int main() {
 
   while (1) {
     _delay_ms(100);
-    USART_Transmit('H');
-    USART_Transmit('e');
-    USART_Transmit('l');
-    USART_Transmit('l');
-    USART_Transmit('o');
-    USART_Transmit(' ');
-    USART_Transmit('W');
-    USART_Transmit('o');
-    USART_Transmit('r');
-    USART_Transmit('l');
-    USART_Transmit('d');
-    USART_Transmit('!');
-    USART_Transmit('\x0D');
-    USART_Transmit('\x0A');
+    USART_SendString("SendString working!\x0D\x0A");
   }
   return 0;
 }

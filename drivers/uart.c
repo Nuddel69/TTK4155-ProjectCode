@@ -17,13 +17,21 @@ void USART_init(struct USART_config *config) {
 }
 
 void USART_Transmit(unsigned char data) {
-
   // Wait for empty transmit buffer
   while (!(UCSR0A & (1 << UDRE0)))
     ;
 
   // Put data into buffer, sends the data
   UDR0 = data;
+}
+
+// This function is a big memory nono!
+void USART_SendString(char *data) {
+  int counter = 0;
+  while (data[counter] != '\0') {
+    USART_Transmit(data[counter]);
+    counter++;
+  }
 }
 
 uint8_t USART_Receive(void) {

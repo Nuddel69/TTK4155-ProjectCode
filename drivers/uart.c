@@ -1,0 +1,37 @@
+#include "uart.h"
+#include <avr/io.h>
+#include <stdint.h>
+#include <util/delay.h>
+
+void USART_init(struct USART_config *config) {
+
+  uint8_t ubrr = (config->fosc / 16 / config->baud) - 1;
+  UBRR0H = (unsigned char)(ubrr >> 8);
+  UBRR0L = (unsigned char)ubrr;
+
+  // Enable RX & TX
+  UCSR0B = (1 << RXEN0) | (1 << TXEN0);
+
+  // Format 9600 8N1
+  UCSR0C = (1 << URSEL0) | (1 << USBS0) | (3 << UCSZ00);
+}
+
+void USART_Transmit(unsigned char data) {
+
+  // Wait for empty transmit buffer
+  while (!(UCSR0A & (1 << UDRE0)))
+    ;
+
+  // Put data into buffer, sends the data
+  UDR0 = data;
+}
+
+uint8_t USART_Receive(void) {
+
+  // Wait for data to be received
+  while (!(UCSR0A & (1 << RXC0)))
+    ;
+
+  // Get and return received data from buffer
+  return UDR0;
+}

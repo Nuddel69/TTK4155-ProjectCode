@@ -1,5 +1,5 @@
 # List all source files to be compiled; separate with space
-SOURCE_FILES := main.c
+SOURCE_FILES := main.c drivers/uart.c
 
 # Set this flag to "yes" (no quotes) to use JTAG; otherwise ISP (SPI) is used
 PROGRAM_WITH_JTAG := yes
@@ -15,16 +15,18 @@ TARGET_CPU := atmega162
 TARGET_DEVICE := m162
 
 CC := avr-gcc
-CFLAGS := -O -std=c11 -mmcu=$(TARGET_CPU) -ggdb
+CFLAGS := -Iinclude -O -std=c11 -mmcu=$(TARGET_CPU) -ggdb
 
 OBJECT_FILES = $(SOURCE_FILES:%.c=$(BUILD_DIR)/%.o)
+# OBJECT_FILES := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SOURCE_FILES)) # ChatGPT's suggestion
 
 .DEFAULT_GOAL := $(BUILD_DIR)/main.hex
 
 $(BUILD_DIR):
 	mkdir $(BUILD_DIR)
 
-$(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
+$(BUILD_DIR)/%.o: %.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/main.hex: $(OBJECT_FILES) | $(BUILD_DIR)
@@ -38,6 +40,7 @@ flash: $(BUILD_DIR)/main.hex
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
+	rm compile_commands.json
 
 .PHONY: erase
 erase:

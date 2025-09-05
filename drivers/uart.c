@@ -32,6 +32,8 @@ void USART_SendString(char *data) {
     USART_Transmit(data[counter]);
     counter++;
   }
+  USART_Transmit('\x0D');
+  USART_Transmit('\x0A');
 }
 
 uint8_t USART_Receive(void) {

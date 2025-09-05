@@ -13,8 +13,8 @@ int main() {
   USART_init(&config);
 
   while (1) {
+    USART_SendString("Hello World!");
     _delay_ms(100);
-    USART_SendString("SendString working!\x0D\x0A");
   }
   return 0;
 }

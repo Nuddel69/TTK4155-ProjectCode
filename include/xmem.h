@@ -19,7 +19,7 @@
 
 //Prototypes
 /*!
- * \brief Enabels external memory, 2KB or 3KB based on XMEM_3KB.
+ * \brief Enables external memory, 2KB or 3KB based on XMEM_3KB.
  *
  */
 void xmem_init(void);
@@ -30,4 +30,4 @@ void xmem_init(void);
  */
 void SRAM_test(void);
 
-#endif XMEM_H
+#endif /* XMEM_H */

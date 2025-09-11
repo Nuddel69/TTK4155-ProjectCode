@@ -2,6 +2,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <util/delay.h>
 
 char receive_buf = 0;
@@ -19,6 +20,7 @@ void USART_init(struct USART_config *config) {
   UCSR0C = (1 << URSEL0) | (1 << USBS0) | (3 << UCSZ00);
 
   sei();
+  fdevopen(USART_Transmit, USART_Receive);
 }
 
 void USART_Transmit(unsigned char data) {

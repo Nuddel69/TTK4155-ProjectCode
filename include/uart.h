@@ -12,6 +12,7 @@
 struct USART_config {
   int16_t baud;
   long fosc;
+  char recieve_buffer;
 };
 
 /*!
@@ -40,6 +41,8 @@ void USART_SendString(char data[]);
  *
  * \return status code.
  */
-// uint8_t USART_Receive(uint8_t *buf);
+void USART_Receive(void);
+
+void USART_ReceiveHandler();
 
 #endif // INCLUDE_INCLUDE_UART_H_

@@ -4,8 +4,10 @@
 #include <stdint.h>
 #include <util/delay.h>
 
-void USART_init(struct USART_config *config) {
+char receive_buf = 0;
+ISR(USART0_RXC_vect) { USART_Receive(); }
 
+void USART_init(struct USART_config *config) {
   uint16_t ubrr = (config->fosc / 16 / config->baud) - 1;
   UBRR0H = (unsigned char)(ubrr >> 8);
   UBRR0L = (unsigned char)ubrr;
@@ -39,7 +41,31 @@ void USART_SendString(char *data) {
   USART_Transmit('\x0A');
 }
 
-// uint8_t USART_Receive(uint8_t *buf) {
-//   // Get and return received data from buffer
-//   return UDR0;
-// }
+void USART_Receive(void) {
+  // Get and return received data from buffer
+  receive_buf = UDR0;
+}
+
+void USART_ReceiveHandler() {
+  char cmd[32] = {0};
+  int cmd_count = 0;
+
+  // Echo
+  if (receive_buf) {
+    USART_Transmit(receive_buf);
+    if (receive_buf == 0x0D) {
+      USART_Transmit(0x0A);
+    }
+
+    cmd[cmd_count] = receive_buf;
+    cmd_count++;
+    receive_buf = 0;
+  }
+
+  // CMD Handler
+  if (cmd[cmd_count] == 0x0D) {
+    USART_SendString(cmd);
+    cmd[cmd_count] = 0;
+    cmd_count = 0;
+  }
+}

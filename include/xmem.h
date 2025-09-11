@@ -30,4 +30,4 @@ void xmem_init(void);
  */
 void SRAM_test(void);
 
-#endif /* XMEM_H */
+#endif // XMEM_H 

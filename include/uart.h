@@ -40,6 +40,6 @@ void USART_SendString(char data[]);
  *
  * \return status code.
  */
-uint8_t USART_Receive(void);
+// uint8_t USART_Receive(uint8_t *buf);
 
 #endif // INCLUDE_INCLUDE_UART_H_

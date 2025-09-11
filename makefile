@@ -18,7 +18,6 @@ CC := avr-gcc
 CFLAGS := -Iinclude -O -std=c11 -mmcu=$(TARGET_CPU) -ggdb
 
 OBJECT_FILES = $(SOURCE_FILES:%.c=$(BUILD_DIR)/%.o)
-# OBJECT_FILES := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SOURCE_FILES)) # ChatGPT's suggestion
 
 .DEFAULT_GOAL := $(BUILD_DIR)/main.hex
 

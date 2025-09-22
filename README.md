@@ -31,8 +31,8 @@ UBRRH and UBRRL regardless of the size of the UBRR number.
 While all our addresses were passing the write test, half were failing on read.
 We figured it might be caused by a single bit not flipping and thus the faulty
 addresses were being overwritten. Tried using known good code, redid the wiring
-a dozen times, stuck decoupling caps _everywhere_, swapped out both the latch
-and uC to no avail.
+a dozen times, stuck decoupling caps _everywhere_ and swapped out both the latch
+and uC, all to no avail.
 
 We probed again and noticed a single bit not latching. While all other outputs on
 the latch were switching between 0V and 3.5V (nominal according to the datasheey),

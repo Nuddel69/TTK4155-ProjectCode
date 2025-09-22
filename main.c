@@ -15,7 +15,7 @@ int main() {
   SRAM_test();
 
   while (1) {
-    USART_ReceiveHandler(); // Required for USART-echo and command handling
+    // USART_ReceiveHandler(); // Required for USART-echo and command handling
   }
   return 0;
 }

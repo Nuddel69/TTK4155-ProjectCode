@@ -1,9 +1,8 @@
-
-
-#include "xmem.h"
-#include "uart.h"
 #include <avr/io.h>
 #include <stdio.h>
+
+#include "uart.h"
+#include "xmem.h"
 
 // Initialize external memory
 void xmem_init(void) {

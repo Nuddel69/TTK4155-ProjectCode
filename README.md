@@ -57,6 +57,7 @@ flowchart TD
     C -->|Maybe?| D
     C -->|Think So?| D
     C -->|Probably?| D
+    D --> P
     
     C -->|Yes| E["Probe Data In to MCU"]
     E --> F{"Data In as Expected?"}

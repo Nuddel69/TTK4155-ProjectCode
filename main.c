@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <util/delay.h>
 
+#include "timer.h"
 #include "uart.h"
 #include "utils.h"
 #include "xmem.h"
@@ -22,12 +23,11 @@ int main() {
   status = SRAM_test();
   STATUS_ASSERT(status)
 
+  status = tim1_CTC_init();
+  STATUS_ASSERT(status)
+
   while (1) {
     // USART_ReceiveHandler(); // Required for USART-echo and command handling
-    USART_SendString("Testing decode: ADC -> SRAM");
-    status = utils_test_address_decode();
-    STATUS_ASSERT(status)
-    USART_SendString("Finished decode test");
   }
   return 0;
 }

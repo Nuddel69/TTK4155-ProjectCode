@@ -8,17 +8,15 @@ void tim1_PWM_init(void) {
     // Fast PWM,
     //Set Compare Output Mode
     TCCR1A = (1 << COM1A1);
-    //Set Clock to PWM fast mode, and prescaler 8(CS11)              
+    //Set Clock to PWM fast mode, and prescaler 10(CS10)              
     TCCR1B = (1 << WGM13) | (1 << WGM12) | (1 << CS10); 
     TCCR1A |= (1 << WGM11);
 
-    uint16_t ICR1 = 0x04;   //frequency = fclk/(N*(1+ICR1)) 4 ~983khz
-    ICR1L = 0x04;
-    ICR1H = (0x04) >> 8);
+    ICR1L = 0x04; //frequency = fclk/(N*(1+ICR1)) 4 ~983khz
+    ICR1H = ((0x04) >> 8);
     OCR1AL = ICR1/2; // 50% duty cycle
     OCR1AH = (ICR1/2 >> 8);
 }
-
 
 // CTC timer, OC1A
 void tim1_CTC_init(void) {

@@ -5,7 +5,7 @@
 
 struct io_oled_device {
   struct spi_interface spi;
-  unsigned int cs;
+  unsigned int ss;
 };
 struct io_joystick_device {
   unsigned int adc_address; // Dunno what's needed, placeholder field

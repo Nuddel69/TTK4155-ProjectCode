@@ -8,7 +8,10 @@
 char receive_buf = 0;
 ISR(USART0_RXC_vect) { USART_Receive(); }
 
+<<<<<<< Updated upstream
 void USART_init(struct USART_config *config) {
+=======
+>>>>>>> Stashed changes
   uint16_t ubrr = (config->fosc / 16 / config->baud) - 1;
   UBRR0H = (unsigned char)(ubrr >> 8);
   UBRR0L = (unsigned char)ubrr;
@@ -71,3 +74,12 @@ void USART_ReceiveHandler() {
     cmd_count = 0;
   }
 }
+
+// Disable global interrupts
+cli( );
+
+EMCUCR |= (1<<ISC2 ) ;
+GICR |= (1<<INT2 ) ;
+
+sei( );
+

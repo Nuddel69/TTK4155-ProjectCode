@@ -2,4 +2,4 @@
 
 #include "adc.h"
 
-int adc_init() { return -ENOERR; }
+int adc_init() { return 0; }

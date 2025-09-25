@@ -24,7 +24,7 @@ int USART_init(struct USART_config *config) {
   sei();
   fdevopen(USART_Transmit, USART_Receive);
 
-  return -ENOERR;
+  return 0;
 }
 
 int USART_Transmit(unsigned char data) {
@@ -35,7 +35,7 @@ int USART_Transmit(unsigned char data) {
   // Put data into buffer, sends the data
   UDR0 = data;
 
-  return -ENOERR;
+  return 0;
 }
 
 // This function is a big memory nono!
@@ -56,7 +56,7 @@ int USART_Receive(void) {
   // Get and return received data from buffer
   receive_buf = UDR0;
 
-  return -ENOERR;
+  return 0;
 }
 
 int USART_ReceiveHandler() {
@@ -82,5 +82,5 @@ int USART_ReceiveHandler() {
     cmd_count = 0;
   }
 
-  return -ENOERR;
+  return 0;
 }

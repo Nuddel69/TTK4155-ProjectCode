@@ -33,7 +33,7 @@ int xmem_init(void) {
   // Same as EMCUCR but for upper sector, set to wait 1 cycle for read & write,
   // see table at pg31
   // MCUCR = (MCUCR & ~(1 << SRW11)) | (1 << SRW10);
-  return -ENOERR;
+  return 0;
 }
 
 // Test taken from Lab-tasks
@@ -80,5 +80,5 @@ int SRAM_test(void) {
       "in retrieval phase\n\r\n\r",
       write_errors, retrieval_errors);
 
-  return -ENOERR;
+  return 0;
 }

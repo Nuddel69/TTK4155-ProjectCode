@@ -13,19 +13,19 @@ int main() {
   int status = 0;
 
   status = USART_init(&config);
-  // if (status) {
-  //   return -1;
-  // }
+  if (status) {
+    return -1;
+  }
 
   status = xmem_init();
-  // if (status) {
-  //   return -1;
-  // }
+  if (status) {
+    return -1;
+  }
 
   status = SRAM_test();
-  // if (status) {
-  //   return -1;
-  // }
+  if (status) {
+    return -1;
+  }
 
   while (1) {
     // USART_ReceiveHandler(); // Required for USART-echo and command handling

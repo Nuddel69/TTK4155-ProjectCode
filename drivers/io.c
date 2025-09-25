@@ -22,7 +22,7 @@ int io_joystick_init(struct io_joystick_device *dev) {
 }
 int io_joystick_read_position(struct io_joystick_device *dev,
                               struct io_joystick_position *buffer) {
-  return -ENOERR;
+  return 0;
 }
 int io_joystick_read_direction(struct io_joystick_device *dev,
                                enum io_joystick_direction *direction) {
@@ -56,7 +56,7 @@ int io_joystick_calibrate(struct io_joystick_device *dev) {
   dev->x_offset = pos.x * -1;
   dev->y_offset = pos.y * -1;
 
-  return -ENOERR;
+  return 0;
 }
 
 //------------------//
@@ -78,14 +78,10 @@ int io_oled_init(struct io_oled_device *dev) {
 
   return status;
 }
-int io_oled_reset(struct io_oled_device *dev) { return -ENOERR; }
-int io_oled_home(struct io_oled_device *dev) { return -ENOERR; }
-int io_oled_goto_line(struct io_oled_device *dev, int line) { return -ENOERR; }
-int io_oled_goto_column(struct io_oled_device *dev, int column) {
-  return -ENOERR;
-}
-int io_oled_clear_line(struct io_oled_device *dev, int line) { return -ENOERR; }
-int io_oled_pos(struct io_oled_device *dev, int row, int column) {
-  return -ENOERR;
-}
-int io_oled_print(struct io_oled_device *dev, char *text) { return -ENOERR; }
+int io_oled_reset(struct io_oled_device *dev) { return 0; }
+int io_oled_home(struct io_oled_device *dev) { return 0; }
+int io_oled_goto_line(struct io_oled_device *dev, int line) { return 0; }
+int io_oled_goto_column(struct io_oled_device *dev, int column) { return 0; }
+int io_oled_clear_line(struct io_oled_device *dev, int line) { return 0; }
+int io_oled_pos(struct io_oled_device *dev, int row, int column) { return 0; }
+int io_oled_print(struct io_oled_device *dev, char *text) { return 0; }

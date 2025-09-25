@@ -8,5 +8,6 @@ struct spi_interface {
 };
 
 int spi_init(struct spi_interface *dev);
+int spi_ready(struct spi_interface *dev);
 
 #endif // INCLUDE_INCLUDE_SPI_H_

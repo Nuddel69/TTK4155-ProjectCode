@@ -2,5 +2,6 @@
 #define INCLUDE_INCLUDE_ADC_H_
 
 int adc_init(void);
+int adc_ready(void);
 
 #endif // INCLUDE_INCLUDE_ADC_H_

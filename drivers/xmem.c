@@ -1,11 +1,12 @@
 #include <avr/io.h>
+#include <errno.h>
 #include <stdio.h>
 
 #include "uart.h"
 #include "xmem.h"
 
 // Initialize external memory
-void xmem_init(void) {
+int xmem_init(void) {
   // SpecialFunction IO Register
   // Enable external memory interface, datasheet ATmega162 pg18 & 26
   MCUCR |= (1 << SRE);
@@ -32,10 +33,11 @@ void xmem_init(void) {
   // Same as EMCUCR but for upper sector, set to wait 1 cycle for read & write,
   // see table at pg31
   // MCUCR = (MCUCR & ~(1 << SRW11)) | (1 << SRW10);
+  return -ENOERR;
 }
 
 // Test taken from Lab-tasks
-void SRAM_test(void) {
+int SRAM_test(void) {
   volatile uint8_t *ext_ram = (uint8_t *)MEM_OFFSET; // Start adress for SRAM
   const uint16_t ext_ram_size = XMEM_SIZE;
 
@@ -77,4 +79,6 @@ void SRAM_test(void) {
       "SRAM test completed with\n\r%4u errors in write phase and\n\r%4u errors "
       "in retrieval phase\n\r\n\r",
       write_errors, retrieval_errors);
+
+  return -ENOERR;
 }

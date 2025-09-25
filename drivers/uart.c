@@ -1,5 +1,6 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <util/delay.h>
@@ -9,7 +10,7 @@
 char receive_buf = 0;
 ISR(USART0_RXC_vect) { USART_Receive(); }
 
-void USART_init(struct USART_config *config) {
+int USART_init(struct USART_config *config) {
   uint16_t ubrr = (config->fosc / 16 / config->baud) - 1;
   UBRR0H = (unsigned char)(ubrr >> 8);
   UBRR0L = (unsigned char)ubrr;
@@ -22,34 +23,43 @@ void USART_init(struct USART_config *config) {
 
   sei();
   fdevopen(USART_Transmit, USART_Receive);
+
+  return -ENOERR;
 }
 
-void USART_Transmit(unsigned char data) {
+int USART_Transmit(unsigned char data) {
   // Wait for empty transmit buffer
   while (!(UCSR0A & (1 << UDRE0)))
     ;
 
   // Put data into buffer, sends the data
   UDR0 = data;
+
+  return -ENOERR;
 }
 
 // This function is a big memory nono!
-void USART_SendString(char *data) {
+int USART_SendString(char *data) {
+  int status;
   int counter = 0;
   while (data[counter] != '\0') {
     USART_Transmit(data[counter]);
     counter++;
   }
-  USART_Transmit('\x0D');
-  USART_Transmit('\x0A');
+  status = USART_Transmit('\x0D');
+  status = USART_Transmit('\x0A');
+
+  return status;
 }
 
-void USART_Receive(void) {
+int USART_Receive(void) {
   // Get and return received data from buffer
   receive_buf = UDR0;
+
+  return -ENOERR;
 }
 
-void USART_ReceiveHandler() {
+int USART_ReceiveHandler() {
   char cmd[32] = {0};
   int cmd_count = 0;
 
@@ -71,4 +81,6 @@ void USART_ReceiveHandler() {
     cmd[cmd_count] = 0;
     cmd_count = 0;
   }
+
+  return -ENOERR;
 }

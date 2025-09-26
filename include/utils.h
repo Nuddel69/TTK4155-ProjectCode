@@ -4,7 +4,6 @@
 #include <avr/io.h>
 
 #define UTILS_DEBUG_LED_PIN PB0
-#define NULL ((void *)0)
 
 #define NULL ((void *)0)
 

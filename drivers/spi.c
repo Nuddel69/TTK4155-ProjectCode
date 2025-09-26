@@ -1,14 +1,14 @@
 #include <avr/io.h>
 #include <errno.h>
+#include <stdio.h>
 #include <util/delay.h>
 
 #include "spi.h"
 #include "utils.h"
 
 int spi_init(struct spi_interface *slave) {
-  DDRB |=
-        (1 << DDB5) |
-        (1 << DDB7) | (1 << DDB2); // Sets the required PORT B pins to SPI mode
+  DDRB |= (1 << DDB5) | (1 << DDB7) | (1 << DDB2) |
+          (1 << DDB4); // Sets the required PORT B pins to SPI mode
 
   SPCR |= (1 << SPE) |
           (1 << MSTR); // Enables the SPI-bus and sets it to master mode, MSB
@@ -50,7 +50,7 @@ int spi_duplex(struct spi_interface *slave, unsigned char data,
   printf("Enter while\n\r");
   while (!(SPSR & (1 << SPIF)))
     ;
-    printf("Done while\n\r");
+  printf("Done while\n\r");
   *out = SPDR;
   spi_set_slave_select(0, 1);
   return 0;

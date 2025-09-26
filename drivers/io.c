@@ -12,9 +12,9 @@
 int io_joystick_init(struct io_joystick_device *dev) {
   int status = 0;
 
-  if (adc_ready()) {
-    status = adc_init();
-  }
+  // if (adc_ready()) {
+  //   status = adc_init();
+  // }
 
   status = io_joystick_calibrate(dev);
 

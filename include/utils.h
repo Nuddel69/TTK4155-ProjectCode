@@ -5,6 +5,8 @@
 
 #define UTILS_DEBUG_LED_PIN PB0
 
+#define NULL ((void *)0)
+
 #define STATUS_ASSERT(status)                                                  \
   {                                                                            \
     DDRB |= (1 << UTILS_DEBUG_LED_PIN);                                        \

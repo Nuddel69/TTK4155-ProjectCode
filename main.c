@@ -28,13 +28,17 @@ int main() {
 	status = tim1_CTC_init();
 	STATUS_ASSERT(status)
 	
+	spi_init(NULL);
+
 	printf("\n\r---Init Complete---\n\r");
 
 	while (1) {
 		// USART_ReceiveHandler(); // Required for USART-echo and command handling
 		
 		//Simple test of ADC		
-		ADC_test();
+		//ADC_test();
+		spi_send(NULL,'k');
+	
 	}
 	return 0;
 }

@@ -30,7 +30,7 @@ uint8_t ADC_read_ch(void) {
   return *ADC_BASE_ADR;
 }
 
-void ADC_read_all(ADC_meas *output) {
+void ADC_read_all(struct ADC_meas *output) {
 
   ADC_start_conv();
 
@@ -45,7 +45,7 @@ void ADC_read_all(ADC_meas *output) {
 
 void ADC_test(void) {
 
-  ADC_meas data;
+  struct ADC_meas data;
 
   ADC_read_all(&data);
 

@@ -2,6 +2,7 @@
 
 #include "adc.h"
 #include "io.h"
+#include "utils.h"
 
 #define JOYSTICK_THRESHOLD 10
 
@@ -12,9 +13,7 @@
 int io_joystick_init(struct io_joystick_device *dev) {
   int status = 0;
 
-  // if (adc_ready()) {
-  //   status = adc_init();
-  // }
+  ADC_init();
 
   status = io_joystick_calibrate(dev);
 
@@ -22,6 +21,14 @@ int io_joystick_init(struct io_joystick_device *dev) {
 }
 int io_joystick_read_position(struct io_joystick_device *dev,
                               struct io_joystick_position *buffer) {
+  struct ADC_meas data;
+
+  ADC_read_all(&data);
+  buffer->x = (map(data.channel[dev->adc_channel_x], 0, 127, (-100), 100)) +
+              dev->x_offset;
+  buffer->y = (map(data.channel[dev->adc_channel_y], 0, 127, (-100), 100)) +
+              dev->y_offset;
+
   return 0;
 }
 int io_joystick_read_direction(struct io_joystick_device *dev,

@@ -13,3 +13,8 @@ int utils_test_address_decode(void) {
 
   return 0;
 }
+
+int8_t map(int8_t x, int8_t in_min, int8_t in_max, int8_t out_min,
+           int8_t out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}

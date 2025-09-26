@@ -8,7 +8,8 @@ struct io_oled_device {
   unsigned int ss;
 };
 struct io_joystick_device {
-  unsigned int adc_address; // Dunno what's needed, placeholder field
+  unsigned int adc_channel_x;
+  unsigned int adc_channel_y;
   int x_offset;
   int y_offset;
 };

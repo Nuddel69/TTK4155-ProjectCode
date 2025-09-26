@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #ifndef XMEM_3KB
-#define XMEM_3KB 0 // Set to 1 if using 3KB memory instead of 2KB(0)
+#define XMEM_3KB 1 // Set to 1 if using 3KB memory instead of 2KB(0)
 #endif
 
 #if XMEM_3KB

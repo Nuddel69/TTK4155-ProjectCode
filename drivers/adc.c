@@ -18,8 +18,10 @@ void ADC_start_conv(void){
 
     // Write to any adress on ADC to trigger WR
     *ADC_BASE_ADR = 0x00;
-    // Delay to ensure ADC conversion is done, consider checking BUSY pin insead.
-    _delay_us(5);
+    // Delay to ensure ADC conversion is done, checking BUSY pin insead.
+    while (PORTD&PD4){
+
+    }
 }
 
 uint8_t ADC_read_ch(void){

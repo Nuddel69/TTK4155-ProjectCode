@@ -1,5 +1,7 @@
 #include <avr/io.h>
 
+#include "timer.h"
+
 // PWM, OC1A 50% dutycycle
 int tim1_PWM_init(void) {
   // Set OC1A on PD5 as output
@@ -14,8 +16,8 @@ int tim1_PWM_init(void) {
 
   ICR1L = 0x04; // frequency = fclk/(N*(1+ICR1)) 4 ~983khz
   ICR1H = ((0x04) >> 8);
-  OCR1AL = ICR1 / 2; // 50% duty cycle
-  OCR1AH = (ICR1 / 2 >> 8);
+  OCR1AL = 0x04 / 2; // 50% duty cycle
+  OCR1AH = (0x04 / 2 >> 8);
 
   return 0;
 }

@@ -1,13 +1,9 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
+#include "adc.h"
+
 #define ADC_BASE_ADR   ((volatile uint8_t*)0x1000) //Adress offset for ADC
-
-
-typedef struct {
-    uint8_t channel[4];// Each channel hold ADC values of channel with corresponding index
-} ADC_meas;
-
 
 void ADC_init(void) {
 
@@ -23,7 +19,7 @@ void ADC_start_conv(void){
     PORTB |= (1 << PB1);//Toggle WR HIGH
 }
 
-uint8_t read_single_ch(void){
+uint8_t ADC_read_ch(void){
 
     //Send WR
     PORTB &= ~(1 << PB2);//Toggle RD LOW
@@ -37,7 +33,6 @@ uint8_t read_single_ch(void){
     _delay_us(1);
 
     return data;
-
 }
 
 
@@ -49,9 +44,21 @@ void ADC_read_all(ADC_meas *output) {
 
     //Send a pulse then read for each channel
     for (uint8_t i = 0; i < 4; i++) {
-        output->channel[i] = read_single_ch();
-        }
+        output->channel[i] = ADC_read_ch();
+    }
+}
 
+
+void ADC_test(void){
+
+    ADC_meas data;
+
+    ADC_read_all(&data);
+
+    printf("--ADC Test--\n\r");
+    printf("CH0=%3u  CH1=%3u  CH2=%3u  CH3=%3u\r\n", data.channel[0], data.channel[1], data.channel[2], data.channel[3]);
+    
+    _delay_ms(3000);
 }
 
 

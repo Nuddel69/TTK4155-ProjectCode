@@ -60,12 +60,114 @@ int io_joystick_calibrate(struct io_joystick_device *dev);
 //       OLED       //
 //------------------//
 
+/*!
+ * \brief Initialise OLED.
+ * \param[in] dev The OLED to be initlaised.
+ * \return Errno.
+ */
 int io_oled_init(struct io_oled_device *dev);
+
+/*!
+ * \brief Sends command to OLED
+ * \param[in] dev The commanded OLED.
+ * \param[in] command the hex command (see p27. SSD1309 datasheet)
+ * \return Errno.
+ */
+int io_oled_cmd(struct io_oled_device *dev, unsigned int command);
+
+/*!
+ * \brief Sends data to OLED
+ * \param[in] dev The OLED that should receive the data.
+ * \param[in] data the data that the OLED should recive 
+ * \return Errno.
+ */
+int io_oled_write(struct io_oled_device *dev, unsinged int data);
+
+/*!
+ * \brief Resets OLED to blank page
+ * \param[in] dev The OLED to be reset.
+ * \return Errno.
+ */
 int io_oled_reset(struct io_oled_device *dev);
+
+/*!
+ * \brief Loads homescreen to OLED
+ * \param[in] dev The OLED to be set
+ * \return Errno.
+ */
 int io_oled_home(struct io_oled_device *dev);
+
+/*!
+ * \brief Go to specific line in OLED
+ * \param[in] dev The OLED who's line is to be set
+ * \param[in] line the line to be set
+ * \return Errno.
+ */
 int io_oled_goto_line(struct io_oled_device *dev, int line);
+
+/*!
+ * \brief Go to specific column in OLED
+ * \param[in] dev The OLED who's column is to be set
+ * \param[in] column the column which should be set
+ * \return Errno.
+ */
 int io_oled_goto_column(struct io_oled_device *dev, int column);
+
+/*!
+ * \brief Clear specific line in OLED 
+ * \param[in] dev The OLED who's line is to be cleared
+ * \param[in] line the line that to be cleared
+ * \return Errno.
+ */
 int io_oled_clear_line(struct io_oled_device *dev, int line);
+
+/*!
+ * \brief Writes data to OLED at current position
+ * \param[in] dev The OLED where the data should be sent
+ * \param[in] data The data to be sendt to the OLED
+ * \return Errno.
+ */
+volatile int io_oled_writedata(struct io_oled_device *dev, int data);
+
+/*!
+ * \brief Set specific position in OLED
+ * \param[in] dev The OLED who's position is to be set
+ * \param[in] row The row of the position to be set
+ * \param[in] collumn the collumn of the position the be set
+ * \return Errno.
+ */
 int io_oled_pos(struct io_oled_device *dev, int row, int column);
+
+/*!
+ * \brief Write string to OLED
+ * \param[in] dev The OLED who should print the line
+ * \param[in] text the string that should be written to the OLED
+ * \return Errno.
+ */
 int io_oled_print(struct io_oled_device *dev, char *text);
+
+/*!
+ * \brief Set OLED brightness
+ * \param[in] dev The OLED who's britness should be set
+ * \param[in] brightness the brightness level to be set
+ * \return Errno.
+ */
+int io_oled_set_brightness(struct io_oled_device *dev, unsigned int brightness);
+
+/*!
+ * \brief Reset OLED brightness
+ * \param[in] dev The OLED who's britness should be set
+ * \return Errno.
+ */
+int io_oled_reset_brightness(struct io_oled_device *dev);
+
+/*!
+ * \brief Prints an arrow at a specified postion
+ * \param[in] dev The OLED who's britness should be set
+ * \param[in] row select row where the arrow should be placed
+ * \param[in] column select column where the arrow should be placed
+ * \return Errno.
+ */
+int io_oled_print_arrow (struct io_oled_device *dev, unsigned row , unsigned col);
+
 #endif // INCLUDE_INCLUDE_IO_H_

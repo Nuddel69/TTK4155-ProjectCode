@@ -3,3 +3,5 @@
 **/compile_commands.json
 **/TTK4155.componentinfo.xml
 **/TTK4155.cproj
+**/.vs
+**/Debug

@@ -60,7 +60,7 @@ accidentally pulling the wrong logic on this, it can either be pulled HIGH or ex
 defined as output. The latter allows us to keep using the pin as a output, hence
 proving the better solution.
 
-### Debug not timing correctly when using different crystal
+### Delay not timing correctly when using different crystal
 
 While this lab is based around a 4.915200MHz crystal, there was an attempt at using
 a 16MHz crystal as well. After adjusting the fuses to support an 8+MHz external clock

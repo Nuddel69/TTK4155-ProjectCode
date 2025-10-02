@@ -47,6 +47,33 @@ While the contacts for both the uC and latch were good, this particle likely
 shorted two paths causing noise and undefined behaviour. Angrily stabbing the 
 offending hole with a dupont wire fixed the issue.
 
+### SPI only sending a single (if lucky) packet
+
+Our early attempts at getting SPI up and running were met with a single packet read
+on the oscilloscope, before code execution got stuck in the SPI transmission done loop.
+
+**The solution**
+
+As the uC supports slave mode as well, it features a SS pin. If triggered, the uC
+will automatically enter slave mode, regardless of register config. In order to avoid
+accidentally pulling the wrong logic on this, it can either be pulled HIGH or explicitly
+defined as output. The latter allows us to keep using the pin as a output, hence
+proving the better solution.
+
+### Debug not timing correctly when using different crystal
+
+While this lab is based around a 4.915200MHz crystal, there was an attempt at using
+a 16MHz crystal as well. After adjusting the fuses to support an 8+MHz external clock
+the code was acting strange. A delay was only lasting an eighth of the time passed to
+the function. Setting the clock-divider fuse solved it, but caused issues for the UART
+baudrate.
+
+**The solution**
+
+The `delay` library has a software defined macro `F_CPU` defining the clock speed. We´ve
+been lucky this is compatible with our usual clock, but now it had to be defined from the
+compiler. Adding `-DF_CPU=<clock>` to the compilation command solved it (see commit `#7f15e61`).
+
 ## Debugging flowchart - expanded as we encounter more problems
 
 ```mermaid

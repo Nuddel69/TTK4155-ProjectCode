@@ -1,23 +1,24 @@
 #ifndef INCLUDE_INCLUDE_IO_H_
 #define INCLUDE_INCLUDE_IO_H_
 
-#include "spi.h"
 #include "fonts.h"
+#include "spi.h"
+#include <stdint.h>
 
 struct oled_font {
-  const void *table;        // pointer to font table
-  uint8_t bytes_per_glyph;  // number of columns per glyph
-  uint8_t height;           // pixel height
-  uint8_t spacing;          // columns of space between glyphs
+  const void *table;       // pointer to font table
+  uint8_t bytes_per_glyph; // number of columns per glyph
+  uint8_t height;          // pixel height
+  uint8_t spacing;         // columns of space between glyphs
 };
 
-extern const unsigned char font8[95][8]  PROGMEM;
-extern const unsigned char font5[95][5]  PROGMEM;
-extern const unsigned char font4[95][4]  PROGMEM;
+extern const unsigned char font8[95][8] PROGMEM;
+extern const unsigned char font5[95][5] PROGMEM;
+extern const unsigned char font4[95][4] PROGMEM;
 
-static const oled_font OLED_FONT_8x8 = { font8, 8, 8, 1 };
-static const oled_font OLED_FONT_5x7 = { font5, 5, 7, 1 };
-static const oled_font OLED_FONT_4x6 = { font4, 4, 6, 1 };
+static const struct oled_font OLED_FONT_8x8 = {font8, 8, 8, 1};
+static const struct oled_font OLED_FONT_5x7 = {font5, 5, 7, 1};
+static const struct oled_font OLED_FONT_4x6 = {font4, 4, 6, 1};
 
 struct io_oled_device {
   struct spi_interface spi;
@@ -89,15 +90,15 @@ int io_oled_init(struct io_oled_device *dev);
  * \param[in] command the hex command (see p27. SSD1309 datasheet)
  * \return Errno.
  */
-int io_oled_cmd(struct io_oled_device *dev, unsigned int command);
+int io_oled_cmd(struct io_oled_device *dev, uint8_t command);
 
 /*!
  * \brief Sends data to OLED
  * \param[in] dev The OLED that should receive the data.
- * \param[in] data the data that the OLED should recive 
+ * \param[in] data the data that the OLED should recive
  * \return Errno.
  */
-int io_oled_write(struct io_oled_device *dev, unsinged int data);
+int io_oled_write(struct io_oled_device *dev, uint8_t data);
 
 /*!
  * \brief Resets OLED to blank page
@@ -130,7 +131,7 @@ int io_oled_goto_line(struct io_oled_device *dev, int line);
 int io_oled_goto_column(struct io_oled_device *dev, int column);
 
 /*!
- * \brief Clear specific line in OLED 
+ * \brief Clear specific line in OLED
  * \param[in] dev The OLED who's line is to be cleared
  * \param[in] line the line that to be cleared
  * \return Errno.
@@ -168,7 +169,7 @@ int io_oled_print(struct io_oled_device *dev, char *text);
  * \param[in] brightness the brightness level to be set
  * \return Errno.
  */
-int io_oled_set_brightness(struct io_oled_device *dev, unsigned int brightness);
+int io_oled_set_brightness(struct io_oled_device *dev, uint8_t brightness);
 
 /*!
  * \brief Reset OLED brightness
@@ -184,6 +185,6 @@ int io_oled_reset_brightness(struct io_oled_device *dev);
  * \param[in] column select column where the arrow should be placed
  * \return Errno.
  */
-int io_oled_print_arrow (struct io_oled_device *dev, unsigned row , unsigned col);
+int io_oled_print_arrow(struct io_oled_device *dev, uint8_t row, uint8_t col);
 
 #endif // INCLUDE_INCLUDE_IO_H_

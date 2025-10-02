@@ -22,13 +22,9 @@ int spi_ready(struct spi_interface *slave) { return 0; }
 
 int spi_set_slave_select(int slave_pin, unsigned char state) {
   if (!state) {
-    printf("start setting slave low\n\r");
     PORTB &= ~(1 << PB2);
-    printf("done setting low\n\r");
   } else {
-    printf("start setting slave high\n\r");
     PORTB |= (1 << PB2);
-    printf("done setting slave low\n\r");
   }
   return 0;
 }
@@ -47,10 +43,8 @@ int spi_duplex(struct spi_interface *slave, unsigned char data,
                unsigned char *out) {
   spi_set_slave_select(0, 0);
   SPDR = data;
-  printf("Enter while\n\r");
   while (!(SPSR & (1 << SPIF)))
     ;
-  printf("Done while\n\r");
   *out = SPDR;
   spi_set_slave_select(0, 1);
   return 0;

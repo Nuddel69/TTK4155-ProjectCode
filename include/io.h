@@ -2,6 +2,22 @@
 #define INCLUDE_INCLUDE_IO_H_
 
 #include "spi.h"
+#include "fonts.h"
+
+struct oled_font {
+  const void *table;        // pointer to font table
+  uint8_t bytes_per_glyph;  // number of columns per glyph
+  uint8_t height;           // pixel height
+  uint8_t spacing;          // columns of space between glyphs
+};
+
+extern const unsigned char font8[95][8]  PROGMEM;
+extern const unsigned char font5[95][5]  PROGMEM;
+extern const unsigned char font4[95][4]  PROGMEM;
+
+static const oled_font OLED_FONT_8x8 = { font8, 8, 8, 1 };
+static const oled_font OLED_FONT_5x7 = { font5, 5, 7, 1 };
+static const oled_font OLED_FONT_4x6 = { font4, 4, 6, 1 };
 
 struct io_oled_device {
   struct spi_interface spi;

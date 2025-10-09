@@ -43,8 +43,9 @@ int spi_duplex(struct spi_interface *slave, unsigned char data,
                unsigned char *out) {
   spi_set_slave_select(0, 0);
   SPDR = data;
-  while (!(SPSR & (1 << SPIF)))
-    ;
+  while (!(SPSR & (1 << SPIF))) {
+    printf("Waiting for SPI transmission complete flag\r\n");
+  }
   *out = SPDR;
   spi_set_slave_select(0, 1);
   return 0;

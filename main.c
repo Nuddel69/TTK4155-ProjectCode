@@ -23,6 +23,8 @@ struct io_joystick_position pos;
 
 struct io_oled_device oled;
 
+struct spi_interface spi_oled;
+
 int main() {
   int status = 0;
 
@@ -64,7 +66,10 @@ int main() {
     _delay_ms(2000);
  */
 
- spi_send(struct oled,'k');
+  spi_send(&spi_oled, 'k');
+  printf("Transmission complete\n\r");
+  _delay_ms(1000);
+
 
 
   }

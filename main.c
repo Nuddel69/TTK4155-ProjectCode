@@ -65,10 +65,10 @@ int main() {
 
     _delay_ms(2000);
  */
-
-  spi_send(&spi_oled, 'k');
+  printf("Starting new transmission\n\r");
+  io_oled_write(&spi_oled,0xff)
   printf("Transmission complete\n\r");
-  _delay_ms(1000);
+  _delay_ms(20);
 
 
 

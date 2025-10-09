@@ -187,4 +187,25 @@ int io_oled_reset_brightness(struct io_oled_device *dev);
  */
 int io_oled_print_arrow(struct io_oled_device *dev, uint8_t row, uint8_t col);
 
+
+/*!
+ * \brief Prints a single glyph in a specifiec font
+ * \param[in] dev the OLED that should be written to
+ * \param[in] font the specified font, see font.h
+ * \param[in] character_id the character that should be written
+ * \return Errno.
+ */
+uint8_t io_oled_write_glyph(struct io_oled_device *dev,struct oled_font *font,char character_id):
+
+
+/*!
+ * \brief Prints an arrow at a specified postion
+ * \param[in] dev the OLED device that should be written to
+ * \param[in] font the specified font, see font.h
+ * \param[in] text the string that should be printed to the OLED, has to end in newline
+ * \return .
+ */
+int io_oled_print_with_font(struct io_oled_device *dev,struct oled_font *font, char *text)
+
+
 #endif // INCLUDE_INCLUDE_IO_H_

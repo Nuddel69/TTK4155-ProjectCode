@@ -100,7 +100,6 @@ int io_oled_write(struct io_oled_device *dev,uint8_t data){
 
 //---------------OLED commands-----------
 
-
 int io_oled_init(struct io_oled_device *dev) {
   int status = 0;
 
@@ -108,42 +107,42 @@ int io_oled_init(struct io_oled_device *dev) {
     status = spi_init(&dev->spi);
   }
 
-    DDRB  |= (1 << PB0) | (1 << PB1) | (1 << PB2); // Set PB0,PB1,PB2 to outputs
+  DDRB  |= (1 << PB0) | (1 << PB1) | (1 << PB2); // Set PB0,PB1,PB2 to outputs
     
-    // Reset
-    PORTB &= ~(1 << PB0); // Set PB0 low
-    _delay_us(5);         // Wait 5us
-    PORTB |= (1 << PB0);  // Set PB0 high
-    _delay_ms(1);         // Making sure its restarted before we start sending commands
+  // Reset
+  PORTB &= ~(1 << PB0); // Set PB0 low
+  _delay_us(5);         // Wait 5us
+  PORTB |= (1 << PB0);  // Set PB0 high
+  _delay_ms(1);         // Making sure its restarted before we start sending commands
 
-    // Display OFF
-    io_oled_cmd(dev,0xAE);                        
+  // Display OFF
+  io_oled_cmd(dev,0xAE);
 
-    // Recommended config for 128x64 OLED, page 19 OLED datasheet
-    io_oled_cmd(dev,0xA1);                                // Segment remap: column address 127->0
-    io_oled_cmd(dev,0xDA);                           // Common pads hardware
-    io_oled_cmd(dev,0xC8);                           // Common output scan direciton
-    io_oled_cmd(dev,0xA8); io_oled_cmd(dev,0x3F);   // Multiplex ratio: 63 (64MUX)
-    io_oled_cmd(dev,0xD5); io_oled_cmd(dev,0x80);   // display devideratio/osc freq.mode
-    io_oled_cmd(dev,0x81); io_oled_cmd(dev,0x50);   // Contrast control
-    io_oled_cmd(dev,0xD9); io_oled_cmd(dev,0x21);   // Set precharged period
-    io_oled_cmd(dev,0x20); io_oled_cmd(dev,0x02);   // Set memory adressing mode
-    io_oled_cmd(dev,0xDB); io_oled_cmd(dev,0x30);   // VCOM deselect level mode
-    io_oled_cmd(dev,0xAD); io_oled_cmd(dev,0x00);  // Master config
-    io_oled_cmd(dev,0xA4);                           // Resume to RAM content
-    io_oled_cmd(dev,0xA6);                           // Normal display
+  // Recommended config for 128x64 OLED, page 19 OLED datasheet
+  io_oled_cmd(dev,0xA1);                          // Segment remap: column address 127->0
+  io_oled_cmd(dev,0xDA);                          // Common pads hardware
+  io_oled_cmd(dev,0xC8);                          // Common output scan direciton
+  io_oled_cmd(dev,0xA8); io_oled_cmd(dev,0x3F);   // Multiplex ratio: 63 (64MUX)
+  io_oled_cmd(dev,0xD5); io_oled_cmd(dev,0x80);   // display devideratio/osc freq.mode
+  io_oled_cmd(dev,0x81); io_oled_cmd(dev,0x50);   // Contrast control
+  io_oled_cmd(dev,0xD9); io_oled_cmd(dev,0x21);   // Set precharged period
+  io_oled_cmd(dev,0x20); io_oled_cmd(dev,0x02);   // Set memory adressing mode
+  io_oled_cmd(dev,0xDB); io_oled_cmd(dev,0x30);   // VCOM deselect level mode
+  io_oled_cmd(dev,0xAD); io_oled_cmd(dev,0x00);   // Master config
+  io_oled_cmd(dev,0xA4);                          // Resume to RAM content
+  io_oled_cmd(dev,0xA6);                          // Normal display
 
-    // Clear GDDRAM once at init
-    for (uint8_t page = 0; page < 8; page++) {
-        io_oled_goto_line(dev, page);
-        io_oled_goto_column(dev, 0);
-        for (uint8_t x = 0; x < 128; x++) {
-            io_oled_write(dev, 0x00);
-        }
+  // Clear GDDRAM once at init
+  for (uint8_t page = 0; page < 8; page++) {
+    io_oled_goto_line(dev, page);
+    io_oled_goto_column(dev, 0);
+    for (uint8_t x = 0; x < 128; x++) {
+      io_oled_write(dev, 0x00);
     }
+  }
 
-    // Display ON
-    io_oled_cmd(dev,0xAF);                         
+  // Display ON
+  io_oled_cmd(dev,0xAF);                         
 
   //Turn display off
   io_oled_cmd(dev,0xAE);

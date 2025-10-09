@@ -21,6 +21,8 @@ struct io_joystick_device joy = {0, 1, 0, 0};
 
 struct io_joystick_position pos;
 
+struct io_oled_device oled;
+
 int main() {
   int status = 0;
 
@@ -40,6 +42,9 @@ int main() {
   STATUS_ASSERT(status)
 
   status = io_joystick_init(&joy);
+  STATUS_ASSERT(status)
+
+  status = io_oled_init(&oled);
   STATUS_ASSERT(status)
 
   printf("\n\r---Init Complete---\n\r");

@@ -107,12 +107,12 @@ int io_oled_init(struct io_oled_device *dev) {
     status = spi_init(&dev->spi);
   }
 
-  DDRB  |= (1 << PB0) | (1 << PB1) | (1 << PB2); // Set PB0,PB1,PB2 to outputs
+  DDRB  |= (1 << PB4) | (1 << PB1) | (1 << PB2); // Set PB0,PB1,PB2 to outputs
     
   // Reset
-  PORTB &= ~(1 << PB0); // Set PB0 low
+  PORTB &= ~(1 << PB4); // Set PB4 low
   _delay_us(5);         // Wait 5us
-  PORTB |= (1 << PB0);  // Set PB0 high
+  PORTB |= (1 << PB4);  // Set PB4 high
   _delay_ms(1);         // Making sure its restarted before we start sending commands
 
   // Display OFF
@@ -160,9 +160,9 @@ int io_oled_reset(struct io_oled_device *dev) {
   io_oled_cmd(dev,0xAE);
   
   // Reset
-  PORTB &= ~(1 << PB0); // Set PB0 low
+  PORTB &= ~(1 << PB4); // Set PB4 low
   _delay_us(5);         // Wait 5us
-  PORTB |= (1 << PB0);  // Set PB0 high
+  PORTB |= (1 << PB4);  // Set PB4 high
   _delay_ms(1);         // Making sure its restarted before we start sending commands
 
 

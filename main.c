@@ -51,7 +51,7 @@ int main() {
 
   while (1) {
 
-    struct ADC_meas data;
+/*     struct ADC_meas data;
     ADC_read_all(&data);
 
     for (int i = 2; i < 4; i++) {
@@ -62,7 +62,9 @@ int main() {
     printf("Joystick Position\tX=%d\tY=%d\n\r", pos.x, pos.y);
 
     _delay_ms(2000);
+ */
 
+ spi_send(struct oled,'k');
 
 
   }

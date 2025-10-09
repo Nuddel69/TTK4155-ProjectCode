@@ -25,10 +25,13 @@ int io_joystick_read_position(struct io_joystick_device *dev,
   struct ADC_meas data;
 
   ADC_read_all(&data);
-  buffer->x = (map(data.channel[dev->adc_channel_x], 0, 127, (-100), 100)) +
+/*   buffer->x = (map(data.channel[dev->adc_channel_x], 0, 127, (-100), 100)) +
               dev->x_offset;
   buffer->y = (map(data.channel[dev->adc_channel_y], 0, 127, (-100), 100)) +
-              dev->y_offset;
+              dev->y_offset; */
+
+  buffer->x = (map(data.channel[0], 0, 255, (-100), 100)) + dev->x_offset;
+  buffer->y = (map(data.channel[1], 0, 255, (-100), 100)) + dev->y_offset;
 
   return 0;
 }

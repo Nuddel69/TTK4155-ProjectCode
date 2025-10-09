@@ -20,7 +20,7 @@ void ADC_start_conv(void) {
   // Write to any adress on ADC to trigger WR
   *ADC_BASE_ADR = 0x00;
   // Delay to ensure ADC conversion is done, checking BUSY pin insead.
-  while (PORTD & PD4) {
+  while ((PORTD & PD4)) {
   }
 }
 
@@ -34,12 +34,13 @@ void ADC_read_all(struct ADC_meas *output) {
 
   ADC_start_conv();
 
-  uint8_t adc_value[4];
+  volatile uint8_t adc_value[4];
 
   // Send a pulse then read for each channel
   for (uint8_t i = 0; i < 4; i++) {
-    output->channel[i] = ADC_read_ch();
-    _delay_us(5);
+    _delay_ms(5);
+    adc_value[i] = ADC_read_ch();
+    output->channel[i] = adc_value[i];
   }
 }
 

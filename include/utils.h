@@ -19,7 +19,10 @@
 
 int utils_test_address_decode(void);
 int utils_assert(int status);
-int8_t map(int8_t x, int8_t in_min, int8_t in_max, int8_t out_min,
-           int8_t out_max);
+/* int8_t map(uint8_t x, uint8_t in_min, uint8_t in_max, int8_t out_min,
+           int8_t out_max); */
+
+int16_t map(uint8_t x, uint8_t in_min, uint8_t in_max, int16_t out_min,
+           int16_t out_max);
 
 #endif // INCLUDE_INCLUDE_UTILS_H_

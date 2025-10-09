@@ -9,21 +9,15 @@
 #include "utils.h"
 #include "xmem.h"
 
-#include "adc.h"
-#include "io.h"
-
-#define FOSC 4915200
 #define BAUD 9600
 
-struct USART_config config = {BAUD, FOSC};
+struct USART_config config = {BAUD, F_CPU};
 
 struct io_joystick_device joy = {0, 1, 0, 0};
 
 struct io_joystick_position pos;
 
-struct io_oled_device oled;
-
-struct spi_interface spi_oled;
+struct io_oled_device oled = {SSB2};
 
 int main() {
   int status = 0;
@@ -53,43 +47,39 @@ int main() {
 
   while (1) {
 
-/*     struct ADC_meas data;
-    ADC_read_all(&data);
+    /*     struct ADC_meas data;
+        ADC_read_all(&data);
 
-    for (int i = 2; i < 4; i++) {
-    printf("Matrix on channel%d: %d  ", i, data.channel[i]);
-    }
+        for (int i = 2; i < 4; i++) {
+        printf("Matrix on channel%d: %d  ", i, data.channel[i]);
+        }
 
-    io_joystick_read_position(&joy, &pos);
-    printf("Joystick Position\tX=%d\tY=%d\n\r", pos.x, pos.y);
+        io_joystick_read_position(&joy, &pos);
+        printf("Joystick Position\tX=%d\tY=%d\n\r", pos.x, pos.y);
 
-    _delay_ms(2000);
- */
-  printf("Starting new transmission\n\r");
-  io_oled_write(&spi_oled,0xff)
-  printf("Transmission complete\n\r");
-  _delay_ms(20);
-
-
-
+        _delay_ms(2000);
+     */
+    printf("Starting new transmission\n\r");
+    io_oled_write(&spi_oled, 0xff) printf("Transmission complete\n\r");
+    _delay_ms(20);
   }
 
-    /* struct ADC_meas data;
-    ADC_read_all(&data);
-    struct io_joystick_position *buffer;
+  /* struct ADC_meas data;
+  ADC_read_all(&data);
+  struct io_joystick_position *buffer;
 
-    for (int i = 0; i < 4; i++) {
-          printf("CH%d raw=%d", i, data.channel[i]);
-    }
-    
+  for (int i = 0; i < 4; i++) {
+        printf("CH%d raw=%d", i, data.channel[i]);
+  }
 
-    int raw_x = data.channel[0];
-    int raw_y = data.channel[1];
 
-    printf("Raw X=%d Y=%dr", raw_x, raw_y);
+  int raw_x = data.channel[0];
+  int raw_y = data.channel[1];
 
-    buffer->x = (map(raw_x, 36, 248, -100, 100));
-    buffer->y = (map(raw_y, 0, 255, -100, 100));
+  printf("Raw X=%d Y=%dr", raw_x, raw_y);
 
-    printf("Mapped X=%d Y=%d\n\r", buffer->x, buffer->y); */
+  buffer->x = (map(raw_x, 36, 248, -100, 100));
+  buffer->y = (map(raw_y, 0, 255, -100, 100));
+
+  printf("Mapped X=%d Y=%d\n\r", buffer->x, buffer->y); */
 }

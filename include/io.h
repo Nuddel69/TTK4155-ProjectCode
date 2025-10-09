@@ -12,17 +12,12 @@ struct oled_font {
   uint8_t spacing;         // columns of space between glyphs
 };
 
-/* extern const unsigned char font8[95][8] PROGMEM;
-extern const unsigned char font5[95][5] PROGMEM;
-extern const unsigned char font4[95][4] PROGMEM; */
-
 static const struct oled_font OLED_FONT_8x8 = {font8, 8, 8, 1};
 static const struct oled_font OLED_FONT_5x7 = {font5, 5, 7, 1};
 static const struct oled_font OLED_FONT_4x6 = {font4, 4, 6, 1};
 
 struct io_oled_device {
-  struct spi_interface spi;
-  unsigned int ss;
+  enum spi_slave spi;
 };
 struct io_joystick_device {
   unsigned int adc_channel_x;
@@ -187,7 +182,6 @@ int io_oled_reset_brightness(struct io_oled_device *dev);
  */
 int io_oled_print_arrow(struct io_oled_device *dev, uint8_t row, uint8_t col);
 
-
 /*!
  * \brief Prints a single glyph in a specifiec font
  * \param[in] dev the OLED that should be written to
@@ -195,17 +189,18 @@ int io_oled_print_arrow(struct io_oled_device *dev, uint8_t row, uint8_t col);
  * \param[in] character_id the character that should be written
  * \return Errno.
  */
-uint8_t io_oled_write_glyph(struct io_oled_device *dev,struct oled_font *font,char character_id);
-
+uint8_t io_oled_write_glyph(struct io_oled_device *dev, struct oled_font *font,
+                            char character_id);
 
 /*!
  * \brief Prints an arrow at a specified postion
  * \param[in] dev the OLED device that should be written to
  * \param[in] font the specified font, see font.h
- * \param[in] text the string that should be printed to the OLED, has to end in newline
+ * \param[in] text the string that should be printed to the OLED, has to end in
+ * newline
  * \return .
  */
-int io_oled_print_with_font(struct io_oled_device *dev,struct oled_font *font, char *text);
-
+int io_oled_print_with_font(struct io_oled_device *dev, struct oled_font *font,
+                            char *text);
 
 #endif // INCLUDE_INCLUDE_IO_H_

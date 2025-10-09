@@ -50,19 +50,21 @@ int main() {
   printf("\n\r---Init Complete---\n\r");
 
   while (1) {
-    io_joystick_read_position(&joy, &pos);
-    printf("Joystick Position\tX=%d\tY=%d\n\r", pos.x, pos.y);
-    _delay_ms(2000);
-
 
     struct ADC_meas data;
     ADC_read_all(&data);
 
-    for (int i = 0; i < 4; i++) {
-    printf("Channel %d: %d", i, data.channel[i]);
-    _delay_ms(2000);
+    for (int i = 2; i < 4; i++) {
+    printf("Matrix on channel%d: %d  ", i, data.channel[i]);
     }
-    printf("\n\r");
+
+    io_joystick_read_position(&joy, &pos);
+    printf("Joystick Position\tX=%d\tY=%d\n\r", pos.x, pos.y);
+
+    _delay_ms(2000);
+
+
+
   }
 
     /* struct ADC_meas data;

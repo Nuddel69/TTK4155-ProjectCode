@@ -34,7 +34,7 @@ int main() {
   status = tim1_CTC_init();
   STATUS_ASSERT(status)
 
-  status = spi_init(NULL);
+  status = spi_init();
   STATUS_ASSERT(status)
 
   status = io_joystick_init(&joy);
@@ -46,40 +46,7 @@ int main() {
   printf("\n\r---Init Complete---\n\r");
 
   while (1) {
-
-    /*     struct ADC_meas data;
-        ADC_read_all(&data);
-
-        for (int i = 2; i < 4; i++) {
-        printf("Matrix on channel%d: %d  ", i, data.channel[i]);
-        }
-
-        io_joystick_read_position(&joy, &pos);
-        printf("Joystick Position\tX=%d\tY=%d\n\r", pos.x, pos.y);
-
-        _delay_ms(2000);
-     */
-    printf("Starting new transmission\n\r");
-    io_oled_write(&spi_oled, 0xff) printf("Transmission complete\n\r");
+    io_oled_write(&oled, 0xff);
     _delay_ms(20);
   }
-
-  /* struct ADC_meas data;
-  ADC_read_all(&data);
-  struct io_joystick_position *buffer;
-
-  for (int i = 0; i < 4; i++) {
-        printf("CH%d raw=%d", i, data.channel[i]);
-  }
-
-
-  int raw_x = data.channel[0];
-  int raw_y = data.channel[1];
-
-  printf("Raw X=%d Y=%dr", raw_x, raw_y);
-
-  buffer->x = (map(raw_x, 36, 248, -100, 100));
-  buffer->y = (map(raw_y, 0, 255, -100, 100));
-
-  printf("Mapped X=%d Y=%d\n\r", buffer->x, buffer->y); */
 }

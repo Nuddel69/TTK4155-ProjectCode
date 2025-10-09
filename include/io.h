@@ -12,9 +12,9 @@ struct oled_font {
   uint8_t spacing;         // columns of space between glyphs
 };
 
-extern const unsigned char font8[95][8] PROGMEM;
+/* extern const unsigned char font8[95][8] PROGMEM;
 extern const unsigned char font5[95][5] PROGMEM;
-extern const unsigned char font4[95][4] PROGMEM;
+extern const unsigned char font4[95][4] PROGMEM; */
 
 static const struct oled_font OLED_FONT_8x8 = {font8, 8, 8, 1};
 static const struct oled_font OLED_FONT_5x7 = {font5, 5, 7, 1};
@@ -195,7 +195,7 @@ int io_oled_print_arrow(struct io_oled_device *dev, uint8_t row, uint8_t col);
  * \param[in] character_id the character that should be written
  * \return Errno.
  */
-uint8_t io_oled_write_glyph(struct io_oled_device *dev,struct oled_font *font,char character_id):
+uint8_t io_oled_write_glyph(struct io_oled_device *dev,struct oled_font *font,char character_id);
 
 
 /*!
@@ -205,7 +205,7 @@ uint8_t io_oled_write_glyph(struct io_oled_device *dev,struct oled_font *font,ch
  * \param[in] text the string that should be printed to the OLED, has to end in newline
  * \return .
  */
-int io_oled_print_with_font(struct io_oled_device *dev,struct oled_font *font, char *text)
+int io_oled_print_with_font(struct io_oled_device *dev,struct oled_font *font, char *text);
 
 
 #endif // INCLUDE_INCLUDE_IO_H_

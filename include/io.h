@@ -85,7 +85,7 @@ int io_oled_init(struct io_oled_device *dev);
  * \param[in] command the hex command (see p27. SSD1309 datasheet)
  * \return Errno.
  */
-int io_oled_cmd(struct io_oled_device *dev, uint8_t command);
+// int io_oled_cmd(struct io_oled_device *dev, uint8_t command);
 
 /*!
  * \brief Sends data to OLED
@@ -93,7 +93,7 @@ int io_oled_cmd(struct io_oled_device *dev, uint8_t command);
  * \param[in] data the data that the OLED should recive
  * \return Errno.
  */
-int io_oled_write(struct io_oled_device *dev, uint8_t data);
+// int io_oled_write(struct io_oled_device *dev, uint8_t data);
 
 /*!
  * \brief Resets OLED to blank page
@@ -189,8 +189,8 @@ int io_oled_print_arrow(struct io_oled_device *dev, uint8_t row, uint8_t col);
  * \param[in] character_id the character that should be written
  * \return Errno.
  */
-uint8_t io_oled_write_glyph(struct io_oled_device *dev, struct oled_font *font,
-                            char character_id);
+uint8_t io_oled_write_glyph(struct io_oled_device *dev,
+                            const struct oled_font *font, char character_id);
 
 /*!
  * \brief Prints an arrow at a specified postion
@@ -200,19 +200,17 @@ uint8_t io_oled_write_glyph(struct io_oled_device *dev, struct oled_font *font,
  * newline
  * \return .
  */
-int io_oled_print_with_font(struct io_oled_device *dev, struct oled_font *font,
-                            char *text);
-
+int io_oled_print_with_font(struct io_oled_device *dev,
+                            const struct oled_font *font, char *text);
 
 /*!
- * \brief Prints a known image to the OLED to confirm that it can print and navigate the screen
+ * \brief Prints a known image to the OLED to confirm that it can print and
+ * navigate the screen
  * \param[in] dev the OLED device that should be tested
  * newline
  * \return .
  */
 int io_oled_test(struct io_oled_device *dev);
-
-
 
 /*!
  * \brief Alternates screen between black and white
@@ -222,6 +220,5 @@ int io_oled_test(struct io_oled_device *dev);
  * \return .
  */
 int io_oled_blinky(struct io_oled_device *dev, uint8_t blinks);
-
 
 #endif // INCLUDE_INCLUDE_IO_H_

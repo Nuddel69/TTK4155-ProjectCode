@@ -19,7 +19,7 @@ int spi_init() {
   /*
   // Define PB2, PB4 and PE2 as slave select pins
   */
-  DDRB |= (1 << PB2) | (1 << PB4);
+  DDRB |= (1 << PB2) | (1 << PB3) | (1 << PB4);
   DDRE |= (1 << PE2);
 
   /*
@@ -58,9 +58,9 @@ int spi_set_slave_select(enum spi_slave *slave, unsigned char state) {
     break;
   case SSE2:
     if (!state) {
-      PORTE &= ~(1 << PE2);
+      PORTB &= ~(1 << PB3);
     } else {
-      PORTE |= (1 << PE2);
+      PORTB |= (1 << PB3);
     }
     break;
   default:
@@ -69,8 +69,13 @@ int spi_set_slave_select(enum spi_slave *slave, unsigned char state) {
   return 0;
 }
 
+int spi_send_n(enum spi_slave *slave, unsigned char *data, int length) {
+  spi_duplex(slave, data, NULL, length);
+  return 0;
+}
+
 int spi_send(enum spi_slave *slave, unsigned char data) {
-  spi_duplex(slave, data, NULL);
+  spi_duplex(slave, &data, NULL, 1);
   return 0;
 }
 
@@ -79,12 +84,39 @@ int spi_recieve(enum spi_slave *slave, unsigned char *out) {
   return 0;
 }
 
-int spi_duplex(enum spi_slave *slave, unsigned char data, unsigned char *out) {
+int spi_recieve_n(enum spi_slave *slave, unsigned char *out, int length) {
+  spi_duplex(slave, NULL, out, length);
+  return 0;
+}
+
+int spi_duplex(enum spi_slave *slave, unsigned char *data, unsigned char *out,
+               int length) {
+  spi_set_slave_select(slave, 0);
+
+  SPDR = data[0];
+  while (!(SPSR & (1 << SPIF))) {
+  }
+  out[0] = SPDR;
+
+  _delay_us(40);
+
+  for (int i = 1; i < length; i++) {
+
+    SPDR = data[i];
+    while (!(SPSR & (1 << SPIF))) {
+    }
+    out[i] = SPDR;
+  }
+  spi_set_slave_select(slave, 1);
+  return 0;
+}
+
+int spi_push(enum spi_slave *slave, unsigned char data, unsigned char *out) {
+
   spi_set_slave_select(slave, 0);
   SPDR = data;
   while (!(SPSR & (1 << SPIF))) {
   }
   *out = SPDR;
-  spi_set_slave_select(slave, 1);
   return 0;
 }

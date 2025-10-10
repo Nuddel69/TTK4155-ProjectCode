@@ -16,6 +16,10 @@ static const struct oled_font OLED_FONT_8x8 = {font8, 8, 8, 1};
 static const struct oled_font OLED_FONT_5x7 = {font5, 5, 7, 1};
 static const struct oled_font OLED_FONT_4x6 = {font4, 4, 6, 1};
 
+struct io_avr_device {
+  enum spi_slave spi;
+};
+
 struct io_oled_device {
   enum spi_slave spi;
 };
@@ -30,6 +34,42 @@ struct io_joystick_position {
   int y; // Y value in % from the middle
 };
 enum io_joystick_direction { LEFT, RIGHT, UP, DOWN, NEUTRAL };
+
+struct __attribute__((packed)) io_avr_buttons {
+  union {
+    uint8_t right;
+    struct {
+      uint8_t R1 : 1;
+      uint8_t R2 : 1;
+      uint8_t R3 : 1;
+      uint8_t R4 : 1;
+      uint8_t R5 : 1;
+      uint8_t R6 : 1;
+    };
+  };
+  union {
+    uint8_t left;
+    struct {
+      uint8_t L1 : 1;
+      uint8_t L2 : 1;
+      uint8_t L3 : 1;
+      uint8_t L4 : 1;
+      uint8_t L5 : 1;
+      uint8_t L6 : 1;
+      uint8_t L7 : 1;
+    };
+  };
+  union {
+    uint8_t nav;
+    struct {
+      uint8_t NB : 1;
+      uint8_t NR : 1;
+      uint8_t ND : 1;
+      uint8_t NL : 1;
+      uint8_t NU : 1;
+    };
+  };
+};
 
 //------------------//
 //     Joystick     //
@@ -67,6 +107,15 @@ int io_joystick_read_direction(struct io_joystick_device *dev,
  * \return Errno.
  */
 int io_joystick_calibrate(struct io_joystick_device *dev);
+
+//-------------------//
+//   Button Inputs   //
+//-------------------//
+
+int io_avr_init(struct io_avr_device *dev);
+int io_avr_buttons_read(struct io_avr_device *dev, struct io_avr_buttons *btn);
+int io_avr_led_set(struct io_avr_device *dev, unsigned char led,
+                   unsigned char brightness);
 
 //------------------//
 //       OLED       //

@@ -3,9 +3,18 @@
 
 #include "adc.h"
 #include "io.h"
+#include "spi.h"
 #include "utils.h"
 
 #define JOYSTICK_THRESHOLD 10
+
+#define IO_AVR_TOUCH_PAD 0x01
+#define IO_AVR_TOUCH_SLIDER 0x02
+#define IO_AVR_JOYSTICK 0x03
+#define IO_AVR_BUTTONS 0x04
+#define IO_AVR_LED_TOGGLE 0x05
+#define IO_AVR_LED_PWM 0x06
+#define IO_AVR_INFO 0x07
 
 //------------------//
 //     Joystick     //
@@ -29,8 +38,10 @@ int io_joystick_read_position(struct io_joystick_device *dev,
     + dev->x_offset; buffer->y = (map(data.channel[dev->adc_channel_y], 0, 127,
     (-100), 100)) + dev->y_offset; */
 
-  buffer->x = (map(data.channel[0], 0, 255, (-100), 100)) + dev->x_offset;
-  buffer->y = (map(data.channel[1], 0, 255, (-100), 100)) + dev->y_offset;
+  buffer->x = (map(data.channel[dev->adc_channel_x], 0, 255, (-100), 100)) +
+              dev->x_offset;
+  buffer->y = (map(data.channel[dev->adc_channel_y], 0, 255, (-100), 100)) +
+              dev->y_offset;
 
   return 0;
 }
@@ -66,6 +77,39 @@ int io_joystick_calibrate(struct io_joystick_device *dev) {
   dev->x_offset = pos.x * -1;
   dev->y_offset = pos.y * -1;
 
+  return 0;
+}
+
+//-------------------//
+//   Button Inputs   //
+//-------------------//
+
+int io_avr_init(struct io_avr_device *dev) {
+
+  int status = 0;
+
+  while (spi_ready()) {
+    status = spi_init();
+  }
+  return status;
+}
+int io_avr_buttons_read(struct io_avr_device *dev, struct io_avr_buttons *btn) {
+
+  unsigned char recbuf[3];
+  spi_push(&dev->spi, IO_AVR_BUTTONS, NULL);
+  spi_recieve_n(&dev->spi, recbuf, 3);
+  spi_set_slave_select(&dev->spi, 1);
+
+  btn->right = recbuf[0];
+  btn->left = recbuf[1];
+  btn->nav = recbuf[2];
+
+  return 0;
+}
+int io_avr_led_set(struct io_avr_device *dev, unsigned char led,
+                   unsigned char brightness) {
+  unsigned char cmd[3] = {IO_AVR_LED_PWM, led, brightness};
+  spi_send_n(&dev->spi, cmd, 3);
   return 0;
 }
 

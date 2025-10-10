@@ -203,4 +203,13 @@ uint8_t io_oled_write_glyph(struct io_oled_device *dev, struct oled_font *font,
 int io_oled_print_with_font(struct io_oled_device *dev, struct oled_font *font,
                             char *text);
 
+
+/*!
+ * \brief Prints a known image to the OLED to confirm that it can print and navigate the screen
+ * \param[in] dev the OLED device that should be tested
+ * newline
+ * \return .
+ */
+int io_oled_test(struct io_oled_device *dev);
+
 #endif // INCLUDE_INCLUDE_IO_H_

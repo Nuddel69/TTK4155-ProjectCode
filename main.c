@@ -44,9 +44,11 @@ int main() {
   STATUS_ASSERT(status)
 
   printf("\n\r---Init Complete---\n\r");
-
+  _delay_ms(1000); // Just temporary wait to ensure external OLED is fully configured before we start
+  
+  io_oled_test(&oled);
+  
   while (1) {
-    io_oled_write(&oled, 0xff);
-    _delay_ms(20);
+   
   }
 }

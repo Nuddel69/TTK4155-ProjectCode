@@ -77,17 +77,18 @@ int io_joystick_calibrate(struct io_joystick_device *dev) {
 
 int io_oled_cmd(struct io_oled_device *dev, uint8_t command) {
   PORTB &= ~(1 << PB1); // D/!C=0
+                        // PB2 DISP_CS Low, Chipselect is driven by SPI
   spi_send(&dev->spi, command);
-  //_delay_us(3);         // Not sure if we need a delay, add if its not working
+  //_delay_us(3);       // Not sure if we need a delay, add if its not working
   return 0;
 }
 
 int io_oled_write(struct io_oled_device *dev, uint8_t data) {
-  PORTB |= (1 << PB1);  // D/!C set high
-  PORTB &= ~(1 << PB2); // DISP_CS Low
+  PORTB |= (1 << PB1);    // D/!C set high
+                          // PB2 DISP_CS Low, Chipselect is driven by SPI
   spi_send(&dev->spi, data);
   //_delay_us(3);         // Not sure if we need a delay, add if its not working
-  PORTB |= (1 << PB2); // DISP_CS high
+
 
   return 0;
 }
@@ -114,23 +115,36 @@ int io_oled_init(struct io_oled_device *dev) {
 
   // Recommended config for 128x64 OLED, page 19 OLED datasheet
   io_oled_cmd(dev, 0xA1); // Segment remap: column address 127->0
+  io_oled_cmd(dev, 0xC8); // Scan direction: remapped C8 or C0
+
   io_oled_cmd(dev, 0xDA); // Common pads hardware
+  io_oled_cmd(dev, 0x12); // Required parameter for 128×64 
+
   io_oled_cmd(dev, 0xC8); // Common output scan direciton
-  io_oled_cmd(dev, 0xA8);
+
+  io_oled_cmd(dev, 0xA8); // Set multiplex ratio
   io_oled_cmd(dev, 0x3F); // Multiplex ratio: 63 (64MUX)
-  io_oled_cmd(dev, 0xD5);
-  io_oled_cmd(dev, 0x80); // display devideratio/osc freq.mode
-  io_oled_cmd(dev, 0x81);
-  io_oled_cmd(dev, 0x50); // Contrast control
-  io_oled_cmd(dev, 0xD9);
-  io_oled_cmd(dev, 0x21); // Set precharged period
-  io_oled_cmd(dev, 0x20);
-  io_oled_cmd(dev, 0x02); // Set memory adressing mode
-  io_oled_cmd(dev, 0xDB);
-  io_oled_cmd(dev, 0x30); // VCOM deselect level mode
-  io_oled_cmd(dev, 0xAD);
-  io_oled_cmd(dev, 0x00); // Master config
+
+  io_oled_cmd(dev, 0xD5); // set display clock devider ratio
+  io_oled_cmd(dev, 0x80); // freq.mode
+
+  io_oled_cmd(dev, 0x81); // Contrast control
+  io_oled_cmd(dev, 0x90); // Set from 0x00-0xFF, 0x50 is ok
+
+  io_oled_cmd(dev, 0xD9); // Set precharged period
+  io_oled_cmd(dev, 0x21); 
+
+  io_oled_cmd(dev, 0x20); // Set memory adressing mode
+  io_oled_cmd(dev, 0x02); // 0x02 = Page (alternativly 0x00 = Horizontal)
+
+  io_oled_cmd(dev, 0xDB); // VCOM deselect level mode
+  io_oled_cmd(dev, 0x30); 
+
+  io_oled_cmd(dev, 0xAD); // Master config
+  io_oled_cmd(dev, 0x00); // Slave
+
   io_oled_cmd(dev, 0xA4); // Resume to RAM content
+  
   io_oled_cmd(dev, 0xA6); // Normal display
 
   // Clear GDDRAM once at init
@@ -270,7 +284,8 @@ uint8_t io_oled_write_glyph(struct io_oled_device *dev, struct oled_font *font,
 
   // Print glyph to oled
   for (uint8_t c = 0; c < font->bytes_per_glyph; ++c) {
-    uint8_t col = pgm_read_byte(base + c);
+    //function from <avr/pgmspace.h> that reads from PROGMEM
+    uint8_t col = pgm_read_byte(base + c); 
     io_oled_write(dev, col);
   }
   // Add spacing after glyph
@@ -294,4 +309,55 @@ int io_oled_print_with_font(struct io_oled_device *dev, struct oled_font *font,
     io_oled_write_glyph(dev, font, *p);
   }
   return 0;
+}
+
+int io_oled_test(struct io_oled_device *dev){
+	
+	io_oled_home(dev);
+
+	for (uint8_t i=0; i < 64; i++){     // print half a line
+		io_oled_write(dev, 0xff);
+	}
+	
+	io_oled_goto_line(dev,1);//new line
+	
+	for (uint8_t i=0; i < 64; i++){     // print half a line
+		io_oled_write(dev, 0xff);
+	}
+	
+	io_oled_goto_line(dev,2);//new line
+	io_oled_goto_column(dev,0);//new carrige return
+	
+	for (uint8_t i=0; i < 128; i++){     // fill every other column in a row
+		if (i%2==0){
+			io_oled_write(dev, 0xff);
+		}
+		else{
+			io_oled_write(dev, 0x00);
+		}
+	}
+		
+	io_oled_goto_line(dev,3);//new line
+	io_oled_goto_column(dev,0);//new carrige return
+		
+	for (uint8_t i=0; i < 128; i++){     // fill a row with chess pattern
+		if (i%2==0){
+			io_oled_write(dev, 0b01010101);
+		}
+		else{
+			io_oled_write(dev, 0b10101010);
+		}
+	}
+	
+	io_oled_goto_line(dev,4);//new line
+	io_oled_goto_column(dev,0);//new carrige return
+	io_oled_print_with_font(dev,&OLED_FONT_8x8,"Ser ut som");
+	
+	io_oled_goto_line(dev,5);//new line
+	io_oled_goto_column(dev,0);//new carrige return
+	io_oled_print_with_font(dev,&OLED_FONT_8x8,"det funker");
+		
+		
+		
+	return 0;
 }

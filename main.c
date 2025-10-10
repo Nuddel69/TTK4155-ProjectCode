@@ -47,6 +47,8 @@ int main() {
   _delay_ms(1000); // Just temporary wait to ensure external OLED is fully configured before we start
   
   io_oled_test(&oled);
+  //io_oled_blink(&oled,30);
+
   
   while (1) {
    

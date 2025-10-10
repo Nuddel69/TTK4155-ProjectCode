@@ -118,7 +118,7 @@ int io_oled_init(struct io_oled_device *dev) {
   io_oled_cmd(dev, 0xC8); // Scan direction: remapped C8 or C0
 
   io_oled_cmd(dev, 0xDA); // Common pads hardware
-  io_oled_cmd(dev, 0x12); // Required parameter for 128×64 
+  io_oled_cmd(dev, 0x12); // Required parameter for 128x64 
 
   io_oled_cmd(dev, 0xC8); // Common output scan direciton
 
@@ -129,7 +129,7 @@ int io_oled_init(struct io_oled_device *dev) {
   io_oled_cmd(dev, 0x80); // freq.mode
 
   io_oled_cmd(dev, 0x81); // Contrast control
-  io_oled_cmd(dev, 0x90); // Set from 0x00-0xFF, 0x50 is ok
+  io_oled_cmd(dev, 0xB0); // Set from 0x00-0xFF, 0x50 is ok
 
   io_oled_cmd(dev, 0xD9); // Set precharged period
   io_oled_cmd(dev, 0x21); 
@@ -351,13 +351,41 @@ int io_oled_test(struct io_oled_device *dev){
 	
 	io_oled_goto_line(dev,4);//new line
 	io_oled_goto_column(dev,0);//new carrige return
-	io_oled_print_with_font(dev,&OLED_FONT_8x8,"Ser ut som");
+	io_oled_print_with_font(dev,&OLED_FONT_8x8,"Text 8x8");
 	
 	io_oled_goto_line(dev,5);//new line
 	io_oled_goto_column(dev,0);//new carrige return
-	io_oled_print_with_font(dev,&OLED_FONT_8x8,"det funker");
-		
+	io_oled_print_with_font(dev,&OLED_FONT_5x7,"Text 5x7");
+	
+	io_oled_goto_line(dev,6);//new line
+	io_oled_goto_column(dev,0);//new carrige return
+	io_oled_print_with_font(dev,&OLED_FONT_4x6,"Text 4x6");
+	
+	io_oled_goto_line(dev,7);//new line
+	io_oled_goto_column(dev,0);//new carrige return
+	io_oled_print_with_font(dev,&OLED_FONT_8x8,"Test:Complete");	
 		
 		
 	return 0;
+}
+
+int io_oled_blink(struct io_oled_device *dev, uint8_t blinks){
+
+  io_oled_home(dev);
+
+  for (uint8_t blink=0; blink < 2*blinks; blink++){
+    for (uint8_t row=0; row < 8; row++){
+      io_oled_goto_line(dev,row);//new line
+      io_oled_goto_column(dev,0);//new carrige return
+      for (uint8_t col=0; col < 126; col++){
+        if (blink%2==0){
+          io_oled_write(dev, 0xFF);  
+        }
+        else{
+          io_oled_write(dev, 0x00);
+        }
+      }
+    }
+    _delay_ms(500);
+  }
 }

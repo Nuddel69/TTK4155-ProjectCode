@@ -212,4 +212,16 @@ int io_oled_print_with_font(struct io_oled_device *dev, struct oled_font *font,
  */
 int io_oled_test(struct io_oled_device *dev);
 
+
+
+/*!
+ * \brief Alternates screen between black and white
+ * \param[in] dev the OLED device that should be blinked
+ * \param[in] blinks number of blinks
+ * newline
+ * \return .
+ */
+int io_oled_blinky(struct io_oled_device *dev, uint8_t blinks);
+
+
 #endif // INCLUDE_INCLUDE_IO_H_

@@ -26,8 +26,9 @@ int spi_init() {
   // Ensure initial state off
   */
   status = spi_set_slave_select((enum spi_slave *)SSB2, 1);
-  status = spi_set_slave_select((enum spi_slave *)SSB4, 1);
+  status = spi_set_slave_select((enum spi_slave *)SSB3, 1);
   status = spi_set_slave_select((enum spi_slave *)SSE2, 1);
+
 
   if (status) {
     return status;
@@ -49,13 +50,6 @@ int spi_set_slave_select(enum spi_slave *slave, unsigned char state) {
       PORTB |= (1 << PB2);
     }
     break;
-  case SSE2:
-    if (!state) {
-      PORTB &= ~(1 << PB4);
-    } else {
-      PORTB |= (1 << PB4);
-    }
-    break;
   case SSB3:
     if (!state) {
       PORTB &= ~(1 << PB3);
@@ -63,11 +57,11 @@ int spi_set_slave_select(enum spi_slave *slave, unsigned char state) {
       PORTB |= (1 << PB3);
     }
     break;
-  case SSE4:
+  case SSE2:
     if (!state) {
-      PORTE &= ~(1 << PB4);
+      PORTE &= ~(1 << PE2);
     } else {
-      PORTE |= (1 << PB4);
+      PORTE |= (1 << PE2);
     }
     break;
   default:

@@ -109,7 +109,7 @@ int8_t MCP2515_init(){
 
     // Confirm that the controller has switched to normal mode
     MCP2515_read(dev, 0x0E, &canstat);
-    if ((canstat & 0x0E) != MODE_NORMAL) {
+    if ((canstat & 0x0E) != MODE_LOOPBACK) {
         printf("Failed to switch controller to normal mode when initialzing");
         return -3;
     }

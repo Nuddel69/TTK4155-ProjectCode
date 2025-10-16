@@ -4,20 +4,16 @@
 
 #include "can.h"
 #include "io.h"
+#include "menu.h"
 #include "spi.h"
 #include "timer.h"
 #include "uart.h"
 #include "utils.h"
 #include "xmem.h"
-<<<<<<< HEAD
-#include "can.h"
-#include "menu.h"
-    =======
->>>>>>> a70b205 (CAN: Minor fixes: Fix syntax errors and typos)
 
 #define BAUD 9600
 
-    struct USART_config config = {BAUD, F_CPU};
+struct USART_config config = {BAUD, F_CPU};
 
 struct io_joystick_device joy = {0, 1, 0, 0};
 
@@ -78,8 +74,4 @@ int main() {
       io_avr_led_set(&avr, 0x4, 0x00);
     }
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> a70b205 (CAN: Minor fixes: Fix syntax errors and typos)

@@ -2,18 +2,22 @@
 #include <stdio.h>
 #include <util/delay.h>
 
+#include "can.h"
 #include "io.h"
 #include "spi.h"
 #include "timer.h"
 #include "uart.h"
 #include "utils.h"
 #include "xmem.h"
+<<<<<<< HEAD
 #include "can.h"
 #include "menu.h"
+    =======
+>>>>>>> a70b205 (CAN: Minor fixes: Fix syntax errors and typos)
 
 #define BAUD 9600
 
-struct USART_config config = {BAUD, F_CPU};
+    struct USART_config config = {BAUD, F_CPU};
 
 struct io_joystick_device joy = {0, 1, 0, 0};
 
@@ -46,14 +50,14 @@ int main() {
 
   status = io_avr_init(&avr);
   STATUS_ASSERT(status)
-  
-  //status = io_oled_init(&oled);
-  //STATUS_ASSERT(status)
 
   menu.oled = &oled;
   menu.items = menu_items;
 
   status = menu_init(&menu);
+  STATUS_ASSERT(status)
+
+  status = can_init(&can);
   STATUS_ASSERT(status)
 
   printf("\n\r---Init Complete---\n\r");
@@ -74,4 +78,8 @@ int main() {
       io_avr_led_set(&avr, 0x4, 0x00);
     }
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> a70b205 (CAN: Minor fixes: Fix syntax errors and typos)

@@ -127,9 +127,6 @@ int8_t MCP2515_write(*dev,uint8_t addr,uint8_t *data){
     return 0;
 }
 
-    return 0;
-}
-
 // Read a specefic RX BUFFER see operation on pg 66 in CAN controller datasheet
 int8_t MCP2515_read(struct *dev,uint8_t addr , uint8_t *out){
 

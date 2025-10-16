@@ -58,6 +58,10 @@ int8_t MCP2515_init(){
         return 2;
     }
 
+    uint8_t cnf1 = 0x00;
+    uitn8_t cnf2 = 0xFF;
+    uint8_t cnf3 = 0x03;
+
     // Program bit timing
     MCP2515_write(dev, 0x2A, cnf1);
     MCP2515_write(dev, 0x29, cnf2);
@@ -96,7 +100,12 @@ int8_t MCP2515_init(){
     MCP2515_write(dev, 0x2B, 0x03);
 
     // OBS! This MUST be the final register we set. sets NORMAL mode, disables ability to config
-    MCP2515_bit_modify(dev, 0x0F, 0xE0, MODE_NORMAL); // Control regiser , mask, normal mode
+
+
+    //Comment this out if we want to communicate with other nodes
+    MCP2515_bit_modify(dev, 0x0F, 0xE0, MODE_LOOPBACK); // Control regiser , mask, Loopback
+    //Comment this back in if you comment out the line above
+    //MCP2515_bit_modify(dev, 0x0F, 0xE0, MODE_NORMAL); // Control regiser , mask, normal mode
 
     // Confirm that the controller has switched to normal mode
     MCP2515_read(dev, 0x0E, &canstat);

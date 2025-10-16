@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <avr/io.h>
  
-#define CAN_CS       //Dont know whichone we are using yet
-#define CAN_CS_PIN
+#define CAN_CS PE2                 //Dont know whichone we are using yet
+#define CAN_CS_PIN PORTE
 #define CAN_STCONFIG 0b00000110
 
 //Commands for SPI-CAN controller

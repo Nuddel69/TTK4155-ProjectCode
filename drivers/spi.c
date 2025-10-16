@@ -49,18 +49,25 @@ int spi_set_slave_select(enum spi_slave *slave, unsigned char state) {
       PORTB |= (1 << PB2);
     }
     break;
-  case SSB4:
+  case SSE2:
     if (!state) {
       PORTB &= ~(1 << PB4);
     } else {
       PORTB |= (1 << PB4);
     }
     break;
-  case SSE2:
+  case SSB3:
     if (!state) {
       PORTB &= ~(1 << PB3);
     } else {
       PORTB |= (1 << PB3);
+    }
+    break;
+  case SSE4:
+    if (!state) {
+      PORTE &= ~(1 << PB4);
+    } else {
+      PORTE |= (1 << PB4);
     }
     break;
   default:

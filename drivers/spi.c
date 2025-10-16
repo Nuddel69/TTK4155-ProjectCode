@@ -29,7 +29,6 @@ int spi_init() {
   status = spi_set_slave_select((enum spi_slave *)SSB3, 1);
   status = spi_set_slave_select((enum spi_slave *)SSE2, 1);
 
-
   if (status) {
     return status;
   }
@@ -90,7 +89,7 @@ int spi_send(enum spi_slave *slave, unsigned char data) {
 }
 
 int spi_recieve(enum spi_slave *slave, unsigned char *out) {
-  *out = SPDR;
+  spi_duplex(slave, NULL, out, 1);
   return 0;
 }
 

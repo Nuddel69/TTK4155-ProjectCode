@@ -3,9 +3,10 @@
 
 #include <stdint.h>
 #include <avr/io.h>
+#include <stdbool.h>
  
 #define CAN_CS PE2                 //Dont know whichone we are using yet
-#define CAN_CS_PIN PORTE
+#define CAN_CS_PORT PORTE
 #define CAN_STCONFIG 0b00000110
 
 //Commands for SPI-CAN controller
@@ -20,6 +21,21 @@ struct can_msg{
     uint8_t adress;
     uint8_t num_df;
     uint8_t data;
+};
+
+struct can_device {
+	enum spi_slave spi;
+};
+
+struct CAN_frame {
+
+    uint32_t id;        // 11-bit, set extended == true for 29-bit adress
+    uint8_t  dlc;       // 0-8 Data Length Code, How many databytes are in the message
+    uint8_t  data[8];
+    bool     extended;  // Decide ID size, true = 29-bit, false = 11-bit 
+    bool     rtr;       // Remote Transmission Request, must be false for standard message 
+                        // When rtr is true, asks a node with the same ID to respond with a data frame.
+                        // On the MCP2515, the RTR bit is in the DLC register for TX/RX.
 };
 
 // Modes for CAN controller
@@ -64,20 +80,20 @@ enum CAN_BUF_ADR{
 //------------------//
 
 int8_t CAN_init(void);
-int8_t CAN_read(void);
-int8_t CAN_reset(void);
+int8_t CAN_read(struct can_device *dev,uint8_t address,uint8_t *out);
+int8_t CAN_reset(struct can_device *dev,uint8_t address, struct CAN_frame data_frame);
 
 
 //------------------//
 //   MSCP2515    //
 //------------------//
 
-int8_t MCP2515_init(struct io_oled_device *dev);
-int8_t MCP2515_read(struct *dev,uint8_t rx_buf_num, uint8_t *out);
-int8_t MCP2515_write(*dev,uint8_t *data);
-int8_t MCP2515_request_to_send(struct *dev,uint8_t tx_buf_num);
-int8_t MCP2515_bit_modify(struct *dev, uint8_t reg, uint8_t mask, uint8_t set_val);
-int8_t MCP2515_reset(struct io_oled_device *dev);
-int8_t MCP2515_read_status(struct io_oled_device *dev);
+int8_t MCP2515_init(struct can_device *dev);
+int8_t MCP2515_read(struct can_device *dev,uint8_t rx_buf_num, uint8_t *out);
+int8_t MCP2515_write(struct can_device *dev,uint8_t addr,uint8_t *data);
+int8_t MCP2515_request_to_send(struct can_device *dev,uint8_t tx_buf_num);
+int8_t MCP2515_bit_modify(struct can_device *dev, uint8_t reg, uint8_t mask, uint8_t set_val);
+int8_t MCP2515_reset(struct can_device *dev);
+int8_t MCP2515_read_status(struct can_device *dev,uint8_t *out);
 
 #endif // INCLUDE_CAN_H_

@@ -8,6 +8,7 @@
 #include "uart.h"
 #include "utils.h"
 #include "xmem.h"
+#include "can.h"
 
 #define BAUD 9600
 
@@ -18,6 +19,8 @@ struct io_joystick_device joy = {0, 1, 0, 0};
 struct io_joystick_position pos;
 
 struct io_oled_device oled = {SSB2};
+
+struct can_device can = {SSE2};
 
 int main() {
   int status = 0;
@@ -42,15 +45,22 @@ int main() {
 
   status = io_oled_init(&oled);
   STATUS_ASSERT(status)
+  
+  status = io_oled_init(&can);
+  STATUS_ASSERT(status)
 
   printf("\n\r---Init Complete---\n\r");
   _delay_ms(1000); // Just temporary wait to ensure external OLED is fully configured before we start
   
-  io_oled_test(&oled);
-  //io_oled_blink(&oled,30);
+  //io_oled_test(&oled);
+  io_oled_blink(&oled,30);
+	
 
+  while(1) {
+	  _delay_ms(100);
+	  
+	  
   
-  while (1) {
-   
-  }
+}
+
 }

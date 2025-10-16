@@ -9,6 +9,7 @@
 #include "utils.h"
 #include "xmem.h"
 #include "can.h"
+#include "menu.h"
 
 #define BAUD 9600
 
@@ -23,6 +24,10 @@ struct io_oled_device oled = {SSB2};
 struct io_avr_device avr = {SSB3};
 
 struct can_device can = {SSE2};
+
+struct menu_cfg menu;
+
+static const char *menu_items[] = {"Start game", "Settings"};
 
 int main() {
   int status = 0;
@@ -42,7 +47,13 @@ int main() {
   status = io_avr_init(&avr);
   STATUS_ASSERT(status)
   
-  status = io_oled_init(&can);
+  //status = io_oled_init(&oled);
+  //STATUS_ASSERT(status)
+
+  menu.oled = &oled;
+  menu.items = menu_items;
+
+  status = menu_init(&menu);
   STATUS_ASSERT(status)
 
   printf("\n\r---Init Complete---\n\r");
@@ -63,6 +74,4 @@ int main() {
       io_avr_led_set(&avr, 0x4, 0x00);
     }
   }
-}
-
 }

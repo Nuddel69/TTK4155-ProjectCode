@@ -17,8 +17,10 @@ struct USART_config config = {BAUD, F_CPU};
 struct io_joystick_device joy = {0, 1, 0, 0};
 
 struct io_joystick_position pos;
+struct io_avr_buttons btn;
 
 struct io_oled_device oled = {SSB2};
+struct io_avr_device avr = {SSE2};
 
 struct can_device can = {SSE2};
 
@@ -37,30 +39,30 @@ int main() {
   status = tim1_CTC_init();
   STATUS_ASSERT(status)
 
-  status = spi_init();
-  STATUS_ASSERT(status)
-
-  status = io_joystick_init(&joy);
-  STATUS_ASSERT(status)
-
-  status = io_oled_init(&oled);
+  status = io_avr_init(&avr);
   STATUS_ASSERT(status)
   
   status = io_oled_init(&can);
   STATUS_ASSERT(status)
 
   printf("\n\r---Init Complete---\n\r");
-  _delay_ms(1000); // Just temporary wait to ensure external OLED is fully configured before we start
-  
-  //io_oled_test(&oled);
-  io_oled_blink(&oled,30);
-	
 
-  while(1) {
-	  _delay_ms(100);
-	  
-	  
-  
+  io_avr_led_set(&avr, 0x0, 0x00);
+  io_avr_led_set(&avr, 0x1, 0x00);
+  io_avr_led_set(&avr, 0x2, 0x00);
+  io_avr_led_set(&avr, 0x3, 0x00);
+  io_avr_led_set(&avr, 0x4, 0x00);
+  io_avr_led_set(&avr, 0x5, 0x00);
+
+  while (1) {
+    io_avr_buttons_read(&avr, &btn);
+
+    if (btn.NB) {
+      io_avr_led_set(&avr, 0x4, 0x0a);
+    } else {
+      io_avr_led_set(&avr, 0x4, 0x00);
+    }
+  }
 }
 
 }

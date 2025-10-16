@@ -196,7 +196,7 @@ int io_oled_init(struct io_oled_device *dev) {
     io_oled_goto_column(dev, 0);
     for (uint8_t x = 0; x < 128; x++) {
       _io_oled_write(dev, 0x00);
-    }S
+    }
   }
 
   // Display ON

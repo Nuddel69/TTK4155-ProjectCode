@@ -19,7 +19,7 @@ struct io_joystick_position pos;
 struct io_avr_buttons btn;
 
 struct io_oled_device oled = {SSB2};
-struct io_avr_device avr = {SSE2};
+struct io_avr_device avr = {SSB3};
 
 int main() {
   int status = 0;

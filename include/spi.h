@@ -3,7 +3,7 @@
 
 enum spi_slave {
   SSB2,
-  SSB4,
+  SSB3,
   SSE2,
 };
 

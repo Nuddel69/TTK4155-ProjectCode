@@ -27,7 +27,7 @@ enum MODE{
 }
 
 enum CAN_IRQ{
-    000 = NO_IRQ    = 0b000,
+    000 = NO_IRQ    = 0,
     001 = ERROR_IRQ = 0b001,
     010 = WAKEUP_IRQ = 0b010,
     011 = TXB0_IRQ  = 0b011,

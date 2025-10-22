@@ -49,6 +49,7 @@ int main() {
 
   menu.oled = &oled;
   menu.items = menu_items;
+  menu.length = sizeof(menu_items) / sizeof(menu_items[0]);
 
   status = menu_init(&menu);
   STATUS_ASSERT(status)

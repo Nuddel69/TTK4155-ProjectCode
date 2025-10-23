@@ -9,11 +9,11 @@
 #define SMALL_FONT &OLED_FONT_4x6
 
 // TODOS:
-// - Create helper function for handling joystick input and calling subsequent functions within menu.c
-// - Get rid of hardcoded values for menu item positions (rows & columns)
 // - Add submenus
 // -- generalize menu items to a struct as a child to a parent struct?
-// --- generalize item lists and allow nested menus
+// -- generalize item lists and allow nested menus
+// - Implement settings page options such as joystick calibration, brightness adjustment etc
+// - Get rid of hardcoded values for menu item positions (rows & columns)
 
 /**
  * \brief Initializes the menu struct and OLED display

@@ -9,11 +9,15 @@
 #define SMALL_FONT &OLED_FONT_4x6
 
 // TODOS:
+// - Create helper function for handling joystick input and calling subsequent functions within menu.c
 // - Get rid of hardcoded values for menu item positions (rows & columns)
 // - Add submenus
 // -- generalize menu items to a struct as a child to a parent struct?
 // --- generalize item lists and allow nested menus
 
+/**
+ * \brief Initializes the menu
+ */
 int menu_init(struct menu_cfg *menu) {
     int status = 0;
 
@@ -28,6 +32,11 @@ int menu_init(struct menu_cfg *menu) {
     return status;
 }
 
+/**
+ * \brief Displays the welcome page
+ * \param[in] menu The menu configuration struct
+ * \return Errno.
+ */
 int welcome_display(struct menu_cfg *menu) {
     int status = 0;
 
@@ -47,6 +56,11 @@ int welcome_display(struct menu_cfg *menu) {
     return status;
 }
 
+/**
+ * \brief Displays the play game page
+ * \param[in] menu The menu configuration struct
+ * \return Errno.
+ */
 int play_game_display(struct menu_cfg *menu) {
     int status = 0;
 
@@ -56,6 +70,11 @@ int play_game_display(struct menu_cfg *menu) {
     return status;
 }
 
+/**
+ * \brief Displays the high scores page
+ * \param[in] menu The menu configuration struct
+ * \return Errno.
+ */
 int high_scores_display(struct menu_cfg *menu) {
     int status = 0;
 
@@ -68,6 +87,11 @@ int high_scores_display(struct menu_cfg *menu) {
     return status;
 }
 
+/**
+ * \brief Displays the settings page
+ * \param[in] menu The menu configuration struct
+ * \return Errno.
+ */
 int settings_display(struct menu_cfg *menu) {
     int status = 0;
 
@@ -193,6 +217,12 @@ int page_dispatch(struct menu_cfg *menu) {
     return status;
 }
 
+/**
+ * \brief Goes back to the welcome page if not already there
+ * \param[in] menu The menu configuration struct
+ * \param[in] btn The button states struct
+ * \return Errno.
+ */
 int page_back(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     int status = 0;
 

@@ -34,8 +34,8 @@ struct CAN_frame {
   uint32_t id; // 11-bit, set extended == true for 29-bit adress
   uint8_t dlc; // 0-8 Data Length Code, How many databytes are in the message
   uint8_t data[8];
-  bool extended; // Decide ID size, true = 29-bit, false = 11-bit
-  bool rtr; // Remote Transmission Request, must be false for standard message
+  uint8_t extended; // Decide ID size, true = 29-bit, false = 11-bit
+  uint8_t rtr; // Remote Transmission Request, must be false for standard message
             // When rtr is true, asks a node with the same ID to respond with a
             // data frame. On the MCP2515, the RTR bit is in the DLC register
             // for TX/RX.

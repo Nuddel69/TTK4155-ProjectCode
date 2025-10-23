@@ -1,6 +1,5 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -42,9 +41,12 @@ int8_t CAN_write(struct can_device *dev, uint8_t address,
 
   // Set data TXBnDm Data going out from buffer 0
   for (uint8_t i = 0; i < 8; i++) {
-    uint8_t adr = MCP2515_OP_WRITE + i;
+    uint8_t adr = 0x36 + i;
     MCP2515_write(dev, adr, data_frame.data[i]);
   }
+  
+  //Inform controller that we are ready to send on buffer0
+  spi_send(dev,0x81);
 
   return 0;
 }
@@ -56,6 +58,8 @@ int8_t CAN_write(struct can_device *dev, uint8_t address,
 ISR(INT2_vect) { printf("External interrupt"); }
 
 int8_t MCP2515_init(struct can_device *dev) {
+	
+  MCP2515_reset(dev); // Send reset - command
   uint8_t value;
 
   // Set bit 6 & 3 in GICR for external interrupt
@@ -65,29 +69,25 @@ int8_t MCP2515_init(struct can_device *dev) {
   while (spi_ready()) { // Confirm SPI Initialized
     uint8_t status = spi_init();
   }
-  MCP2515_reset(dev); // Send reset - command
+  
 
   // Confirm that we are in correct mode after boot, and that there are no
   // pending messages.
+  
   MCP2515_read_status(dev, &value);
-  // uint8_t mode= (0x07&(value>>5));  // Extract code for mode from status
-  // uint8_t irq = (0x07&(value>>1));  // Extract code for interrupt requests
-  // from status
-  uint8_t mode = 0;
-  uint8_t irq = 0;
 
-  if (mode != MODE_CONFIG) {
+  if ((value&0xE0)!=(MODE_CONFIG<<5)) {
     printf("SPI to CAN controller is not in configuration mode after reset!\n");
     return 1;
   }
-  if (irq != 0) {
+  if ((value&0xE0)!=(MCP2515_NO_IRQ<<1)) {
     printf("There is an interrupt request when booting the SPI-CAN controller");
     return 2;
   }
 
   uint8_t cnf1 = 0x00;
-  uint8_t cnf2 = 0xFF;
-  uint8_t cnf3 = 0x03;
+  uint8_t cnf2 = 0xB1;
+  uint8_t cnf3 = 0x05;
 
   // Program bit timing
   MCP2515_write(dev, 0x2A, cnf1);
@@ -128,15 +128,14 @@ int8_t MCP2515_init(struct can_device *dev) {
   // ability to config
 
   // Comment this out if we want to communicate with other nodes
-  MCP2515_bit_modify(dev, 0x0F, 0xE0,
-                     MODE_LOOPBACK); // Control regiser , mask, Loopback
+  MCP2515_bit_modify(dev, 0x0F, 0xE0,MODE_LOOPBACK); // Control regiser , mask, Loopback
   // Comment this back in if you comment out the line above
   // MCP2515_bit_modify(dev, 0x0F, 0xE0, MODE_NORMAL); // Control regiser ,
   // mask, normal mode
   uint8_t canstat;
   // Confirm that the controller has switched to normal mode
   MCP2515_read(dev, 0x0E, &canstat);
-  if ((canstat & 0x0E) != MODE_LOOPBACK) {
+  if ((canstat & 0x0E) != MODE_LOOPBACK<<5) {
     printf("Failed to switch controller to normal mode when initialzing");
     return -3;
   }
@@ -145,10 +144,9 @@ int8_t MCP2515_init(struct can_device *dev) {
 
 // Write data to register beginning at selected address.
 int8_t MCP2515_write(struct can_device *dev, uint8_t addr, uint8_t data) {
-
-  spi_push(&dev->spi, MCP2515_OP_WRITE, NULL); // Set operation
-  spi_push(&dev->spi, addr, NULL);             // Set address
-  spi_push(&dev->spi, data, NULL);             // Write data
+  
+  unsigned char frame[3] = {MCP2515_OP_WRITE, addr, data};
+  spi_send_n(&dev->spi, frame, 3);
   return 0;
 }
 
@@ -159,10 +157,12 @@ int8_t MCP2515_read(struct can_device *dev, uint8_t addr, uint8_t *out) {
   if (!*out) {
     return -1;
   }
-  spi_push(&dev->spi, MCP2515_OP_READ, NULL); // Set operation
-  spi_push(&dev->spi, addr, NULL);            // Set address
-  spi_recieve(&dev->spi, out);                // Read data
-
+  
+  unsigned char tx[3] = {MCP2515_OP_READ, addr,0xff};
+  unsigned char rx[3];
+  spi_duplex(&dev->spi, tx, rx, 3);
+  *out = rx[3];
+	  
   return 0;
 }
 

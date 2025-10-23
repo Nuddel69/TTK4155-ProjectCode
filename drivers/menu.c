@@ -23,13 +23,13 @@
 int menu_init(struct menu_cfg *menu) {
     int status = 0;
 
-    //menu->length = 2;         // Set dynamically in main instead
     menu->cursor_pos = 0;
     menu->current_page = PAGE_WELCOME;
 
     io_oled_init(menu->oled);
-    //welcome_display(menu);    // Moved to page_dispatch
-    page_dispatch(menu);        // Initialize with loading the welcome page
+    io_oled_blink(menu->oled, 2);       // Blink once to indicate ready
+
+    page_dispatch(menu);                // Initialize with loading the welcome page
     
     return status;
 }
@@ -43,6 +43,7 @@ int welcome_display(struct menu_cfg *menu) {
     int status = 0;
 
     io_oled_home(menu->oled);
+    io_oled_clear_line(menu->oled,0); // Clear first line to avoid overlap
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Welcome");
 
     io_oled_pos(menu->oled, 1, 0);
@@ -69,6 +70,7 @@ int play_game_display(struct menu_cfg *menu) {
     int status = 0;
 
     io_oled_home(menu->oled);
+    io_oled_clear_line(menu->oled,0); // Clear first line to avoid overlap
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Play game");
 
     return status;
@@ -83,6 +85,7 @@ int high_scores_display(struct menu_cfg *menu) {
     int status = 0;
 
     io_oled_home(menu->oled);
+    io_oled_clear_line(menu->oled,0); // Clear first line to avoid overlap
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "High scores");
 
     io_oled_pos(menu->oled, 2, 0);
@@ -100,6 +103,7 @@ int settings_display(struct menu_cfg *menu) {
     int status = 0;
 
     io_oled_home(menu->oled);
+    io_oled_clear_line(menu->oled,0); // Clear first line to avoid overlap
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Settings");
 
     //TODO: add settings options such as joystick calibration, brightness etc

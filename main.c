@@ -27,7 +27,7 @@ struct can_device can = {SSE2};
 
 struct menu_cfg menu;
 
-static const char *menu_items[] = {"Start game", "Settings"};
+static const char *menu_items[] = {"Start game", "Play game", "High scores", "Settings"};
 
 int main() {
   int status = 0;
@@ -54,8 +54,8 @@ int main() {
   status = menu_init(&menu);
   STATUS_ASSERT(status)
 
-  status = can_init(&can);
-  STATUS_ASSERT(status)
+  //status = can_init(&can);
+  //STATUS_ASSERT(status)
 
   printf("\n\r---Init Complete---\n\r");
 

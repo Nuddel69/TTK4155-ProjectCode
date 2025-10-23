@@ -31,7 +31,7 @@ int8_t CAN_write(struct can_device *dev, uint8_t address,
   MCP2515_write(dev, 0x32, (data_frame.id << 8));
 
   uint8_t DLC;
-  // TXBnDLC
+  // TXB0DLC
   if (data_frame.rtr) {
     DLC = (data_frame.dlc | (1 << 6));
   } else {
@@ -40,13 +40,10 @@ int8_t CAN_write(struct can_device *dev, uint8_t address,
   MCP2515_write(dev, 0x35, DLC);
 
   // Set data TXB0Dm Data going out from buffer 0
-  for (uint8_t i = 0; i < 8; i++) {
-    uint8_t adr = 0x36 + i;
-    MCP2515_write(dev, adr, data_frame.data[i]);
-  }
+    MCP2515_write(dev, 0x36, data_frame.data);
   
   //Inform controller that we are ready to send on buffer0
-  spi_send(dev,0x81);
+  spi_send(&dev->spi,0x81);
 
   return 0;
 }
@@ -182,6 +179,14 @@ int8_t MCP2515_write(struct can_device *dev, uint8_t addr, uint8_t data) {
   
   unsigned char frame[3] = {MCP2515_OP_WRITE, addr, data};
   spi_send_n(&dev->spi, frame, 3);
+  
+  return 0;
+}
+
+int8_t MCP2515_write_n(struct can_device *dev, uint8_t addr, uint8_t *data) {
+  
+  unsigned char frame = {MCP2515_OP_WRITE, addr, data[0],data[1],data[2],data[3],data[4],data[5],data[6]data[0]};
+  spi_send_n(&dev->spi, frame, 2+8);
   
   return 0;
 }

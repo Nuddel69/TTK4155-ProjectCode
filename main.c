@@ -28,8 +28,7 @@ struct can_device can = {SSE2};
 struct menu_cfg menu;
 
 static const char *menu_items[] = {"Start game", "Settings"};
-	
-struct CAN_frame can_msg  = {0xFF,0x08,{1,2,3,4,5,6,7,8},1,0};
+struct CAN_frame can_msg  = {0xFF,0x08,"HiWorld",0,0};
 
 int main() {
   int status = 0;
@@ -76,6 +75,7 @@ int main() {
       io_avr_led_set(&avr, 0x4, 0x00);
     }
 	*/
-	//CAN_write(&can, 0x31, can_msg);
+	CAN_write(&can, 0x31, can_msg);
+	_delay_ms(10);
   }
 }

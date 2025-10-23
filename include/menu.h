@@ -36,10 +36,11 @@ int high_scores_display(struct menu_cfg *menu);
 int settings_display(struct menu_cfg *menu);
 
 int draw_cursor(struct menu_cfg *menu);
-int cursor_update(struct menu_cfg *menu, enum io_joystick_direction direction);
+int cursor_update(struct menu_cfg *menu, struct io_avr_buttons *btn);
 int page_select(struct menu_cfg *menu, struct io_avr_buttons *btn);
 int set_page(struct menu_cfg *menu, enum page_id page);
 int page_dispatch(struct menu_cfg *menu);
 int page_back(struct menu_cfg *menu, struct io_avr_buttons *btn);
+int menu_handler(struct menu_cfg *menu, struct io_avr_buttons *btn);
 
 #endif // ICLUDE_MENU_H

@@ -67,8 +67,10 @@ int main() {
   io_avr_led_set(&avr, 0x5, 0x00);
 
   while (1) {
-    io_avr_buttons_read(&avr, &btn);
-
+    io_avr_buttons_read(&avr, &btn);    // Read button inputs from IO board
+    menu_handler(&menu, &btn);          // Handle menu based on button inputs
+      
+    // Button test
     if (btn.NB) {
       io_avr_led_set(&avr, 0x4, 0x0a);
     } else {

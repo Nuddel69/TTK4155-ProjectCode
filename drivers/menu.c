@@ -130,18 +130,29 @@ int draw_cursor(struct menu_cfg *menu) {
 // Conteplated to call io_joystick_read_position() inside the function instead of passing direction as parameter,
 // but I think this will be a better seperation(?) - seperating hardware (input readaing) from logic (cursor updating).
 // Should 'direction' be a pointer? I did not do it as it is only used for reading inside the function.
-// TODO: implement modulur arithmetic for wrapping around the cursor position
+// int cursor_update(struct menu_cfg *menu, enum io_joystick_direction direction) {
+
+/**
+ * \brief Updates the cursor position based on nav button from the IO board. Wraps around if going out of bounds.
+ * \param[in] menu The menu configuration struct
+ * \param[in] btn The button states struct
+ * \return Errno.
+ */
 int cursor_update(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     int status = 0;
 
-    if (btn.ND) {
+    // TODO: 
+    // Implement modulus for wrapping around the cursor position
+    // Implement a delay/debounce to avoid fast cursor movement if this is a problem
+
+    if (btn->ND) { // NAV DOWN
         menu->cursor_pos++;
         
         if (menu->cursor_pos >= menu->length) {
             menu->cursor_pos = 0;
         }
     }
-    else if (btn.NU) {
+    else if (btn->NU) { // NAV UP
         menu->cursor_pos--;
 
         if (menu->cursor_pos < 0) {
@@ -153,7 +164,7 @@ int cursor_update(struct menu_cfg *menu, struct io_avr_buttons *btn) {
 }
 
 /**
- * \brief Selects the current menu item based on NB button press from the IO board
+ * \brief Selects the current menu item based on nav button from the IO board
  * \param[in] menu The menu configuration struct
  * \param[in] btn The button states struct
  * \return Errno.
@@ -223,7 +234,7 @@ int page_dispatch(struct menu_cfg *menu) {
 }
 
 /**
- * \brief Goes back to the welcome page if not already there
+ * \brief Goes back to the welcome page if not already there based on left button from the IO board
  * \param[in] menu The menu configuration struct
  * \param[in] btn The button states struct
  * \return Errno.
@@ -237,5 +248,30 @@ int page_back(struct menu_cfg *menu, struct io_avr_buttons *btn) {
             return set_page(menu, PAGE_WELCOME);
         }
     }
+    return status;
+}
+
+/**
+ * \brief Handles menu logic based on current page and button inputs from the IO board
+ * \param[in] menu The menu configuration struct
+ * \param[in] btn The button states struct
+ * \return Errno.
+ */
+int menu_handler(struct menu_cfg *menu, struct io_avr_buttons *btn) {
+    int status = 0;
+
+    // Only allow cursor movement and page selection if we're on the welcome page, if so:
+    // 1. Cursor update
+    // 2. Draw cursor
+    // 3. Page seleciton 
+    // If not, make page_back available from all other pages
+    if (menu->current_page == PAGE_WELCOME) {
+        cursor_update(menu, btn);
+        draw_cursor(menu);
+        page_select(menu, btn);
+    } else {
+        page_back(menu, btn);
+    }
+
     return status;
 }

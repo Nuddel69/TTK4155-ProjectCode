@@ -16,7 +16,9 @@
 // --- generalize item lists and allow nested menus
 
 /**
- * \brief Initializes the menu
+ * \brief Initializes the menu struct and OLED display
+ * \param[in] menu The menu configuration struct
+ * \return Errno.
  */
 int menu_init(struct menu_cfg *menu) {
     int status = 0;
@@ -46,12 +48,14 @@ int welcome_display(struct menu_cfg *menu) {
     io_oled_pos(menu->oled, 1, 0);
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "-------------");
 
+    // Printing meny items
     for (uint8_t i = 0; i < menu->length; i++) {
         io_oled_pos(menu->oled, 2 + i, 2);
         io_oled_print_with_font(menu->oled, SMALL_FONT, menu->items[i]);
     }
 
-    draw_cursor(menu); // Only redraw cursor when the joystick is moved
+    // Draws the cursor. Only redraws the cursor when the joystick is moved
+    draw_cursor(menu);
     
     return status;
 }
@@ -98,7 +102,7 @@ int settings_display(struct menu_cfg *menu) {
     io_oled_home(menu->oled);
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Settings");
 
-    //TODO: add settings options such as joystick calibration, brightness
+    //TODO: add settings options such as joystick calibration, brightness etc
 
     return status;
 }
@@ -126,17 +130,18 @@ int draw_cursor(struct menu_cfg *menu) {
 // Conteplated to call io_joystick_read_position() inside the function instead of passing direction as parameter,
 // but I think this will be a better seperation(?) - seperating hardware (input readaing) from logic (cursor updating).
 // Should 'direction' be a pointer? I did not do it as it is only used for reading inside the function.
-int cursor_update(struct menu_cfg *menu, enum io_joystick_direction direction) {
+// TODO: implement modulur arithmetic for wrapping around the cursor position
+int cursor_update(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     int status = 0;
 
-    if (direction == DOWN) {
+    if (btn.ND) {
         menu->cursor_pos++;
         
         if (menu->cursor_pos >= menu->length) {
             menu->cursor_pos = 0;
         }
     }
-    else if (direction == UP) {
+    else if (btn.NU) {
         menu->cursor_pos--;
 
         if (menu->cursor_pos < 0) {
@@ -148,7 +153,7 @@ int cursor_update(struct menu_cfg *menu, enum io_joystick_direction direction) {
 }
 
 /**
- * \brief Selects the current menu item based on joystick button press
+ * \brief Selects the current menu item based on NB button press from the IO board
  * \param[in] menu The menu configuration struct
  * \param[in] btn The button states struct
  * \return Errno.
@@ -173,7 +178,7 @@ int page_select(struct menu_cfg *menu, struct io_avr_buttons *btn) {
 }
 
 /**
- * \brief Sets the current page to the specified page and updates the display
+ * \brief Sets the current page field in the menu struct to a specified page and calls the page_dispatch function
  * \param[in] menu The menu configuration struct
  * \param[in] page The page to set
  * \return Errno.
@@ -181,7 +186,7 @@ int page_select(struct menu_cfg *menu, struct io_avr_buttons *btn) {
 int set_page(struct menu_cfg *menu, enum page_id page) {
     int status = 0;
 
-    // Checking if the requested page is the current page
+    // Checking if the requested page is the current page. If so, do nothing.
     if (menu->current_page == page) {
         return status;
     }
@@ -193,7 +198,7 @@ int set_page(struct menu_cfg *menu, enum page_id page) {
 }
 
 /**
- * \brief Dispatches to the appropriate page display function based on the current page
+ * \brief Dispatches to the appropriate page display function based on the current page field in the menu struct
  * \param[in] menu The menu configuration struct
  * \return Errno.
  */

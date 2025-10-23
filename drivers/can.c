@@ -161,7 +161,7 @@ int8_t MCP2515_read(struct can_device *dev, uint8_t addr, uint8_t *out) {
   unsigned char tx[3] = {MCP2515_OP_READ, addr,0xff};
   unsigned char rx[3];
   spi_duplex(&dev->spi, tx, rx, 3);
-  *out = rx[3];
+  *out = rx[2];
 	  
   return 0;
 }
@@ -170,7 +170,7 @@ int8_t MCP2515_read(struct can_device *dev, uint8_t addr, uint8_t *out) {
 // any of the transmit buffers.
 int8_t MCP2515_request_to_send(struct can_device *dev, uint8_t tx_buf_num) {
 
-  spi_push(&dev->spi, MCP2515_OP_RTS_BASE | (1 << tx_buf_num), NULL);
+  spi_send(&dev->spi, (MCP2515_OP_RTS_BASE | (1 << tx_buf_num)));
 
   return 0;
 }

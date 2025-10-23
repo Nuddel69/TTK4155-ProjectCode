@@ -132,7 +132,7 @@ int cursor_update(struct menu_cfg *menu, enum io_joystick_direction direction) {
 int page_select(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     int status = 0;
 
-    if (btn->nav) {
+    if (btn->NB) {
         switch (menu->cursor_pos) {
         case 0:
             return set_page(menu, PAGE_PLAY_GAME);
@@ -197,7 +197,7 @@ int page_back(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     int status = 0;
 
     // Not sure if I can use 'left' or I need to use L1, L2, etc.
-    if (btn->left) {
+    if (btn->L7) {
         if (menu->current_page != PAGE_WELCOME) {
             return set_page(menu, PAGE_WELCOME);
         }

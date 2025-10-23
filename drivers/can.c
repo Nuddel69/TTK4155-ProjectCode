@@ -63,6 +63,7 @@ int8_t MCP2515_init(struct can_device *dev) {
     uint8_t status = spi_init();
   }
 
+ 
   MCP2515_reset(dev); // Send reset - command
   uint8_t value = 0;
   //_delay_ms(10);
@@ -217,7 +218,8 @@ int8_t MCP2515_bit_modify(struct can_device *dev, uint8_t reg, uint8_t mask,
                           uint8_t set_val) {
 
   unsigned char cmd[4] = {MCP2515_OP_BIT_MODIFY, reg, mask, set_val};
-  spi_send_n(&dev->spi, cmd, 4);
+  spi_duplex(&dev->spi,cmd,NULL,4);
+  //spi_send_n(&dev->spi, cmd, 4);
 
   return 0;
 }

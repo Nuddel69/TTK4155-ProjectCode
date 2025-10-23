@@ -114,7 +114,11 @@ int spi_duplex(enum spi_slave *slave, unsigned char *data, unsigned char *out,
     SPDR = data[i];
     while (!(SPSR & (1 << SPIF))) {
     }
-    out[i] = SPDR;
+	if (NULL != out)
+	{
+		out[i] = SPDR;
+	}
+    
   }
   spi_set_slave_select(slave, 1);
   return 0;

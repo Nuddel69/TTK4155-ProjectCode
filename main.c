@@ -76,6 +76,6 @@ int main() {
       io_avr_led_set(&avr, 0x4, 0x00);
     }
 	*/
-	CAN_write(&can, 0x31, can_msg);
+	//CAN_write(&can, 0x31, can_msg);
   }
 }

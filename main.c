@@ -29,7 +29,7 @@ struct menu_cfg menu;
 
 static const char *menu_items[] = {"Start game", "Settings"};
 	
-struct CAN_frame can_msg  = {0xFFFF,0x08,{1,2,3,4,5,6,7,8},0,0};
+struct CAN_frame can_msg  = {0xFF,0x08,{1,2,3,4,5,6,7,8},1,0};
 
 int main() {
   int status = 0;
@@ -55,27 +55,27 @@ int main() {
   status = menu_init(&menu);
   STATUS_ASSERT(status)
 
-  //status = can_init(&can);
-  //STATUS_ASSERT(status)
+  status = can_init(&can);
+  STATUS_ASSERT(status)
 
   printf("\n\r---Init Complete---\n\r");
 
-  io_avr_led_set(&avr, 0x0, 0x00);
+/*  io_avr_led_set(&avr, 0x0, 0x00);
   io_avr_led_set(&avr, 0x1, 0x00);
   io_avr_led_set(&avr, 0x2, 0x00);
   io_avr_led_set(&avr, 0x3, 0x00);
   io_avr_led_set(&avr, 0x4, 0x00);
   io_avr_led_set(&avr, 0x5, 0x00);
-
+*/
   while (1) {
-    io_avr_buttons_read(&avr, &btn);
+   /* io_avr_buttons_read(&avr, &btn);
 
     if (btn.NB) {
       io_avr_led_set(&avr, 0x4, 0x0a);
     } else {
       io_avr_led_set(&avr, 0x4, 0x00);
     }
-	
-	//CAN_write(&can, 0x31, can_msg);
+	*/
+	CAN_write(&can, 0x31, can_msg);
   }
 }

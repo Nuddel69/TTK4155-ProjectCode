@@ -2,6 +2,7 @@
 #include <avr/io.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <util/delay.h>
 
 #include "can.h"
 #include "spi.h"
@@ -11,8 +12,7 @@
 //------------------//
 
 int8_t can_init(struct can_device *dev) {
-  MCP2515_init(dev);
-  return 0;
+  return MCP2515_init(dev);
 }
 
 int8_t can_read(struct can_device *dev, uint8_t address, uint8_t *out) {
@@ -61,6 +61,7 @@ int8_t MCP2515_init(struct can_device *dev) {
 	
   MCP2515_reset(dev); // Send reset - command
   uint8_t value;
+  _delay_ms(10);
 
   // Set bit 6 & 3 in GICR for external interrupt
   // GICR |= 0x24;
@@ -73,17 +74,22 @@ int8_t MCP2515_init(struct can_device *dev) {
 
   // Confirm that we are in correct mode after boot, and that there are no
   // pending messages.
-  
-  MCP2515_read_status(dev, &value);
 
-  if ((value&0xE0)!=(MODE_CONFIG<<5)) {
+
+  //MCP2515_read(dev,0x0E,&value);
+  MCP2515_read_status(dev,&value);
+  
+  if ((value&0x70)!=(MODE_CONFIG<<5)) {
     printf("SPI to CAN controller is not in configuration mode after reset!\n");
     return 1;
   }
-  if ((value&0xE0)!=(MCP2515_NO_IRQ<<1)) {
+
+  MCP2515_read_status(dev, &value);
+  if ((value&0x0E)!=(MCP2515_NO_IRQ<<1)) {
     printf("There is an interrupt request when booting the SPI-CAN controller");
     return 2;
   }
+ 
 
   uint8_t cnf1 = 0x00;
   uint8_t cnf2 = 0xB1;

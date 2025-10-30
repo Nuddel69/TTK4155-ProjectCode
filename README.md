@@ -74,6 +74,21 @@ The `delay` library has a software defined macro `F_CPU` defining the clock spee
 been lucky this is compatible with our usual clock, but now it had to be defined from the
 compiler. Adding `-DF_CPU=<clock>` to the compilation command solved it (see commit `#7f15e61`).
 
+### CAN init freezing halfway through
+
+Halfway through initialising the CAN controller, the entire MCU froze. Upon probing the SPI
+connection to the controller, the clock line seemed to stop at arbitrary points while MOSI
+was still transmitting.
+
+**The solution**
+
+The `spi_write_n` was causing problems. It implicitly passes `NULL` as the output buffer and
+trashes whatever the SPI device responds with when sending. When sending n bytes, the function
+indexes into the output buffer in order to store the data. Indexing past NULL-ptr accesses
+and overwrites important system-memory and causes undefined behaviour. This is equivalent to a
+segmentation fault on an operating system and was fixed by only writing the output buffer if not
+NULL.
+
 ## Debugging flowchart - expanded as we encounter more problems
 
 ```mermaid

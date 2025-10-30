@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 #include "spi.h"
-
+/*
 #define CAN_CS PE2 // Dont know whichone we are using yet
 #define CAN_CS_PORT PORTE
 #define CAN_STCONFIG 0b00000110
@@ -18,6 +18,10 @@
 #define MCP2515_OP_READ_STATUS 0xA0
 #define MCP2515_OP_RESET 0xC0
 #define MCP2515_OP_RTS_BASE 0x80
+
+#define MCP2515_MODEMASK 0x70
+#define MCP2515_IRQMASK 0x0E
+*/
 
 struct can_msg {
   uint8_t adress;
@@ -41,6 +45,7 @@ struct CAN_frame {
             // for TX/RX.
 };
 
+/*
 // Modes for CAN controller
 // See page 59 datasheet on controller
 enum MODE {
@@ -63,6 +68,7 @@ enum CAN_IRQ {
   MCP2515_RXB1_IRQ = 0b111
 };
 
+
 // CAN buffer addresses
 enum CAN_BUF_ADR {
   MCP2515_TXB0SIDH = 0x31,
@@ -77,12 +83,14 @@ enum CAN_BUF_ADR {
   MCP2515_RXB1D0 = 0x76,
 };
 
+*/
+
 //------------------//
 //   GENERAL CAN    //
 //------------------//
 
 int8_t can_init(struct can_device *dev);
-int8_t can_read(struct can_device *dev, uint8_t address, uint8_t *out);
+int8_t can_read(struct can_device *dev, struct CAN_frame *out);
 int8_t can_reset(struct can_device *dev, uint8_t address,
                  struct CAN_frame data_frame);
 
@@ -92,7 +100,7 @@ int8_t can_reset(struct can_device *dev, uint8_t address,
 
 int8_t MCP2515_init(struct can_device *dev);
 int8_t MCP2515_read(struct can_device *dev, uint8_t rx_buf_num, uint8_t *out);
-int8_t MCP2515_write(struct can_device *dev, uint8_t addr, uint8_t data);
+int8_t MCP2515_write(struct can_device *dev,uint8_t addr, uint8_t data);
 int8_t MCP2515_request_to_send(struct can_device *dev, uint8_t tx_buf_num);
 int8_t MCP2515_bit_modify(struct can_device *dev, uint8_t reg, uint8_t mask,
                           uint8_t set_val);

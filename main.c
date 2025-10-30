@@ -10,6 +10,7 @@
 #include "uart.h"
 #include "utils.h"
 #include "xmem.h"
+#include "mcp.h"
 
 #define BAUD 9600
 
@@ -75,7 +76,14 @@ int main() {
       io_avr_led_set(&avr, 0x4, 0x00);
     }
 	*/
-	CAN_write(&can, 0x31, can_msg);
+	can_write(&can, can_msg);
 	_delay_ms(10);
+   uint8_t status;
+   MCP2515_read(&can,MCP2515_TXB0CTRL,&status);
+   printf(status);
+	_delay_ms(10);
+
+   
+	_delay_ms(150);
   }
 }

@@ -6,22 +6,103 @@
 
 #include "can.h"
 #include "spi.h"
-
+#include "mcp.h"
+ 
+ struct can_device *can_irq;
+ struct CAN_frame new_message;
+ 
 //------------------//
 //   GENERAL CAN    //
 //------------------//
 
 int8_t can_init(struct can_device *dev) {
+	
+
+can_irq = dev;
+struct CAN_frame new_message = {0x00,0x01,'1',0,0};
+  
+// configure PD2 as input
+DDRD &= ~(1 << CAN_INTERRUPT_PIN);
+// Disable global interrupts
+cli();
+// Enable external interrupt INT2
+GICR |= (1 << CAN_INTERRUPT_ISR_REGISTER);
+// Configure interrupt falling edge
+MCUCR |=(1<<ISC01);
+MCUCR &= ~(1<<ISC00);
+// Enable global interrupts
+sei();
+	    
   return MCP2515_init(dev);
 }
 
-int8_t can_read(struct can_device *dev, uint8_t address, uint8_t *out) {
 
-  MCP2515_read(dev, address, out);
+int8_t can_write(struct can_device *dev, struct CAN_frame msg)
+{
+	uint8_t ID_MSB = (0x7F8 & msg.id) >> 3;
+	uint8_t ID_LSB = (0x7 & msg.id) << 5;
+	
+	MCP2515_write(dev,MCP2515_TXB0SIDH, ID_MSB);
+	MCP2515_write(dev,MCP2515_TXB0SIDL, ID_LSB);
+	MCP2515_write(dev,TXB0DLC, msg.dlc);
+	
+	uint8_t buff0_status;
+	MCP2515_read(dev,MCP2515_TXB0CTRL,&buff0_status);
+	if ((buff0_status & 0x8) != 0x8) {
+		if (msg.dlc > 8) {
+      printf("TX Buffer0 overflow, message too large\r\n");
+      return -2;
+			
+		}
+		for(uint8_t i = 0; i < msg.dlc; i++)
+		{	
+			MCP2515_write(dev,MCP2515_TXB0D0+i,msg.data[i]);
+		}
+		
+		MCP2515_request_to_send(dev,MCP2515_RTS_TX0);
+		return 0;
 
-  return 0;
+	} else {
+		printf("TX Buffer0 not avaliable\r\n");
+		return -2;
+	}
+	
 }
 
+
+
+int8_t can_read(struct can_device *dev, struct CAN_frame *out) {
+	
+
+	uint8_t ID_MSB;
+	uint8_t ID_LSB;
+	uint8_t length;
+	
+	MCP2515_read(dev,MCP2515_RXB0SIDH,&ID_MSB);
+	MCP2515_read(dev,MCP2515_RXB0SIDL,&ID_LSB);
+		
+	ID_LSB = (ID_LSB & 0xE0) >> 5;
+	out->id = ID_MSB << 3;
+	out->id = (out->id & 0x7F8) | (ID_LSB & 0x7);
+		
+	MCP2515_read(dev,MCP2515_RXB0DLC,&length);
+	out->dlc = (length & 0xF);
+	if (out->dlc > 8) {
+		out->dlc = 8;
+	}
+		
+	for (uint8_t i=0; i < out->dlc; i++) {
+		MCP2515_read(dev,MCP2515_RXB0D0 + i,out->data[i]);
+		char *temp_msg = out->data[i];
+		printf(&temp_msg);
+	}
+	printf("\r\n");
+	
+	return 0;
+}
+
+
+/*
 int8_t CAN_write(struct can_device *dev, uint8_t address,
                  struct CAN_frame data_frame) {
 
@@ -37,6 +118,8 @@ int8_t CAN_write(struct can_device *dev, uint8_t address,
   } else {
     DLC = data_frame.dlc;
   }
+
+  // Set DLC 
   MCP2515_write(dev, 0x35, DLC);
 
   // Set data TXB0Dm Data going out from buffer 0
@@ -47,70 +130,119 @@ int8_t CAN_write(struct can_device *dev, uint8_t address,
 
   return 0;
 }
+*/
+
 //------------------//
 // MCP2515 Specific //
 //------------------//
 
-// Interrupt PE0
-ISR(INT2_vect) { printf("External interrupt"); }
+// External interrupt PE0, From MCP2515
+ISR(INT2_vect) { 
+	
+	printf("External interrupt"); 
+	uint8_t status;
+	MCP2515_read_status(can_irq,&status);
+	
+	if (status & rx_buff_0_full) {
+		can_read(can_irq, &new_message);
+		printf("RX0 Full\r\n");
+	}
+	
+	if (status & rx_buff_1_full) {
+		can_read(can_irq, &new_message);
+		printf("RX1 Full\r\n");
+	}
+	
+	if (status & tx_buff_0_busy) {
+		printf("TX0 Busy\r\n");
+	}
+	
+	if (status & tx_buff_0_empty) {
+		printf("TX0 Empty\r\n");
+	}
+	
+	// reset CANINTF
+	MCP2515_write(can_irq, MCP2515_CANINTF, 0x00);
+	
+}
 
 int8_t MCP2515_init(struct can_device *dev) {
 	
   while (spi_ready()) { // Confirm SPI Initialized
     uint8_t status = spi_init();
   }
-
  
   MCP2515_reset(dev); // Send reset - command
   uint8_t value = 0;
-  //_delay_ms(10);
+  _delay_ms(10);
 
-  // Set bit 6 & 3 in GICR for external interrupt
-  // GICR |= 0x24;
-  //
   
-
   // Confirm that we are in correct mode after boot, and that there are no
   // pending messages.
   MCP2515_read(dev,0x0E,&value);
   
-  if ((value&0xE0)!=(MODE_CONFIG<<5)) {
+  if ((value&MODE_MASK)!=(MODE_CONFIG)) {
     printf("SPI to CAN controller is not in configuration mode after reset!\n");
-    return 1;
+    return -1;
   }
 
   //MCP2515_read_status(dev, &value);
-  if ((value&0x0E)!=(MCP2515_NO_IRQ<<1)) {
+  if ((value&0x0E)!=(MCP2515_NO_IRQ)) {
     printf("There is an interrupt request when booting the SPI-CAN controller");
-    return 2;
+    return -2;
   }
- 
+
   //RTS control
-  MCP2515_write(dev,0x0D,0x7);
-  MCP2515_bit_modify(dev,0x60,0x60,0x60);
+  unsigned char tx[3] = {MCP2515_WRITE, MCP2515_TXRTSCTRL,MCP2515_TXRTS_CONF};
+  spi_send_n(&dev->spi,tx,3);  
+	 
+	 // Receive buffer0 config. Receive all, no overflow
+	 MCP2515_bit_modify(dev,MCP2515_RXB0CTRL, 0x60, 0x60);
+	 MCP2515_read(dev,MCP2515_RXB0CTRL,&value);
+	 if (value != 0x60){
+		 printf("Couldnt configure MCP2515 RX0 Buffer\r\n");
+		 return -3;
+	 }
+	 
+	 // Receive buffer1 config. Receive all
+	 MCP2515_bit_modify(dev,MCP2515_RXB1CTRL, 0x60, 0x60);
+	 MCP2515_read(dev,MCP2515_RXB1CTRL,&value);
+	 if (value != 0x60){
+		 printf("Couldnt configure MCP2515 RX1\r\n");
+		 return -4;
+	 }	
 
-
-  //RX0
-  MCP2515_read(dev, 0x60, &value);
-
-  if((value&0x60)!=0x60){
-    printf("Failed to set RX0 register");
-    return -2; 
-}
-  //RX1
-  MCP2515_bit_modify(dev,0x70,0x60,0x60);
-  MCP2515_read(dev, 0x70, &value);
-
-  if((value&0x60)!=0x60){
-    printf("Failed to set RX1 register");
-    return -2; 
-  }
 
   //INT config
-  MCP2515_bit_modify(dev,0x2B,0xFF,0x5);
+  //MCP2515_bit_modify(dev,MCP2515_CANINTE,0xFF,0x5);
+
+
+  // Interrupt config: msg error, error flag change, TX0 empty, RX0 full
+	MCP2515_bit_modify(dev,MCP2515_CANINTE, 0xFF, 0x5);
+	MCP2515_read(dev,MCP2515_CANINTE,&value);
+	if (value != 0x5){
+		printf("Couldnt set IRQ config for MCP2515\r\n");
+		return -5;
+	} 
 
   //BRP config
-  MCP2515_bit_modify(dev,0x2A,0x3,0x3);
+  //MCP2515_bit_modify(dev,0x2A,0x3,0x3);
+
+  //Setting baudrate prescaler
+  MCP2515_bit_modify(dev,MCP2515_CNF1, MCP2515_BRP, MCP2515_BRP);
+	MCP2515_read(dev,MCP2515_CNF1,&value);
+	if (value != MCP2515_BRP){
+		printf("Couldnt configure BRP for MCP2515\r\n");
+		return -6;
+	}
+
+
+  MCP2515_write(dev,MCP2515_CANCTRL, MODE_NORMAL);
+	MCP2515_read(dev,MCP2515_CANSTAT,&value);
+	if ((value & MODE_MASK) != MODE_NORMAL){
+		printf("MCP2515 could not be set to NORMAL mode when init compelte \r\n");
+		return -7;
+	 }
 
   /*
 
@@ -160,24 +292,26 @@ int8_t MCP2515_init(struct can_device *dev) {
   // ability to config
 
   // Comment this out if we want to communicate with other nodes
-  MCP2515_write(dev, 0x0F, 0x40); // Control regiser , mask, Loopback
+  // MCP2515_bit_modify(dev, 0x0F, 0x70, 0x40); // Control regiser , mask, Loopback
   // Comment this back in if you comment out the line above
   // MCP2515_bit_modify(dev, 0x0F, 0xE0, MODE_NORMAL); // Control regiser ,
   // mask, normal mode
   // Confirm that the controller has switched to normal mode
   
-  MCP2515_read(dev, 0x0E, &value);
+  /* MCP2515_read(dev, 0x0E, &value);
   if ((value & 0xE0) != MODE_LOOPBACK<<5) {
     printf("Failed to switch controller to normal mode when initialzing");
     return -3;
   }
+  */
+
   return 0;
 }
 
 // Write data to register beginning at selected address.
 int8_t MCP2515_write(struct can_device *dev, uint8_t addr, uint8_t data) {
   
-  unsigned char frame[3] = {MCP2515_OP_WRITE, addr, data};
+  unsigned char frame[3] = {MCP2515_WRITE, addr, data};
   spi_send_n(&dev->spi, frame, 3);
   
   return 0;
@@ -185,7 +319,7 @@ int8_t MCP2515_write(struct can_device *dev, uint8_t addr, uint8_t data) {
 
 int8_t MCP2515_write_n(struct can_device *dev, uint8_t addr, uint8_t *data) {
   
-  unsigned char frame = {MCP2515_OP_WRITE, addr, data[0],data[1],data[2],data[3],data[4],data[5],data[6]data[0]};
+  unsigned char frame = {MCP2515_WRITE, addr, data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]};
   spi_send_n(&dev->spi, frame, 2+8);
   
   return 0;
@@ -199,7 +333,7 @@ int8_t MCP2515_read(struct can_device *dev, uint8_t addr, uint8_t *out) {
     return -1;
   }
   
-  unsigned char tx[3] = {MCP2515_OP_READ, addr,0xff};
+  unsigned char tx[3] = {MCP2515_READ, addr,0xff};
   unsigned char rx[3];
   //spi_duplex(&dev->spi, tx, rx, 3);
   spi_push(&dev->spi,tx[0],NULL);
@@ -211,9 +345,9 @@ int8_t MCP2515_read(struct can_device *dev, uint8_t addr, uint8_t *out) {
 
 // Instructs controller to begin message transmission sequence for
 // any of the transmit buffers.
-int8_t MCP2515_request_to_send(struct can_device *dev, uint8_t tx_buf_num) {
+int8_t MCP2515_request_to_send(struct can_device *dev, uint8_t buffer) {
 
-  spi_send(&dev->spi, (MCP2515_OP_RTS_BASE | (1 << tx_buf_num)));
+  spi_send(&dev->spi, buffer);
 
   return 0;
 }
@@ -222,7 +356,7 @@ int8_t MCP2515_request_to_send(struct can_device *dev, uint8_t tx_buf_num) {
 int8_t MCP2515_bit_modify(struct can_device *dev, uint8_t reg, uint8_t mask,
                           uint8_t set_val) {
 
-  unsigned char cmd[4] = {MCP2515_OP_BIT_MODIFY, reg, mask, set_val};
+  unsigned char cmd[4] = {MCP2515_BITMOD, reg, mask, set_val};
   spi_duplex(&dev->spi,cmd,NULL,4);
   //spi_send_n(&dev->spi, cmd, 4);
 
@@ -232,7 +366,7 @@ int8_t MCP2515_bit_modify(struct can_device *dev, uint8_t reg, uint8_t mask,
 // Resets internal registers to default state, this sets Config mode
 int8_t MCP2515_reset(struct can_device *dev) {
 
-  spi_send(&dev->spi, MCP2515_OP_RESET);
+  spi_send(&dev->spi, MCP2515_RESET);
 
   return 0;
 }
@@ -243,7 +377,7 @@ int8_t MCP2515_read_status(struct can_device *dev, uint8_t *out) {
 
   uint8_t *status;
 
-  spi_push(&dev->spi, MCP2515_OP_READ_STATUS, NULL);
+  spi_push(&dev->spi, MCP2515_READ_STATUS, NULL);
   spi_recieve(&dev->spi, out);
 
   return 0;

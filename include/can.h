@@ -39,10 +39,10 @@ struct CAN_frame {
   uint8_t dlc; // 0-8 Data Length Code, How many databytes are in the message
   char data[8];
   uint8_t extended; // Decide ID size, true = 29-bit, false = 11-bit
-  uint8_t rtr; // Remote Transmission Request, must be false for standard message
-            // When rtr is true, asks a node with the same ID to respond with a
-            // data frame. On the MCP2515, the RTR bit is in the DLC register
-            // for TX/RX.
+  uint8_t rtr;      // Remote Transmission Request, must be false for standard
+               // message When rtr is true, asks a node with the same ID to
+               // respond with a data frame. On the MCP2515, the RTR bit is in
+               // the DLC register for TX/RX.
 };
 
 /*
@@ -91,6 +91,7 @@ enum CAN_BUF_ADR {
 
 int8_t can_init(struct can_device *dev);
 int8_t can_read(struct can_device *dev, struct CAN_frame *out);
+int8_t can_write(struct can_device *dev, struct CAN_frame msg);
 int8_t can_reset(struct can_device *dev, uint8_t address,
                  struct CAN_frame data_frame);
 
@@ -100,7 +101,7 @@ int8_t can_reset(struct can_device *dev, uint8_t address,
 
 int8_t MCP2515_init(struct can_device *dev);
 int8_t MCP2515_read(struct can_device *dev, uint8_t rx_buf_num, uint8_t *out);
-int8_t MCP2515_write(struct can_device *dev,uint8_t addr, uint8_t data);
+int8_t MCP2515_write(struct can_device *dev, uint8_t addr, uint8_t data);
 int8_t MCP2515_request_to_send(struct can_device *dev, uint8_t tx_buf_num);
 int8_t MCP2515_bit_modify(struct can_device *dev, uint8_t reg, uint8_t mask,
                           uint8_t set_val);

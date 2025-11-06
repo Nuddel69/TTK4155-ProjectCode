@@ -27,10 +27,10 @@ int menu_init(struct menu_cfg *menu) {
     menu->current_page = PAGE_WELCOME;
 
     io_oled_init(menu->oled);
-    io_oled_blink(menu->oled, 2);       // Blink once to indicate ready
+    //io_oled_blink(menu->oled, 2);       // Blink once to indicate ready
 
     page_dispatch(menu);                // Initialize with loading the welcome page
-    
+
     return status;
 }
 
@@ -42,21 +42,29 @@ int menu_init(struct menu_cfg *menu) {
 int welcome_display(struct menu_cfg *menu) {
     int status = 0;
 
+    //io_oled_write_command(menu->oled, 0x20); // Set Memory Addressing Mode
+    //io_oled_write_command(menu->oled, 0x02); // Page Addressing Mode
+
+    io_oled_write_command(menu->oled, 0x20);
+    io_oled_write_command(menu->oled, 0x02); // force Page mode again
+
+    io_oled_clear_line(menu->oled, 0);
     io_oled_home(menu->oled);
-    io_oled_clear_line(menu->oled,0); // Clear first line to avoid overlap
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Welcome");
 
+    io_oled_clear_line(menu->oled, 1);
     io_oled_pos(menu->oled, 1, 0);
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "-------------");
 
-    // Printing meny items
-    for (uint8_t i = 0; i < menu->length; i++) {
-        io_oled_pos(menu->oled, 2 + i, 2);
-        io_oled_print_with_font(menu->oled, SMALL_FONT, menu->items[i]);
-    }
-
     // Draws the cursor. Only redraws the cursor when the joystick is moved
     draw_cursor(menu);
+
+    // Printing menu items
+    for (uint8_t i = 0; i < menu->length; i++) {
+        io_oled_clear_line(menu->oled, 2 + i);
+        io_oled_pos(menu->oled, 2 + i, 10);
+        io_oled_print_with_font(menu->oled, SMALL_FONT, menu->items[i]);
+    }
     
     return status;
 }
@@ -69,8 +77,8 @@ int welcome_display(struct menu_cfg *menu) {
 int play_game_display(struct menu_cfg *menu) {
     int status = 0;
 
+    io_oled_clear_line(menu->oled,0);
     io_oled_home(menu->oled);
-    io_oled_clear_line(menu->oled,0); // Clear first line to avoid overlap
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Play game");
 
     return status;
@@ -84,8 +92,8 @@ int play_game_display(struct menu_cfg *menu) {
 int high_scores_display(struct menu_cfg *menu) {
     int status = 0;
 
+    io_oled_clear_line(menu->oled,0);
     io_oled_home(menu->oled);
-    io_oled_clear_line(menu->oled,0); // Clear first line to avoid overlap
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "High scores");
 
     io_oled_pos(menu->oled, 2, 0);
@@ -102,8 +110,8 @@ int high_scores_display(struct menu_cfg *menu) {
 int settings_display(struct menu_cfg *menu) {
     int status = 0;
 
+    io_oled_clear_line(menu->oled,0);
     io_oled_home(menu->oled);
-    io_oled_clear_line(menu->oled,0); // Clear first line to avoid overlap
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Settings");
 
     //TODO: add settings options such as joystick calibration, brightness etc
@@ -124,7 +132,11 @@ int draw_cursor(struct menu_cfg *menu) {
         if (i == menu->cursor_pos) {
             io_oled_print_with_font(menu->oled, SMALL_FONT, "> ");
         } else {
-            io_oled_print_with_font(menu->oled, SMALL_FONT, "  ");
+            // Clearing the cursor position
+            for (uint8_t i = 0; i < 6; i++) {
+                io_oled_write_data(menu->oled, 0x00);
+            }
+            //io_oled_print_with_font(menu->oled, SMALL_FONT, "  ");
         }
     }
 
@@ -267,7 +279,7 @@ int menu_handler(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     // Only allow cursor movement and page selection if we're on the welcome page, if so:
     // 1. Cursor update
     // 2. Draw cursor
-    // 3. Page seleciton 
+    // 3. Page seleciton
     // If not, make page_back available from all other pages
     if (menu->current_page == PAGE_WELCOME) {
         cursor_update(menu, btn);

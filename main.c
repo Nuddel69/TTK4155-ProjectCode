@@ -80,7 +80,7 @@ int main() {
 	_delay_ms(10);
    uint8_t status;
    MCP2515_read(&can,MCP2515_TXB0CTRL,&status);
-   printf(status);
+   printf("TXB0CTRL=0x%02X\r\n",status);
 	_delay_ms(10);
 
    

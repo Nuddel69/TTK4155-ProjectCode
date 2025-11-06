@@ -92,7 +92,7 @@ int8_t can_read(struct can_device *dev, struct CAN_frame *out) {
 	}
 		
 	for (uint8_t i=0; i < out->dlc; i++) {
-		MCP2515_read(dev,MCP2515_RXB0D0 + i,out->data[i]);
+		MCP2515_read(dev,MCP2515_RXB0D0 + i,(uint8_t*)&out->data[i]);
 		char *temp_msg = out->data[i];
 		printf(&temp_msg);
 	}

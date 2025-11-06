@@ -74,8 +74,6 @@ int8_t can_write(struct can_device *dev, struct CAN_frame msg)
 	
 }
 
-
-
 int8_t can_read(struct can_device *dev, struct CAN_frame *out) {
 	
 

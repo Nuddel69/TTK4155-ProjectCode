@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <inttypes.h> // for printing time
 //#include <util/delay.h>
 
 
@@ -46,16 +47,16 @@ int main(void){
 	//TEST for checking if system is live, can be removed
 	PIOB->PIO_OER  = (1 << 27);
 	
+	uint64_t inittime =time_now();  
+	
 	while (1){ 
 		
-		time_spinFor(msecs(500));
+		time_spinFor(msecs(50));
 		PIOB->PIO_SODR = (1 << 27);
-		time_spinFor(msecs(500));
+		time_spinFor(msecs(50));
 		PIOB->PIO_CODR = (1 << 27);
 		
-		
-		printf("Hello World\r\n");
-		printf("Test\r\n");
+		printf("Current time: %.3f \r\n", totalSeconds(time_now()-inittime));
 		// Check new RX mailbox 1
 		if (can_receive(&msg, 1) == 0) {
 			print_canmsg(&msg);

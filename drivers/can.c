@@ -68,7 +68,7 @@ int8_t can_write(struct can_device *dev, struct CAN_frame msg)
 		return 0;
 
 	} else {
-		printf("TX Buffer0 not avaliable\r\n");
+		// printf("TX Buffer0 not avaliable\r\n");
 		return -2;
 	}
 	
@@ -99,7 +99,7 @@ int8_t can_read(struct can_device *dev, struct CAN_frame *out) {
 
     for (uint8_t i = 0; i < out->dlc; i++) {
     MCP2515_read(dev, MCP2515_RXB0D0 + i, &out->data[i]);
-    printf("%02X ", out->data[i]);
+    printf("%c", (char)out->data[i]);
     }
     printf("\r\n");
 	}
@@ -261,6 +261,8 @@ int8_t MCP2515_init(struct can_device *dev) {
 		printf(" CNF3 not set\r\n");
 		return -8;
 	}
+	
+	
 
   //Set the controller to normal mode !!!THIS HAS TO BE LAST IN INIT!!!
     MCP2515_write(dev,MCP2515_CANCTRL, MODE_NORMAL);
@@ -268,6 +270,7 @@ int8_t MCP2515_init(struct can_device *dev) {
 	if ((value & MODE_MASK) != MODE_NORMAL){
 		printf("MCP2515 could not be set to NORMAL mode when init compelte \r\n");
 		return -9;
+		
 	 }
 
   /*
@@ -345,7 +348,7 @@ int8_t MCP2515_write(struct can_device *dev, uint8_t addr, uint8_t data) {
 
 int8_t MCP2515_write_n(struct can_device *dev, uint8_t addr, uint8_t *data) {
   
-  unsigned char frame = {MCP2515_WRITE, addr, data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]};
+  unsigned char frame[10] = {MCP2515_WRITE, addr, data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]};
   spi_send_n(&dev->spi, frame, 2+8);
   
   return 0;

@@ -25,9 +25,33 @@ struct io_avr_device avr = {SSB3};
 
 struct can_device can = {SSE2};
 
-struct menu_cfg menu;
+// Define settings sub menu
+static struct menu_item settings_menu [] = {
+    {"Adjust brightness", PAGE_ADJUST_BRIGHTNESS, NULL, 0},
+    {"Calibrate joystick", PAGE_CALIBRATE_JOYSTICK, NULL, 0},
+};
 
-static const char *menu_items[] = {"Start game", "Play game", "High scores", "Settings"};
+// Define main menu
+static struct menu_item main_menu[] = {
+    {"Start game", PAGE_PLAY_GAME, NULL, 0},
+    {"High scores", PAGE_HIGH_SCORES, NULL, 0},
+    {"Settings", PAGE_NULL, settings_menu, 2},
+};
+
+//static const char *menu_items[] = {"Start game", "High scores", "Settings"};
+
+// Initialize menu_cfg struct with menus defined above
+struct menu_cfg menu = {
+  .oled = &oled,
+  .items = main_menu,
+  .length = 3,
+  .cursor_pos = 0,
+  .current_page = PAGE_WELCOME,
+  .root_items = main_menu,
+  .root_length = 3,
+  .parent_menu = NULL,
+  .parent_length = 0,
+};
 
 int main() {
   int status = 0;
@@ -47,9 +71,10 @@ int main() {
   status = io_avr_init(&avr);
   STATUS_ASSERT(status)
 
-  menu.oled = &oled;
-  menu.items = menu_items;
-  menu.length = sizeof(menu_items) / sizeof(menu_items[0]);
+  // Old menu initialization
+  //menu.oled = &oled;
+  //menu.items = menu_items;
+  //menu.length = sizeof(menu_items) / sizeof(menu_items[0]);
 
   status = menu_init(&menu);
   STATUS_ASSERT(status)

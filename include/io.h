@@ -271,9 +271,12 @@ int io_oled_test(struct io_oled_device *dev);
  * newline
  * \return .
  */
-int io_oled_blinky(struct io_oled_device *dev, uint8_t blinks);
+int io_oled_blink(struct io_oled_device *dev, uint8_t blinks);
 
 int io_oled_write_data(struct io_oled_device *dev, uint8_t data);
 int io_oled_write_command(struct io_oled_device *dev, uint8_t command);
+
+//NEW FOR TESTING
+int io_oled_clear_all(struct io_oled_device *dev);
 
 #endif // INCLUDE_INCLUDE_IO_H_

@@ -286,6 +286,26 @@ int io_oled_clear_line(struct io_oled_device *dev, int line) {
   return 0;
 }
 
+/**
+ * \brief Clears all lines on the OLED (fills entire display with black)
+ * \param[in] dev Pointer to the OLED device struct
+ * \return Errno (0 = success, -1 = failure)
+ */
+int io_oled_clear_all(struct io_oled_device *dev) {
+    int status = 0;
+
+    // There are 8 pages (0–7) on a 64-pixel-tall display
+    for (uint8_t line = 0; line < 8; line++) {
+        status = io_oled_clear_line(dev, line);
+        if (status < 0) {
+            return status;  // early exit on failure
+        }
+    }
+
+    return 0;
+}
+
+
 int io_oled_pos(struct io_oled_device *dev, int line, int column) {
 
   io_oled_goto_line(dev, line);

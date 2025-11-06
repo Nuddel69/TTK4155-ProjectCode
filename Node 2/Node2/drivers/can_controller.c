@@ -75,10 +75,10 @@ uint8_t can_init (uint8_t num_tx_mb, uint8_t num_rx_mb){
 	
 	
 	uint32_t can_br =
-	CAN_BR_BRP(6)      // Baud rate prescaler (tQ = (6+1)/84 MHz)
+	CAN_BR_BRP(27)       // Baud rate prescaler (tQ = (27+1)/84 MHz)
 	| CAN_BR_SJW(1)      // Synchronization jump width = 2 TQ
 	| CAN_BR_PROPAG(5)   // Propagation segment = 6 TQ
-	| CAN_BR_PHASE1(12)  // Phase segment 1 = 13 TQ
+	| CAN_BR_PHASE1(11)  // Phase segment 1 = 12 TQ
 	| CAN_BR_PHASE2(4);  // Phase segment 2 = 5 TQ
 
 
@@ -216,7 +216,7 @@ uint8_t print_canmsg(const CAN_MESSAGE* msg) {
 	
 	printf("CAN RX  id=0x%03X  data:", msg->id, msg->data_length);
 	for (uint8_t i = 0; i < msg->data_length; i++) {
-		printf(" %02X", (uint8_t)msg->data[i]);
+		printf(" %02c", (uint8_t)msg->data[i]);
 	}
 	printf("\r\n");
 	return 0;

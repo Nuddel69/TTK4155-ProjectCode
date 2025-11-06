@@ -14,6 +14,7 @@
 // -- generalize item lists and allow nested menus
 // - Implement settings page options such as joystick calibration, brightness adjustment etc
 // - Get rid of hardcoded values for menu item positions (rows & columns)
+// - Printing high scores on high scores page
 
 /**
  * \brief Initializes the menu struct and OLED display
@@ -27,9 +28,8 @@ int menu_init(struct menu_cfg *menu) {
     menu->current_page = PAGE_WELCOME;
 
     io_oled_init(menu->oled);
-    //io_oled_blink(menu->oled, 2);       // Blink once to indicate ready
-
-    page_dispatch(menu);                // Initialize with loading the welcome page
+    //io_oled_blink(menu->oled, 2);         // Blink once to indicate ready
+    page_dispatch(menu);                    // Initialize with loading the welcome page
 
     return status;
 }
@@ -41,12 +41,6 @@ int menu_init(struct menu_cfg *menu) {
  */
 int welcome_display(struct menu_cfg *menu) {
     int status = 0;
-
-    //io_oled_write_command(menu->oled, 0x20); // Set Memory Addressing Mode
-    //io_oled_write_command(menu->oled, 0x02); // Page Addressing Mode
-
-    io_oled_write_command(menu->oled, 0x20);
-    io_oled_write_command(menu->oled, 0x02); // force Page mode again
 
     io_oled_clear_line(menu->oled, 0);
     io_oled_home(menu->oled);
@@ -97,7 +91,6 @@ int high_scores_display(struct menu_cfg *menu) {
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "High scores");
 
     io_oled_pos(menu->oled, 2, 0);
-    // TODO: for-loop for printing saved high scores
 
     return status;
 }
@@ -113,8 +106,6 @@ int settings_display(struct menu_cfg *menu) {
     io_oled_clear_line(menu->oled,0);
     io_oled_home(menu->oled);
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Settings");
-
-    //TODO: add settings options such as joystick calibration, brightness etc
 
     return status;
 }
@@ -136,17 +127,11 @@ int draw_cursor(struct menu_cfg *menu) {
             for (uint8_t i = 0; i < 6; i++) {
                 io_oled_write_data(menu->oled, 0x00);
             }
-            //io_oled_print_with_font(menu->oled, SMALL_FONT, "  ");
         }
     }
 
     return status;
 }
-
-// Conteplated to call io_joystick_read_position() inside the function instead of passing direction as parameter,
-// but I think this will be a better seperation(?) - seperating hardware (input readaing) from logic (cursor updating).
-// Should 'direction' be a pointer? I did not do it as it is only used for reading inside the function.
-// int cursor_update(struct menu_cfg *menu, enum io_joystick_direction direction) {
 
 /**
  * \brief Updates the cursor position based on nav button from the IO board. Wraps around if going out of bounds.
@@ -258,7 +243,6 @@ int page_dispatch(struct menu_cfg *menu) {
 int page_back(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     int status = 0;
 
-    // Not sure if I can use 'left' or I need to use L1, L2, etc.
     if (btn->L7) {
         if (menu->current_page != PAGE_WELCOME) {
             return set_page(menu, PAGE_WELCOME);
@@ -277,10 +261,6 @@ int menu_handler(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     int status = 0;
 
     // Only allow cursor movement and page selection if we're on the welcome page, if so:
-    // 1. Cursor update
-    // 2. Draw cursor
-    // 3. Page seleciton
-    // If not, make page_back available from all other pages
     if (menu->current_page == PAGE_WELCOME) {
         cursor_update(menu, btn);
         draw_cursor(menu);

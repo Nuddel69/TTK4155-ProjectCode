@@ -1,10 +1,16 @@
+# Build files
 **/build
 **/.cache
 **/compile_commands.json
-**/TTK4155.componentinfo.xml
-**/TTK4155.cproj
-**/.vs
+
+# Microchip Studio
+**/*.componentinfo.xml
+**/*.cproj
+**/*.atsln
+**/Device_Startup
 **/Debug
+**/Release
+
+# VSCode
+**/.vs
 **/.vscode
-Node 2/Node2/Node2.cproj
-Node 2/TTK4155.atsln

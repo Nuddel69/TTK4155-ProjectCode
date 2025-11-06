@@ -14,26 +14,31 @@
 //------------------//
 //   GENERAL CAN    //
 //------------------//
-
 int8_t can_init(struct can_device *dev) {
 	
+ can_irq = dev;
+ struct CAN_frame new_message = {0x00,0x01,'1',0,0};
 
-can_irq = dev;
-struct CAN_frame new_message = {0x00,0x01,'1',0,0};
-  
-// configure PD2 as input
-DDRD &= ~(1 << CAN_INTERRUPT_PIN);
-// Disable global interrupts
-cli();
-// Enable external interrupt INT2
-GICR |= (1 << CAN_INTERRUPT_ISR_REGISTER);
-// Configure interrupt falling edge
-MCUCR |=(1<<ISC01);
-MCUCR &= ~(1<<ISC00);
-// Enable global interrupts
-sei();
+ // Set PE0 as input
+ DDRE  &= ~(1<<PE0); 
+ PORTE |=  (1<<PE0); 
+
+
+ // Disable global interrupts
+ cli();
+ // Enable INT2
+ GICR  |= (1<<CAN_INTERRUPT_ISR_REGISTER);
+
+ // Edge select, active-low interrupt from MCP2515
+ EMCUCR &= ~(1<<ISC2);
+
+ // Configure interrupt falling edge
+ //MCUCR |=(1<<ISC01);
+ //MCUCR &= ~(1<<ISC00);
+ // Enable global interrupts
+ sei();
 	    
-  return MCP2515_init(dev);
+ return MCP2515_init(dev);
 }
 
 
@@ -93,10 +98,13 @@ int8_t can_read(struct can_device *dev, struct CAN_frame *out) {
 		
 	for (uint8_t i=0; i < out->dlc; i++) {
 		MCP2515_read(dev,MCP2515_RXB0D0 + i,(uint8_t*)&out->data[i]);
-		char *temp_msg = out->data[i];
-		printf(&temp_msg);
+
+    for (uint8_t i = 0; i < out->dlc; i++) {
+    MCP2515_read(dev, MCP2515_RXB0D0 + i, &out->data[i]);
+    printf("%02X ", out->data[i]);
+    }
+    printf("\r\n");
 	}
-	printf("\r\n");
 	
 	return 0;
 }
@@ -181,6 +189,8 @@ int8_t MCP2515_init(struct can_device *dev) {
   // pending messages.
   MCP2515_read(dev,0x0E,&value);
   
+
+  //Ensure config mode after reset
   if ((value&MODE_MASK)!=(MODE_CONFIG)) {
     printf("SPI to CAN controller is not in configuration mode after reset!\n");
     return -1;
@@ -212,9 +222,15 @@ int8_t MCP2515_init(struct can_device *dev) {
 		 return -4;
 	 }	
 
+  // Set PE0 as input
+  DDRE  &= ~(1<<PE0); 
+  PORTE |=  (1<<PE0); 
 
-  //INT config
-  //MCP2515_bit_modify(dev,MCP2515_CANINTE,0xFF,0x5);
+  // Enable INT2
+  GICR  |= (1<<INT2);
+
+  // Edge select, active-low interrupt from MCP2515
+  EMCUCR &= ~(1<<ISC2);
 
 
   // Interrupt config: msg error, error flag change, TX0 empty, RX0 full
@@ -225,23 +241,35 @@ int8_t MCP2515_init(struct can_device *dev) {
 		return -5;
 	} 
 
-  //BRP config
-  //MCP2515_bit_modify(dev,0x2A,0x3,0x3);
+  //BRP and CAN timing config
+  MCP2515_write(dev, MCP2515_CNF1, MCP2515_VAL_CNF1);
+  MCP2515_write(dev, MCP2515_CNF2, MCP2515_VAL_CNF2);
+  MCP2515_write(dev, MCP2515_CNF3, MCP2515_VAL_CNF3);
 
-  //Setting baudrate prescaler
-  MCP2515_bit_modify(dev,MCP2515_CNF1, MCP2515_BRP, MCP2515_BRP);
 	MCP2515_read(dev,MCP2515_CNF1,&value);
-	if (value != MCP2515_BRP){
+	if (value != MCP2515_VAL_CNF1){
 		printf("Couldnt configure BRP for MCP2515\r\n");
 		return -6;
 	}
 
+	MCP2515_read(dev,MCP2515_CNF2,&value);
+	if (value != MCP2515_VAL_CNF2){
+		printf(" CNF2 not set\r\n");
+		return -7;
+	}
 
-  MCP2515_write(dev,MCP2515_CANCTRL, MODE_NORMAL);
+	MCP2515_read(dev,MCP2515_CNF3,&value);
+	if (value != MCP2515_VAL_CNF3){
+		printf(" CNF3 not set\r\n");
+		return -8;
+	}
+
+  //Set the controller to normal mode !!!THIS HAS TO BE LAST IN INIT!!!
+    MCP2515_write(dev,MCP2515_CANCTRL, MODE_NORMAL);
 	MCP2515_read(dev,MCP2515_CANSTAT,&value);
 	if ((value & MODE_MASK) != MODE_NORMAL){
 		printf("MCP2515 could not be set to NORMAL mode when init compelte \r\n");
-		return -7;
+		return -9;
 	 }
 
   /*

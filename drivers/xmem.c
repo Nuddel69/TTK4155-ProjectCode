@@ -1,9 +1,12 @@
 #include <avr/io.h>
-#include <errno.h>
-#include <stdio.h>
+// #include <stdio.h>
+// #include <string.h>
 
+#include "log.h"
 #include "uart.h"
 #include "xmem.h"
+
+LOG_MODULE_DEFINE("XMEM")
 
 // Initialize external memory
 int xmem_init(void) {
@@ -38,13 +41,15 @@ int xmem_init(void) {
 
 // Test taken from Lab-tasks
 int SRAM_test(void) {
+  int status = 0;
+
   volatile uint8_t *ext_ram = (uint8_t *)MEM_OFFSET; // Start adress for SRAM
   const uint16_t ext_ram_size = XMEM_SIZE;
 
   uint16_t write_errors = 0;
   uint16_t retrieval_errors = 0;
 
-  printf("Starting SRAM test...\n\r");
+  LOG_INF("Starting SRAM test...")
 
   // rand() stores internal state; use it once to vary the seed each run
   uint16_t seed = (uint16_t)rand();
@@ -56,8 +61,9 @@ int SRAM_test(void) {
     ext_ram[i] = value;
     uint8_t retrieved = ext_ram[i];
     if (retrieved != value) {
-      printf("Write phase error: ext_ram[%4u] = 0x%02X (should be 0x%02X)\n\r",
-             i, (unsigned)retrieved, (unsigned)value);
+      // printf("Write phase error: ext_ram[%4u] = 0x%02X (should be
+      // 0x%02X)\n\r",
+      //        i, (unsigned)retrieved, (unsigned)value);
       write_errors++;
     }
   }
@@ -68,17 +74,25 @@ int SRAM_test(void) {
     uint8_t value = (uint8_t)rand();
     uint8_t retrieved = ext_ram[i];
     if (retrieved != value) {
-      printf(
-          "Retrieval phase error: ext_ram[%4u] = 0x%02X (should be 0x%02X)\n\r",
-          i, (unsigned)retrieved, (unsigned)value);
+      // printf(
+      //     "Retrieval phase error: ext_ram[%4u] = 0x%02X (should be
+      //     0x%02X)\n\r", i, (unsigned)retrieved, (unsigned)value);
       retrieval_errors++;
     }
   }
 
-  printf(
-      "SRAM test completed with\n\r%4u errors in write phase and\n\r%4u errors "
-      "in retrieval phase\n\r\n\r",
-      write_errors, retrieval_errors);
+  LOG_INF("SRAM test completed")
+
+  // printf(
+  //     "SRAM test completed with\n\r%4u errors in write phase and\n\r%4u
+  //     errors " "in retrieval phase\n\r\n\r", write_errors, retrieval_errors);
+
+  if (write_errors) {
+    return -1;
+  }
+  if (retrieval_errors) {
+    return -2;
+  }
 
   return 0;
 }

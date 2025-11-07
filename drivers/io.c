@@ -3,8 +3,11 @@
 
 #include "adc.h"
 #include "io.h"
+#include "log.h"
 #include "spi.h"
 #include "utils.h"
+
+LOG_MODULE_DEFINE("IO")
 
 #define JOYSTICK_THRESHOLD 10
 

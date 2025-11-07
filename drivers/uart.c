@@ -1,8 +1,10 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <errno.h>
+#include <stdarg.h>
 #include <stdint.h>
-#include <stdio.h>
+// #include <stdio.h>
+#include <string.h>
 #include <util/delay.h>
 
 #include "uart.h"
@@ -22,8 +24,74 @@ int USART_init(struct USART_config *config) {
   UCSR0C = (1 << URSEL0) | (1 << USBS0) | (3 << UCSZ00);
 
   sei();
-  fdevopen(USART_Transmit, USART_Receive);
+  // fdevopen(USART_Transmit, USART_Receive);
 
+  return 0;
+}
+
+// Function inspired by
+// https://www.geeksforgeeks.org/c/how-to-write-your-own-printf-in-c/
+int USART_print(const char *str, ...) {
+
+  // Variadic function requirements
+  va_list replacements;
+  va_start(replacements, str);
+
+  char curr_token[1000];
+  int index = 0;
+
+  // parsing the formatted string
+  for (int i = 0; str[i] != '\0'; i++) {
+    curr_token[index++] = str[i];
+
+    if (str[i + 1] == '%' || str[i + 1] == '\0') {
+      curr_token[index] = '\0';
+      index = 0;
+      if (curr_token[0] != '%') {
+        USART_SendString(curr_token);
+      } else {
+        int j = 1;
+        char ch1 = 0;
+
+        // for integers
+        if (ch1 == 'i' || ch1 == 'd' || ch1 == 'u' || ch1 == 'h') {
+          USART_SendString((char *)(va_arg(replacements, int)));
+        }
+        // for characters
+        else if (ch1 == 'c') {
+          USART_SendString((char *)(va_arg(replacements, int)));
+        } else if (ch1 == 'l') {
+          char ch2 = curr_token[2];
+
+          // for long int
+          if (ch2 == 'u' || ch2 == 'd' || ch2 == 'i') {
+            USART_SendString((char *)(va_arg(replacements, long)));
+          }
+
+        } else if (ch1 == 'L') {
+          char ch2 = curr_token[2];
+
+          // for long long int
+          if (ch2 == 'u' || ch2 == 'd' || ch2 == 'i') {
+            USART_SendString((char *)(va_arg(replacements, long long)));
+          }
+        }
+
+        // for strings
+        else if (ch1 == 's') {
+          USART_SendString((char *)(va_arg(replacements, char *)));
+        }
+
+        // print the whole token
+        // if no case is matched
+        else {
+          USART_SendString((char *)va_arg(replacements, long));
+        }
+      }
+    }
+  }
+
+  va_end(replacements);
   return 0;
 }
 
@@ -43,12 +111,14 @@ int USART_SendString(char *data) {
   int status;
   int counter = 0;
   while (data[counter] != '\0') {
-    USART_Transmit(data[counter]);
+    if (data[counter] == '\n') {
+      status = USART_Transmit('\x0D');
+      status = USART_Transmit('\x0A');
+    } else {
+      status = USART_Transmit(data[counter]);
+    }
     counter++;
   }
-  status = USART_Transmit('\x0D');
-  status = USART_Transmit('\x0A');
-
   return status;
 }
 

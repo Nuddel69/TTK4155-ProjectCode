@@ -3,6 +3,9 @@
 #include <util/delay.h>
 
 #include "adc.h"
+#include "log.h"
+
+LOG_MODULE_DEFINE("ADC")
 
 #define ADC_BASE_ADR ((volatile uint8_t *)0x1000) // Adress offset for ADC
 

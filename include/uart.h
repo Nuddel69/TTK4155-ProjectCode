@@ -22,6 +22,8 @@ struct USART_config {
  */
 int USART_init(struct USART_config *config);
 
+int USART_print(const char *str, ...);
+
 /*!
  * \brief Transmit a single byte.
  *

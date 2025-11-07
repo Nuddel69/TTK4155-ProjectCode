@@ -1,3 +1,5 @@
+
+/*
 #include "can.h"
 #include "sam.h"
 #include <stdio.h>
@@ -71,6 +73,7 @@ void can_init(CanInit init, uint8_t rxInterrupt) {
   CAN0->CAN_MR |= CAN_MR_CANEN;
 }
 */
+	/*
 void can_tx(CanMsg m) {
   while (!(CAN0->CAN_MB[txMailbox].CAN_MSR & CAN_MSR_MRDY)) {
   }
@@ -113,6 +116,8 @@ uint8_t can_rx(CanMsg *m) {
   return 1;
 }
 
+*/
+
 /*
 // Example CAN interrupt handler
 void CAN0_Handler(void){
@@ -134,3 +139,4 @@ void CAN0_Handler(void){
     NVIC_ClearPendingIRQ(ID_CAN0);
 }
 */
+

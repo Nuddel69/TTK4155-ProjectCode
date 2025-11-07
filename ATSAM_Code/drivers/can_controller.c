@@ -115,18 +115,18 @@ uint8_t can_init(uint8_t num_tx_mb,uint8_t num_rx_mb) {
 */
   /****** End of mailbox configuraion ******/
 	
-  printf("Values before activating\r\nSR=0x%08lX  MB1:MSR=0x%08lX  MB2:MSR=0x%08lX\r\n",
-       CAN0->CAN_SR,
-       CAN0->CAN_MB[1].CAN_MSR,
-       CAN0->CAN_MB[2].CAN_MSR);
+
 
   // Enable interrupt on receive mailboxes
   CAN0->CAN_IER = can_ier;
   
-    printf("Values after activating\r\nSR=0x%08lX  MB1:MSR=0x%08lX  MB2:MSR=0x%08lX\r\n",
-       CAN0->CAN_SR,
+    printf("Values after activating\r\n MB1:MSR=0x%08lX  MB1:MCR=0x%08lX  MB1:MMR=0x%08lX\r\nMB2:MSR=0x%08lX  MB2:MCR=0x%08lX  MB2:MMR=0x%08lX\r\n",
        CAN0->CAN_MB[1].CAN_MSR,
-       CAN0->CAN_MB[2].CAN_MSR);
+	   CAN0->CAN_MB[1].CAN_MCR,
+	   CAN0->CAN_MB[1].CAN_MMR,
+	   CAN0->CAN_MB[2].CAN_MSR,
+	   CAN0->CAN_MB[2].CAN_MCR,
+	   CAN0->CAN_MB[2].CAN_MMR);
 
   // Enable interrupt in NVIC
   NVIC_EnableIRQ(ID_CAN0);
@@ -231,7 +231,7 @@ uint8_t print_canmsg(const CAN_MESSAGE *msg) {
 
   printf("CAN RX  id=0x%03X  data:", msg->id, msg->data_length);
   for (uint8_t i = 0; i < msg->data_length; i++) {
-    printf(" %02c", (uint8_t)msg->data[i]);
+    printf("%c", (uint8_t)msg->data[i]);
   }
   printf("\r\n");
   return 0;

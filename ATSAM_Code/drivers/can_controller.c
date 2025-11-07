@@ -73,17 +73,28 @@ uint8_t can_init (uint8_t num_tx_mb, uint8_t num_rx_mb){
 	PMC->PMC_PCR = PMC_PCR_EN | (0 << PMC_PCR_DIV_Pos) | PMC_PCR_CMD | (ID_CAN0 << PMC_PCR_PID_Pos); // DIV = 1(can clk = MCK/2), CMD = 1 (write), PID = 2B (CAN0)
 	PMC->PMC_PCER1 |= 1 << (ID_CAN0 - 32);
 	
-	
+	/*
 	uint32_t can_br =
 	CAN_BR_BRP(27)       // Baud rate prescaler (tQ = (27+1)/84 MHz)
 	| CAN_BR_SJW(1)      // Synchronization jump width = 2 TQ
 	| CAN_BR_PROPAG(5)   // Propagation segment = 6 TQ
 	| CAN_BR_PHASE1(11)  // Phase segment 1 = 12 TQ
 	| CAN_BR_PHASE2(4);  // Phase segment 2 = 5 TQ
-
+	*/
+	
+	uint32_t can_br = 
+	CAN_BR_BRP(33)
+	|CAN_BR_SJW(1)
+	|CAN_BR_PROPAG(3)
+	|CAN_BR_PHASE1(6)
+	|CAN_BR_PHASE2(7);
 
 	//Set baudrate, Phase1, phase2 and propagation delay for can bus. Must match on all nodes!
-	CAN0->CAN_BR = can_br; 
+	//CAN0->CAN_BR = can_br;
+	
+	CAN0->CAN_BR = can_br;
+	
+
 	
 
 	/****** Start of mailbox configuration ******/
@@ -91,12 +102,13 @@ uint8_t can_init (uint8_t num_tx_mb, uint8_t num_rx_mb){
 	uint32_t can_ier = 0;
 
 	/* Configure receive mailboxes */
-	for (int n = num_tx_mb; n <= num_rx_mb + num_tx_mb; n++)  //Simply one mailbox setup for all messages. You might want to apply filter for them.
+	//for (int n = num_tx_mb; n <= num_rx_mb + num_tx_mb; n++)
+	for (int n = num_tx_mb; n < num_rx_mb + num_tx_mb; n++)  //Simply one mailbox setup for all messages. You might want to apply filter for them.
 	{
 		CAN0->CAN_MB[n].CAN_MAM = 0; //Accept all messages
-		CAN0->CAN_MB[n].CAN_MID = 0; //Set adress to 11bit old version was //CAN_MID_MIDE;
+		CAN0->CAN_MB[n].CAN_MID = CAN_MID_MIDE; //CAN_MID_MIDE;
 		CAN0->CAN_MB[n].CAN_MMR = (CAN_MMR_MOT_MB_RX);
-		CAN0->CAN_MB[n].CAN_MCR |= CAN_MCR_MTCR;
+		CAN0->CAN_MB[n].CAN_MCR = CAN_MCR_MTCR;  //|= CAN_MCR_MTCR; 
 
 		can_ier |= 1 << n; //Enable interrupt on rx mailbox
 	}
@@ -112,9 +124,18 @@ uint8_t can_init (uint8_t num_tx_mb, uint8_t num_rx_mb){
 
 	//Enable interrupt on receive mailboxes
 	CAN0->CAN_IER = can_ier;
+	
+	//Check that mailboxes are armed // NEW
+	printf("MB1:MSR=0x%08lX  MB2:MSR=0x%08lX\r\n",
+       (unsigned long)CAN0->CAN_MB[1].CAN_MSR,
+       (unsigned long)CAN0->CAN_MB[2].CAN_MSR);
 
+	uint32_t imr = CAN0->CAN_IMR; // should have MB1/MB2 bits set to be able to receive, MB0 to send.
+	printf("Checking enabled interrupts IMR=0x%08lX\r\n", (unsigned long)imr);
 	//Enable interrupt in NVIC 
 	NVIC_EnableIRQ(ID_CAN0);
+	
+	//__enable_irq();
 
 	//enable CAN
 	CAN0->CAN_MR |= CAN_MR_CANEN;
@@ -216,7 +237,7 @@ uint8_t print_canmsg(const CAN_MESSAGE* msg) {
 	
 	printf("CAN RX  id=0x%03X  data:", msg->id, msg->data_length);
 	for (uint8_t i = 0; i < msg->data_length; i++) {
-		printf(" %02c", (uint8_t)msg->data[i]);
+		printf(" %02c", msg->data[i]);
 	}
 	printf("\r\n");
 	return 0;

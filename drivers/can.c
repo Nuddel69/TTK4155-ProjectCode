@@ -96,13 +96,15 @@ int8_t can_read(struct can_device *dev, struct CAN_frame *out) {
 		
 	for (uint8_t i=0; i < out->dlc; i++) {
 		MCP2515_read(dev,MCP2515_RXB0D0 + i,(uint8_t*)&out->data[i]);
-
-    for (uint8_t i = 0; i < out->dlc; i++) {
-    MCP2515_read(dev, MCP2515_RXB0D0 + i, &out->data[i]);
-    printf("%c", (char)out->data[i]);
-    }
-    printf("\r\n");
 	}
+	//Print once
+	for (uint8_t i = 0; i < out->dlc; i++){ 
+		putchar((char)out->data[i]);
+	}
+	putchar('\r'); putchar('\n');
+	
+	// Clear RX0IF to clear buffer for next message
+	MCP2515_bit_modify(dev, MCP2515_CANINTF, (1 << 0), 0x00); // RX0IF=bit0
 	
 	return 0;
 }
@@ -145,7 +147,7 @@ int8_t CAN_write(struct can_device *dev, uint8_t address,
 // External interrupt PE0, From MCP2515
 ISR(INT2_vect) { 
 	
-	printf("External interrupt"); 
+	printf("External interrupt \r\n"); 
 	uint8_t status;
 	MCP2515_read_status(can_irq,&status);
 	

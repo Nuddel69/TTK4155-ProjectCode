@@ -19,6 +19,8 @@
 
 #define DEBUG_INTERRUPT 0
 
+volatile uint32_t can0_irq_hits = 0;
+
 /**
  * \brief CAN0 Interrupt handler for RX, TX and bus error interrupts
  *
@@ -28,8 +30,11 @@
  */
 void CAN0_Handler( void )
 {
+	
+	can0_irq_hits++;            // prove we got here
+	
 	if(DEBUG_INTERRUPT)printf("CAN0 interrupt\n\r");
-	char can_sr = CAN0->CAN_SR; 
+	uint32_t can_sr = CAN0->CAN_SR; 
 	
 	//RX interrupt
 	if(can_sr & (CAN_SR_MB1 | CAN_SR_MB2) )//Only mailbox 1 and 2 specified for receiving
@@ -58,6 +63,7 @@ void CAN0_Handler( void )
 		}
 		if(DEBUG_INTERRUPT)printf("\n\r");
 	}
+
 	
 	if(can_sr & CAN_SR_MB0)
 	{

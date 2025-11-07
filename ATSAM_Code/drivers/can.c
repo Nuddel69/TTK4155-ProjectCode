@@ -16,6 +16,7 @@ void can_printmsg(CanMsg m) {
 #define txMailbox 0
 #define rxMailbox 1
 
+/*
 void can_init(CanInit init, uint8_t rxInterrupt) {
   // Disable CAN
   CAN0->CAN_MR &= ~CAN_MR_CANEN;
@@ -37,9 +38,11 @@ void can_init(CanInit init, uint8_t rxInterrupt) {
   PIOA->PIO_PUER = (PIO_PA1A_CANRX0 | PIO_PA0A_CANTX0);
 
   // Enable Clock for CAN0 in PMC
-  // DIV = 1 (can clk = MCK/2), CMD = 1 (write), PID = 2B (CAN0)
-  PMC->PMC_PCR = PMC_PCR_EN | (0 /*??*/ << PMC_PCR_DIV_Pos) | PMC_PCR_CMD |
-                 (ID_CAN0 << PMC_PCR_PID_Pos);
+  // DIV = 1 (can clk = MCK/2), CMD = 1 (write), PID = 2B (CAN0) */
+  //PMC->PMC_PCR = PMC_PCR_EN | (0 /*??*/ << PMC_PCR_DIV_Pos) | PMC_PCR_CMD |
+             
+	/*		   
+			     (ID_CAN0 << PMC_PCR_PID_Pos);
   PMC->PMC_PCER1 |= 1 << (ID_CAN0 - 32);
 
   // Set baudrate, Phase1, phase2 and propagation delay for can bus. Must match
@@ -62,11 +65,12 @@ void can_init(CanInit init, uint8_t rxInterrupt) {
     // Enable interrupt in NVIC
     NVIC_EnableIRQ(ID_CAN0);
   }
+ 
 
   // Enable CAN
   CAN0->CAN_MR |= CAN_MR_CANEN;
 }
-
+*/
 void can_tx(CanMsg m) {
   while (!(CAN0->CAN_MB[txMailbox].CAN_MSR & CAN_MSR_MRDY)) {
   }

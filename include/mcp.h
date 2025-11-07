@@ -94,8 +94,7 @@
 #define MCP2515_BRP 0x00       
 #define MCP2515_VAL_CNF1 0x03  // BRP=0, SJW=1 TQ  // Change this t 0x00 for 1Mbps 0x01 for 250kbps, and 0x03 for 125kbps
 #define MCP2515_VAL_CNF2 0xBA  // BTLMODE=1, PHSEG1=8 TQ, PRSEG=3 TQ
-#define MCP2515_VAL_CNF3 0x07  
-// this gives 20 TQ total. = 60%
+#define MCP2515_VAL_CNF3 0x03  
 
 // CANCTRL Register
 #define MODE_NORMAL     0x00

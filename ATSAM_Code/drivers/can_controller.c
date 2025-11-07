@@ -21,7 +21,7 @@
  *
  * \retval Success(0) or failure(1)
  */
-uint8_t can_init_def_tx_rx_mb() { return can_init(); }
+uint8_t can_init_def_tx_rx_mb() { return can_init(1,2); }
 
 /**
  * \brief Initialize can bus
@@ -35,7 +35,14 @@ uint8_t can_init_def_tx_rx_mb() { return can_init(); }
  * \retval Success(0) or failure(1)
  */
 
-uint8_t can_init(void) {
+
+uint8_t can_init(uint8_t num_tx_mb,uint8_t num_rx_mb) {
+	
+	//Make sure num_rx_mb and num_tx_mb is valid
+	if(num_rx_mb > 8 | num_tx_mb > 8 | num_rx_mb + num_tx_mb > 8)
+	{
+		return 1; //Too many mailboxes is configured
+	}
 
   uint32_t ul_status;
 
@@ -47,9 +54,9 @@ uint8_t can_init(void) {
   // Disable interrupts on CANH and CANL pins
   PIOA->PIO_IDR = PIO_PA8A_URXD | PIO_PA9A_UTXD;
 
-  // // Select CAN0 RX and TX in PIOA
-  // uint32_t ul_sr = PIOA->PIO_ABSR;
-  // PIOA->PIO_ABSR = ~(PIO_PA1A_CANRX0 | PIO_PA0A_CANTX0) & ul_sr;
+  // Select CAN0 RX and TX in PIOA
+  uint32_t ul_sr = PIOA->PIO_ABSR;
+  PIOA->PIO_ABSR = ~(PIO_PA1A_CANRX0 | PIO_PA0A_CANTX0) & ul_sr;
 
   // Select CAN0 RX and TX in PIOA
   PIOA->PIO_ABSR &= ~(PIO_PA1A_CANRX0 | PIO_PA0A_CANTX0);
@@ -67,11 +74,11 @@ uint8_t can_init(void) {
                                                // = 1 (write), PID = 2B (CAN0)
   PMC->PMC_PCER1 |= 1 << (ID_CAN0 - 32);
 
-  uint32_t can_br = CAN_BR_BRP(27)  // Baud rate prescaler (tQ = (27+1)/84 MHz)
-                    | CAN_BR_SJW(1) // Synchronization jump width = 2 TQ
-                    | CAN_BR_PROPAG(5)  // Propagation segment = 6 TQ
-                    | CAN_BR_PHASE1(11) // Phase segment 1 = 12 TQ
-                    | CAN_BR_PHASE2(4); // Phase segment 2 = 5 TQ
+  uint32_t can_br = CAN_BR_BRP(33)
+					|CAN_BR_SJW(1)
+					|CAN_BR_PROPAG(3)
+					|CAN_BR_PHASE1(6)
+					|CAN_BR_PHASE2(7);
 
   // Set baudrate, Phase1, phase2 and propagation delay for can bus. Must match
   // on all nodes!
@@ -81,26 +88,25 @@ uint8_t can_init(void) {
 
   uint32_t can_ier = 0;
 
-  /* /* Configure receive mailboxes */
-  /* for (int n = 1; n <= num_rx_mb; */
-  /*      n++) // Simply one mailbox setup for all messages. You might want to
-   */
-  /*           // apply filter for them. */
-  /* { */
-  /*   CAN0->CAN_MB[n].CAN_MAM = 0; // Accept all messages */
-  /*   CAN0->CAN_MB[n].CAN_MID = */
-  /*       0; // Set adress to 11bit old version was //CAN_MID_MIDE; */
-  /*   CAN0->CAN_MB[n].CAN_MMR = (CAN_MMR_MOT_MB_RX); */
-  /*   CAN0->CAN_MB[n].CAN_MCR |= CAN_MCR_MTCR; */
-  /**/
-  /*   can_ier |= 1 << n; // Enable interrupt on rx mailbox */
-  /* } */
-  /**/
-  /* /*Configure transmit mailboxes */
-  /* for (int n = 0; n < num_tx_mb; n++) { */
-  /*   CAN0->CAN_MB[n].CAN_MID = CAN_MID_MIDE; */
-  /*   CAN0->CAN_MB[n].CAN_MMR = (CAN_MMR_MOT_MB_TX); */
-  /* } */
+   /* Configure receive mailboxes */
+   for (int n = 1; n <= num_rx_mb; 
+        n++) // Simply one mailbox setup for all messages. You might want to
+   
+   // apply filter for them. 
+   { 
+     CAN0->CAN_MB[n].CAN_MAM = 0; // Accept all messages 
+     //CAN0->CAN_MB[n].CAN_MID = CAN_MID_MIDE; // Set adress to 11bit old version was //CAN_MID_MIDE; 
+     CAN0->CAN_MB[n].CAN_MMR = (CAN_MMR_MOT_MB_RX); 
+     CAN0->CAN_MB[n].CAN_MCR |= CAN_MCR_MTCR; 
+  
+     can_ier |= 1 << n; // Enable interrupt on rx mailbox 
+   } 
+  
+   /*Configure transmit mailboxes */
+   for (int n = 0; n <= num_tx_mb; n++) { 
+     CAN0->CAN_MB[n].CAN_MID = CAN_MID_MIDE; 
+     CAN0->CAN_MB[n].CAN_MMR = (CAN_MMR_MOT_MB_TX); 
+   } 
 
   // transmit
   CAN0->CAN_MB[0].CAN_MID = CAN_MID_MIDE;

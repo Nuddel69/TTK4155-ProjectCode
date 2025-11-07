@@ -21,7 +21,7 @@
   USART_SendString(_log_module_name);                                          \
   USART_SendString(": ");                                                      \
   USART_SendString(inf_string);                                                \
-  USART_SendString((char *)'\n');
+  USART_endl();
 #else
 #define LOG_INF(inf_string, log_level) (void(0))
 #endif
@@ -32,7 +32,7 @@
   USART_SendString(_log_module_name);                                          \
   USART_SendString(": ");                                                      \
   USART_SendString(err_string);                                                \
-  USART_SendString('\n');                                                      \
+  USART_endl();                                                                \
   STATUS_ASSERT(status)
 #else
 #define LOG_ERR(err_string, status) (void(0))

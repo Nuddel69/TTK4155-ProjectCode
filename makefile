@@ -18,8 +18,10 @@ CLOCK := 4915200 # Default clock speed at lab - can
                  # be overwritten by passing flag 
                  # CLOCK=<speed> to make command
 
+LOG := LOG_LEVEL_INFO # Log level
+
 CC := avr-gcc
-CFLAGS := -Iinclude -O -std=c11 -mmcu=$(TARGET_CPU) -ggdb -DF_CPU=$(CLOCK)
+CFLAGS := -Iinclude -O -std=c11 -mmcu=$(TARGET_CPU) -ggdb -DF_CPU=$(CLOCK) -DLOG_LEVEL=${LOG}
 
 OBJECT_FILES = $(SOURCE_FILES:%.c=$(BUILD_DIR)/%.o)
 

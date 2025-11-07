@@ -40,19 +40,16 @@ int main(void) {
     printf("Failed to initialize CAN\r\n");
   }
   
-  //Manual IRQ test
+
+  printf("-----Node2 Init complete------\r\n");
+  
+    //Manual IRQ test
   extern volatile uint32_t can0_irq_hits;  // define in can_interrupt.c
   NVIC_SetPendingIRQ(CAN0_IRQn);           // force an interrupt
   for (volatile int i=0;i<100000;i++){}    // brief spin
   printf("CAN0 hits=%lu\r\n", (unsigned long)can0_irq_hits);
 
 
-  printf("-----Node2 Init complete------\r\n");
-  
-  printf("SR=0x%08lX  MB1:MSR=0x%08lX  MB2:MSR=0x%08lX\r\n",
-       (unsigned long)CAN0->CAN_SR,
-       (unsigned long)CAN0->CAN_MB[1].CAN_MSR,
-       (unsigned long)CAN0->CAN_MB[2].CAN_MSR);
 
   // TEST for checking if system is live, can be removed
   PIOB->PIO_OER = (1 << 27);

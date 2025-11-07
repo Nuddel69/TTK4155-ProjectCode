@@ -58,9 +58,10 @@ uint8_t can_init(uint8_t num_tx_mb,uint8_t num_rx_mb) {
   uint32_t ul_sr = PIOA->PIO_ABSR;
   PIOA->PIO_ABSR = ~(PIO_PA1A_CANRX0 | PIO_PA0A_CANTX0) & ul_sr;
 
-  // Select CAN0 RX and TX in PIOA
+  /*// Select CAN0 RX and TX in PIOA
   PIOA->PIO_ABSR &= ~(PIO_PA1A_CANRX0 | PIO_PA0A_CANTX0);
-
+  */
+  
   // Disable the Parallel IO (PIO) of the Rx and Tx pins so that the peripheral
   // controller can use them
   PIOA->PIO_PDR = PIO_PA1A_CANRX0 | PIO_PA0A_CANTX0;
@@ -74,11 +75,7 @@ uint8_t can_init(uint8_t num_tx_mb,uint8_t num_rx_mb) {
                                                // = 1 (write), PID = 2B (CAN0)
   PMC->PMC_PCER1 |= 1 << (ID_CAN0 - 32);
 
-  uint32_t can_br = CAN_BR_BRP(33)
-					|CAN_BR_SJW(1)
-					|CAN_BR_PROPAG(3)
-					|CAN_BR_PHASE1(6)
-					|CAN_BR_PHASE2(7);
+  uint32_t can_br = 0x290165; //SMP 2B =0x0, BRP=0x29 ,SJV=0x0,PROP 0x1,PHASE1=0x6,PHASE2=0x5,0x290165
 
   // Set baudrate, Phase1, phase2 and propagation delay for can bus. Must match
   // on all nodes!
@@ -89,16 +86,13 @@ uint8_t can_init(uint8_t num_tx_mb,uint8_t num_rx_mb) {
   uint32_t can_ier = 0;
 
    /* Configure receive mailboxes */
-   for (int n = 1; n <= num_rx_mb; 
-        n++) // Simply one mailbox setup for all messages. You might want to
-   
-   // apply filter for them. 
+   for (int n = 1; n <= num_rx_mb; n++) // Simply one mailbox setup for all messages. You might want to // apply filter for them. 
    { 
      CAN0->CAN_MB[n].CAN_MAM = 0; // Accept all messages 
-     //CAN0->CAN_MB[n].CAN_MID = CAN_MID_MIDE; // Set adress to 11bit old version was //CAN_MID_MIDE; 
+     CAN0->CAN_MB[n].CAN_MID = CAN_MID_MIDE; // Set adress to 11bit old version was //CAN_MID_MIDE; 
      CAN0->CAN_MB[n].CAN_MMR = (CAN_MMR_MOT_MB_RX); 
      CAN0->CAN_MB[n].CAN_MCR |= CAN_MCR_MTCR; 
-  
+
      can_ier |= 1 << n; // Enable interrupt on rx mailbox 
    } 
   
@@ -108,6 +102,7 @@ uint8_t can_init(uint8_t num_tx_mb,uint8_t num_rx_mb) {
      CAN0->CAN_MB[n].CAN_MMR = (CAN_MMR_MOT_MB_TX); 
    } 
 
+/*
   // transmit
   CAN0->CAN_MB[0].CAN_MID = CAN_MID_MIDE;
   CAN0->CAN_MB[0].CAN_MMR = CAN_MMR_MOT_MB_TX;
@@ -117,11 +112,21 @@ uint8_t can_init(uint8_t num_tx_mb,uint8_t num_rx_mb) {
   CAN0->CAN_MB[1].CAN_MID = 0;
   CAN0->CAN_MB[1].CAN_MMR = CAN_MMR_MOT_MB_RX;
   CAN0->CAN_MB[1].CAN_MCR |= CAN_MCR_MTCR;
-
+*/
   /****** End of mailbox configuraion ******/
+	
+  printf("Values before activating\r\nSR=0x%08lX  MB1:MSR=0x%08lX  MB2:MSR=0x%08lX\r\n",
+       CAN0->CAN_SR,
+       CAN0->CAN_MB[1].CAN_MSR,
+       CAN0->CAN_MB[2].CAN_MSR);
 
   // Enable interrupt on receive mailboxes
   CAN0->CAN_IER = can_ier;
+  
+    printf("Values after activating\r\nSR=0x%08lX  MB1:MSR=0x%08lX  MB2:MSR=0x%08lX\r\n",
+       CAN0->CAN_SR,
+       CAN0->CAN_MB[1].CAN_MSR,
+       CAN0->CAN_MB[2].CAN_MSR);
 
   // Enable interrupt in NVIC
   NVIC_EnableIRQ(ID_CAN0);

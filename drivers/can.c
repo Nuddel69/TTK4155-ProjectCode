@@ -242,9 +242,9 @@ int8_t MCP2515_init(struct can_device *dev) {
 	} 
 
   //BRP and CAN timing config
-  MCP2515_write(dev, MCP2515_CNF1, MCP2515_VAL_CNF1);
-  MCP2515_write(dev, MCP2515_CNF2, MCP2515_VAL_CNF2);
-  MCP2515_write(dev, MCP2515_CNF3, MCP2515_VAL_CNF3);
+  MCP2515_bit_modify(dev, MCP2515_CNF1, MCP2515_VAL_CNF1,MCP2515_VAL_CNF1);
+  MCP2515_bit_modify(dev, MCP2515_CNF2, MCP2515_VAL_CNF2,MCP2515_VAL_CNF2);
+  MCP2515_bit_modify(dev, MCP2515_CNF3, MCP2515_VAL_CNF3,MCP2515_VAL_CNF3);
 
 	MCP2515_read(dev,MCP2515_CNF1,&value);
 	if (value != MCP2515_VAL_CNF1){

@@ -29,7 +29,7 @@ struct can_device can = {SSE2};
 struct menu_cfg menu;
 
 static const char *menu_items[] = {"Start game", "Settings"};
-struct CAN_frame can_msg  = {0xFF,0x08,"HiWorld",0,0};
+struct CAN_frame can_msg  = {0x100,0x08,"HiWorld",1,0};
 
 int main() {
   int status = 0;
@@ -79,11 +79,10 @@ int main() {
 	can_write(&can, can_msg);
 	_delay_ms(10);
    uint8_t status;
-   _delay_ms(5000);
+   _delay_ms(500);
    MCP2515_read(&can,MCP2515_TXB0CTRL,&status);
    printf("TXB0CTRL=0x%02X\r\n",status);
 	_delay_ms(10);
-   
-	_delay_ms(1000);
+  
   }
 }

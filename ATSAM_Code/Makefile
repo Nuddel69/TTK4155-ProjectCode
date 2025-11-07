@@ -8,8 +8,7 @@ MCUTYPE = __SAM3X8E__
 SOURCE_FILES = \
 	$(BOOTUP) \
 	main.c \
-	drivers/can_controller.c \
-	drivers/can_interrupt.c \
+	drivers/can.c \
 	drivers/led.c \
 	drivers/time.c \
 	drivers/uart.c \
@@ -48,14 +47,13 @@ $(BUILD_DIR)/%.o : %.s | $(BUILD_DIR)
 $(ELF) : $(OBJS) | $(BUILD_DIR)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
 
-
-.PHONY: clean
-clean:
-	rm -rf $(BUILD_DIR)
-
 .PHONY: compiledb
 compiledb:
 	@bear -- make
+
+.PHONY: clean
+clean:
+	@rm -rf $(BUILD_DIR)
 
 .PHONY: debug
 debug: $(ELF)

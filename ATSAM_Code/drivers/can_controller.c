@@ -195,8 +195,7 @@ uint8_t can_receive(CAN_MESSAGE *can_msg, uint8_t rx_mb_id) {
 
   // Get message ID
   can_msg->id =
-      (uint16_t)((CAN0->CAN_MB[rx_mb_id].CAN_MID & CAN_MID_MIDvA_Msk) >>
-                 CAN_MID_MIDvA_Pos);
+      (uint16_t)((CAN0->CAN_MB[rx_mb_id].CAN_MID & CAN_MID_MIDvA_Msk) >>CAN_MID_MIDvA_Pos);
 
   // Get data length
   can_msg->data_length =
@@ -229,10 +228,103 @@ uint8_t can_receive(CAN_MESSAGE *can_msg, uint8_t rx_mb_id) {
 
 uint8_t print_canmsg(const CAN_MESSAGE *msg) {
 
-  printf("CAN RX  id=0x%03X  data:", msg->id, msg->data_length);
+  printf("CAN RX  id=0x%06X  data:", msg->id, msg->data_length);
   for (uint8_t i = 0; i < msg->data_length; i++) {
     printf("%c", (uint8_t)msg->data[i]);
   }
   printf("\r\n");
   return 0;
 }
+
+
+//DEBUGING function for forcing params for  
+void force_mailbox_layout_safe(void) {
+	// Disable CAN before reconfiguring MOT/MID/MAM
+	CAN0->CAN_MR &= ~CAN_MR_CANEN;
+	(void)CAN0->CAN_SR; // read to clear
+
+	// MB0: TX
+	CAN0->CAN_MB[0].CAN_MMR = CAN_MMR_MOT_MB_TX;
+
+	// MB1: accept-all EXTENDED (29-bit) — OVERWRITE mode
+	CAN0->CAN_MB[1].CAN_MMR = CAN_MMR_MOT_MB_RX_OVERWRITE;
+	CAN0->CAN_MB[1].CAN_MAM = 0;                // no filtering
+	CAN0->CAN_MB[1].CAN_MID = CAN_MID_MIDE;     // MIDE=1 → extended layout
+	CAN0->CAN_MB[1].CAN_MCR = CAN_MCR_MTCR;     // arm
+
+	// MB2: accept-all STANDARD (11-bit) — OVERWRITE mode
+	CAN0->CAN_MB[2].CAN_MMR = CAN_MMR_MOT_MB_RX_OVERWRITE;
+	CAN0->CAN_MB[2].CAN_MAM = 0;                // no filtering
+	CAN0->CAN_MB[2].CAN_MID = 0;                // MIDE=0 → standard layout
+	CAN0->CAN_MB[2].CAN_MCR = CAN_MCR_MTCR;     // arm
+
+	// Enable CAN
+	CAN0->CAN_MR |= CAN_MR_CANEN;
+}
+
+
+/*
+
+// ---------- Diagnostics ----------
+static void print_can_health_once(void) {
+    uint32_t sr  = CAN0->CAN_SR;
+    uint32_t ecr = CAN0->CAN_ECR;
+
+    uint8_t rec = (ecr & CAN_ECR_REC_Msk) >> CAN_ECR_REC_Pos;
+    uint8_t tec = (ecr & CAN_ECR_TEC_Msk) >> CAN_ECR_TEC_Pos;
+
+    printf("[CAN] ECR: REC=%u TEC=%u  SR:", rec, tec);
+    if (sr & CAN_SR_BOFF)  printf(" BOFF");
+    if (sr & CAN_SR_ERRP)  printf(" ERRP");
+    if (sr & CAN_SR_WARN)  printf(" WARN");
+    if (sr & CAN_SR_AERR)  printf(" AERR");
+    if (sr & CAN_SR_SERR)  printf(" SERR");
+    if (sr & CAN_SR_FERR)  printf(" FERR");
+    if (sr & CAN_SR_BERR)  printf(" BERR");
+    if (sr & CAN_SR_CERR)  printf(" CERR");
+    if (sr & CAN_SR_RBSY)  printf(" RBSY");
+    if (sr & CAN_SR_TBSY)  printf(" TBSY");
+    if (sr & CAN_SR_OVLSY) printf(" OVLSY");
+    printf("\n");
+}
+
+static void print_mb_state(uint8_t mb) {
+    uint32_t msr = CAN0->CAN_MB[mb].CAN_MSR;
+    uint8_t  dlc = (msr & CAN_MSR_MDLC_Msk) >> CAN_MSR_MDLC_Pos;
+    printf("[MB%u] MSR=0x%08lX  MRDY=%u  MMI=%u  RTR=%u  DLC=%u\n",
+           mb,
+           (unsigned long)msr,
+           (msr & CAN_MSR_MRDY) ? 1 : 0,
+           (msr & CAN_MSR_MMI)  ? 1 : 0,
+           (msr & CAN_MSR_MRTR) ? 1 : 0,
+           dlc);
+}
+
+static uint32_t extract_id_from_mb(uint8_t mb) {
+    uint32_t mid = CAN0->CAN_MB[mb].CAN_MID;
+    if (mid & CAN_MID_MIDE) {
+        // Extended (29-bit): SID(11) + EID(18)
+        uint32_t sid = (mid & CAN_MID_MIDvA_Msk) >> CAN_MID_MIDvA_Pos;
+        uint32_t eid = (mid & CAN_MID_MIDvB_Msk) >> CAN_MID_MIDvB_Pos;
+        return (sid << 18) | eid;
+    } else {
+        // Standard (11-bit)
+        return (mid & CAN_MID_MIDvA_Msk) >> CAN_MID_MIDvA_Pos;
+    }
+}
+
+
+static void dump_mb_roles(void) {
+    for (int i = 0; i < 3; i++) {
+        uint32_t mmr = CAN0->CAN_MB[i].CAN_MMR;
+        uint32_t mid = CAN0->CAN_MB[i].CAN_MID;
+        uint32_t mot = (mmr >> 24) & 0x7;
+        const char* role = (mot == 1) ? "RX"
+                           : (mot == 2) ? "RX_OVR"
+                           : (mot == 3) ? "TX"
+                           : "DIS";
+        printf("MB%d: MOT=%s  MIDE=%u\n", i, role, (mid & CAN_MID_MIDE) ? 1 : 0);
+    }
+}
+
+*/

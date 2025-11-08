@@ -28,5 +28,6 @@ uint8_t can_receive(CAN_MESSAGE *can_msg, uint8_t mailbox_id);
 
 // Our own functions
 uint8_t print_canmsg(const CAN_MESSAGE *msg);
+void force_mailbox_layout_safe(void);
 
 #endif /* CAN_CONTROLLER_H_ */

@@ -53,6 +53,7 @@
 #define MCP2515_RXB1CTRL	0x70
 #define MCP2515_RXB1SIDH	0x71
 #define MCP2515_RXB1SIDL	0x72
+#define MCP2515_TXB0EID0   0x34
 
 
 #define MCP2515_TX_IRQ		0x1C		// EN IRQ on transmit

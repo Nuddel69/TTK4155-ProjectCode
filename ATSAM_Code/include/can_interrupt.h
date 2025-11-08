@@ -8,14 +8,20 @@
  *
  */ 
 
-
 #ifndef CAN_INTERRUPT_H_
 #define CAN_INTERRUPT_H_
-void CAN0_Handler       ( void );
+
+#define CAN_RXQ_SIZE 16
+
+#include "can_controller.h"
+
+//Modified
+void CAN0_Handler( void );
 
 
-
-
+// Our functions
+static inline int can_rxq_add(CAN_MESSAGE *msg);
+int can_rxq_pull(CAN_MESSAGE *out);
 
 
 #endif /* CAN_INTERRUPT_H_ */

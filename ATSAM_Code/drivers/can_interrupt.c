@@ -19,7 +19,8 @@
 
 #define DEBUG_INTERRUPT 0
 
-volatile uint32_t can0_irq_hits = 0;
+static volatile uint8_t rxq_head = 0, rxq_tail = 0;
+CAN_MESSAGE rxq[CAN_RXQ_SIZE];
 
 /**
  * \brief CAN0 Interrupt handler for RX, TX and bus error interrupts
@@ -31,8 +32,6 @@ volatile uint32_t can0_irq_hits = 0;
 void CAN0_Handler( void )
 {
 	
-	can0_irq_hits++;            // prove we got here
-	
 	if(DEBUG_INTERRUPT)printf("CAN0 interrupt\n\r");
 	uint32_t can_sr = CAN0->CAN_SR; 
 	
@@ -43,12 +42,14 @@ void CAN0_Handler( void )
 		if(can_sr & CAN_SR_MB1)  //Mailbox 1 event
 		{
 			can_receive(&message, 1);
+			can_rxq_add(&message);
 
 		}
 		else if(can_sr & CAN_SR_MB2) //Mailbox 2 event
 		
 		{
 			can_receive(&message, 2);
+			can_rxq_add(&message);
 		}
 		else
 		{
@@ -87,4 +88,28 @@ void CAN0_Handler( void )
 	
 	NVIC_ClearPendingIRQ(ID_CAN0);
 	//sei();*/
+}
+
+
+//---------OUR FUNCTIONS
+ // Add to RX Buffer
+static inline int can_rxq_add(CAN_MESSAGE *msg) {
+	
+	uint8_t next = (uint8_t)((rxq_head + 1) & (CAN_RXQ_SIZE - 1));
+	if (next == rxq_tail){ 
+		return 0;
+	}	 
+	rxq[rxq_head] = *msg;
+	rxq_head = next;
+	return 1;
+}
+
+// Pull from RX buffer
+int can_rxq_pull(CAN_MESSAGE *out){
+	if (rxq_tail == rxq_head){
+		return 0;
+	}
+	*out = rxq[rxq_tail];
+	rxq_tail = (uint8_t)((rxq_tail + 1) & (CAN_RXQ_SIZE - 1));
+	return 1;
 }

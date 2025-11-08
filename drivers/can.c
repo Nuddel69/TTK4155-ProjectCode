@@ -43,11 +43,30 @@ int8_t can_init(struct can_device *dev) {
 }
 
 int8_t can_write(struct can_device *dev, struct CAN_frame msg) {
+	
+	
+if (msg.extended) {
+  // 29bit ID 
+  uint32_t id = msg.id & 0x1FFFFFFF;
+
+  uint8_t EID0 =  id        & 0xFF;         // EID[7:0]
+  uint8_t EID8 = (id >> 8)  & 0xFF;         // EID[15:8]
+  uint8_t SIDL = ((id >> 16) & 0x03)        // EID[17:16] -> SIDL<1:0>
+  | 0x08                                    // EXIDE=1 (bit3)
+  | ((id >> 18) & 0xE0);                    // SID[2:0]  -> SIDL<7:5>
+  uint8_t SIDH = (id >> 21) & 0xFF;         // SID[10:3] -> SIDH
+
+  MCP2515_write(dev, MCP2515_TXB0SIDH, SIDH);
+  MCP2515_write(dev, MCP2515_TXB0SIDL, SIDL);
+  MCP2515_write(dev, MCP2515_TXB0EID8, EID8);
+  MCP2515_write(dev, MCP2515_TXB0EID0, EID0);
+} else { // 11bit ID
   uint8_t ID_MSB = (0x7F8 & msg.id) >> 3;
   uint8_t ID_LSB = (0x7 & msg.id) << 5;
 
   MCP2515_write(dev, MCP2515_TXB0SIDH, ID_MSB);
   MCP2515_write(dev, MCP2515_TXB0SIDL, ID_LSB);
+}
   MCP2515_write(dev, TXB0DLC, msg.dlc);
 
   uint8_t buff0_status;

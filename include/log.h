@@ -12,8 +12,12 @@
 #define LOG_LEVEL LOG_LEVEL_INFO
 #endif
 
+#if LOG_LEVEL > LOG_LEVEL_NONE
 #define LOG_MODULE_DEFINE(module_name)                                         \
   static char *_log_module_name = module_name;
+#else
+#define LOG_MODULE_DEFINE(module_name) ;
+#endif
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
 #define LOG_INF(inf_string)                                                    \
@@ -23,7 +27,7 @@
   USART_SendString(inf_string);                                                \
   USART_endl();
 #else
-#define LOG_INF(inf_string, log_level) (void(0))
+#define LOG_INF(inf_string) (void(0))
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO

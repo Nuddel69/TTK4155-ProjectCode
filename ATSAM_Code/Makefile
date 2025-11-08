@@ -9,8 +9,11 @@ SOURCE_FILES = \
 	$(BOOTUP) \
 	main.c \
 	drivers/can.c \
+	drivers/can_controller.c \
+	drivers/can_interrupt.c \
 	drivers/led.c \
 	drivers/time.c \
+	drivers/servo.c \
 	drivers/pwm.c \
 	drivers/uart.c \
 	drivers/utils.c

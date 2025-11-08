@@ -11,6 +11,7 @@ SOURCE_FILES = \
 	drivers/can.c \
 	drivers/led.c \
 	drivers/time.c \
+	drivers/pwm.c \
 	drivers/uart.c \
 	drivers/utils.c
 

@@ -13,6 +13,9 @@ LOG_MODULE_DEFINE("CAN")
 struct can_device *can_irq;
 struct CAN_frame new_message;
 
+static volatile uint8_t rxq_head = 0, rxq_tail = 0;
+struct CAN_frame rxq[CAN_RXQ_SIZE];
+
 //------------------//
 //   GENERAL CAN    //
 //------------------//
@@ -111,18 +114,31 @@ int8_t can_read(struct can_device *dev, struct CAN_frame *out) {
   for (uint8_t i = 0; i < out->dlc; i++) {
     MCP2515_read(dev, MCP2515_RXB0D0 + i, (uint8_t *)&out->data[i]);
   }
-
-  // // Print once
-  // for (uint8_t i = 0; i < out->dlc; i++) {
-  //   putchar((char)out->data[i]);
-  // }
-  // putchar('\r');
-  // putchar('\n');
-
   // Clear RX0IF to clear buffer for next message
   MCP2515_bit_modify(dev, MCP2515_CANINTF, (1 << 0), 0x00); // RX0IF=bit0
-
   return 0;
+}
+
+
+static inline int can_rxq_add(struct CAN_frame *msg) {
+	
+	uint8_t next = (uint8_t)((rxq_head + 1) & (CAN_RXQ_SIZE - 1));
+	if (next == rxq_tail){
+		return 0;
+	}
+	rxq[rxq_head] = *msg;
+	rxq_head = next;
+	return 1;
+}
+
+// Pull from RX buffer
+int can_rxq_pull(struct CAN_frame *out){
+	if (rxq_tail == rxq_head){
+		return 0;
+	}
+	*out = rxq[rxq_tail];
+	rxq_tail = (uint8_t)((rxq_tail + 1) & (CAN_RXQ_SIZE - 1));
+	return 1;
 }
 
 /*
@@ -168,11 +184,13 @@ ISR(INT2_vect) {
 
   if (status & rx_buff_0_full) {
     can_read(can_irq, &new_message);
+	can_rxq_add(&new_message);
     LOG_INF("RX0 Full");
   }
 
   if (status & rx_buff_1_full) {
     can_read(can_irq, &new_message);
+	can_rxq_add(&new_message);
     LOG_INF("RX1 Full");
   }
 

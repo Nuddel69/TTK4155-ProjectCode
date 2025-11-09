@@ -6,6 +6,7 @@
 #include "log.h"
 #include "spi.h"
 #include "utils.h"
+#include "can.h"
 
 LOG_MODULE_DEFINE("IO")
 
@@ -432,3 +433,4 @@ int io_oled_blink(struct io_oled_device *dev, uint8_t blinks) {
   }
   return 0;
 }
+

@@ -13,6 +13,57 @@
 
 #include <stdint.h>
 
+#define CAN_ID_ERROR     0x01
+#define CAN_ID_GAMEOVER  0x02
+#define CAN_ID_GAMESTART 0x03
+#define CAN_ID_JOYPOS    0x04
+#define CAN_ID_SOLONOID  0x05
+#define CAN_ID_MOTORPOS  0x06
+#define CAN_ID_SCORE     0x07
+#define CAN_ID_DEFAULT   0x08
+
+
+struct io_joystick_position {
+	int x; // X value in % from the middle
+	int y; // Y value in % from the middle
+};
+
+struct __attribute__((packed)) io_avr_buttons {
+	union {
+		uint8_t right;
+		struct {
+			uint8_t R1 : 1;
+			uint8_t R2 : 1;
+			uint8_t R3 : 1;
+			uint8_t R4 : 1;
+			uint8_t R5 : 1;
+			uint8_t R6 : 1;
+		};
+	};
+	union {
+		uint8_t left;
+		struct {
+			uint8_t L1 : 1;
+			uint8_t L2 : 1;
+			uint8_t L3 : 1;
+			uint8_t L4 : 1;
+			uint8_t L5 : 1;
+			uint8_t L6 : 1;
+			uint8_t L7 : 1;
+		};
+	};
+	union {
+		uint8_t nav;
+		struct {
+			uint8_t NB : 1;
+			uint8_t NR : 1;
+			uint8_t ND : 1;
+			uint8_t NL : 1;
+			uint8_t NU : 1;
+		};
+	};
+};
+
 typedef struct can_message_t {
   uint16_t id;
   char data_length;

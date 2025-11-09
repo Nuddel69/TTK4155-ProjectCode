@@ -262,6 +262,73 @@ void force_mailbox_layout_safe(void) {
 	CAN0->CAN_MR |= CAN_MR_CANEN;
 }
 
+int process_can_frame(){
+	
+	CAN_MESSAGE msg;
+	if (can_rxq_pull(&msg)){
+	
+		switch (msg.id){
+		
+			case CAN_ID_ERROR:{   //This ID is reserved for errors, BOTH node1 and node2
+		
+				// TODO: handle error / stop game
+		
+			break;
+			}
+			case CAN_ID_GAMEOVER:{//This ID is reserved for gameover message from node2
+		
+			
+			break;
+			}
+			case CAN_ID_GAMESTART:{//This ID is reserved for starting a new game from node1
+			
+				// TODO: start game
+			
+			break;
+			}
+			case CAN_ID_JOYPOS:{  //This ID is reserved for sending Joystick position and button state
+					
+				struct io_joystick_position joy_pos = { (int8_t)msg.data[0], (int8_t)msg.data[1] };
+				struct io_avr_buttons btn;
+				btn.right = (uint8_t)msg.data[2];
+				btn.left  = (uint8_t)msg.data[3];
+				btn.nav   = (uint8_t)msg.data[4];
+
+				printf("Buttons R=0x%02X L=0x%02X N=0x%02X, pos x:%d, y:%d\r\n",
+				btn.right, btn.left, btn.nav, joy_pos.x, joy_pos.y);
+				// update_control(joy_pos, btn);		
+			
+				//update_control(joy_pos, btn); //TODO
+								
+			break;
+			}
+			case CAN_ID_SOLONOID:{//This ID is reserved for sending trigger signal for the solonoid
+		
+				// TODO: trigger solonoid
+		
+			break;
+			}
+			case CAN_ID_MOTORPOS:{//This ID is reserved for sending current motor position
+		
+			break;
+			}
+			case CAN_ID_SCORE:{   //This ID is reserved for sending gamescore
+		
+			break;
+			}
+			case CAN_ID_DEFAULT:{ //This ID is for anything else
+		
+			break;
+			}
+			default:{
+				
+			}
+		}
+	}
+	
+}
+
+
 
 /*
 

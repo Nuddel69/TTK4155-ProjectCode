@@ -294,7 +294,8 @@ int process_can_frame(){
 				btn.left  = (uint8_t)msg.data[3];
 				btn.nav   = (uint8_t)msg.data[4];
 
-				printf("Buttons R=0x%02X L=0x%02X N=0x%02X, pos x:%d, y:%d\r\n",
+				//printf("%c[2J",27);
+				printf("Buttons R=0x%02X L=0x%02X N=0x%02X, pos x:%d, y:%d\r",
 				btn.right, btn.left, btn.nav, joy_pos.x, joy_pos.y);
 				// update_control(joy_pos, btn);		
 			

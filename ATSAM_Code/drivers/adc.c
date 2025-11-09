@@ -11,22 +11,23 @@
 
 //Init a single ADC channel in freerun mode
 int adc_init(void){
+	
 	//Enable power to ADC 
-	PMC->PMC_PCER1 = (1 << (ID_ADC - 32));  // ID_ADC=37 PCER1 bit 5
+	PMC->PMC_PCER1 = PMC_PCER1_PID37;  // ID_ADC=37 PCER1 bit 5
 	
 	//Disable writeprotect (p.1353 datasheet)
 	ADC->ADC_WPMR =  ADC_WPMR_WPKEY_PASSWD; //ADC in ASCII shifted 8 (0x414443)<<8); 
 	
+	//Enable chosen channel(AD7 ch=0)
+	ADC->ADC_CHER = ADC_CHER_CH0;
+	
 	//SET MODE (P.1333 datasheet)
-	//12-bit, free-run, 1 MHz
+	//12-bit, freerun, 1 MHz
 	// ADCClock = 84MHz / ((41+1)*2) = 1.0 MHz
 	ADC->ADC_MR =ADC_MR_FREERUN|ADC_MR_PRESCAL(41)|ADC_MR_TRACKTIM(10)|ADC_MR_TRANSFER(2)|ADC_MR_STARTUP_SUT64;
 	
 	//Enable writeprotect (p.1353 datasheet), do we need a WP?
 	//ADC->ADC_WPMR =  ADC_WPMR_WPKEY_PASSWD|1; //ADC in ASCII shifted 8 +1 (0x414443)<<8)|1;
-
-	//Enable chosen channel(AD0 => ch=0)
-	ADC->ADC_CHER |= 1;
 	
 	//Start conversion, Since it is in freerun we only need to start it once. and read (uint16_t)(ADC->ADC_LCDR & 0xFFF) whenever flag is set
 	ADC->ADC_CR = ADC_CR_START;
@@ -36,10 +37,22 @@ int adc_init(void){
 
 static inline uint16_t adc_read(void){
 	while ((ADC->ADC_ISR & ADC_ISR_DRDY) == 0) {
-		//Wait untill read is ready
+		//Wait until read is ready
 	}
-	return (uint16_t)(ADC->ADC_LCDR & 0x0FFF);
+	//Mask because 12bit ADC
+	return (uint16_t)(ADC->ADC_CDR[0] & 0x0FFF);
 }
+
+//TEMP function to see if we actually read the ADC
+uint16_t adc_read_once(void){
+	while ((ADC->ADC_ISR & ADC_ISR_DRDY) == 0) {
+		//Wait until read is ready
+	}
+	//Mask because 12bit ADC
+	return (uint16_t)(ADC->ADC_CDR[0] & 0x0FFF);
+}
+
+
 
 int attempt_score(uint8_t *score){
 	

@@ -1,10 +1,9 @@
 #include <stddef.h>
-#include <stdio.h>
 #include <util/delay.h>
 
 #include "can.h"
 #include "io.h"
-#include "menu.h"
+#include "log.h"
 #include "spi.h"
 #include "timer.h"
 #include "uart.h"
@@ -13,16 +12,12 @@
 
 #define BAUD 9600
 
+LOG_MODULE_DEFINE("main")
+
+// Device Configs
 struct USART_config config = {BAUD, F_CPU};
-
 struct io_joystick_device joy = {0, 1, 0, 0};
-
-struct io_joystick_position pos;
-struct io_avr_buttons btn;
-
-struct io_oled_device oled = {SSB2};
 struct io_avr_device avr = {SSB3};
-
 struct can_device can = {SSE2};
 
 // Define settings sub menu
@@ -77,14 +72,7 @@ int main() {
   //status = can_init(&can);
   //STATUS_ASSERT(status)
 
-  printf("\n\r---Init Complete---\n\r");
-
-  io_avr_led_set(&avr, 0x0, 0x00);
-  io_avr_led_set(&avr, 0x1, 0x00);
-  io_avr_led_set(&avr, 0x2, 0x00);
-  io_avr_led_set(&avr, 0x3, 0x00);
-  io_avr_led_set(&avr, 0x4, 0x00);
-  io_avr_led_set(&avr, 0x5, 0x00);
+  LOG_INF("---Init complete---")
 
   while (1) {
     io_avr_buttons_read(&avr, &btn);    // Read button inputs from IO board

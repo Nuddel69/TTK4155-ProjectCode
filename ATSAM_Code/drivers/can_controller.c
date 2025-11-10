@@ -1,0 +1,398 @@
+/*
+ * can_controller.c
+ *
+ * Author: Gustav O. Often and Eivind H. J�lsgard
+ *
+ * For use in TTK4155 Embedded and Industrial Computer Systems Design
+ * NTNU - Norwegian University of Science and Technology
+ *
+ */
+
+#include "can_controller.h"
+
+#include "sam.h"
+
+// #include "../uart_and_printf/printf-stdarg.h"
+
+/**
+ * \brief Initialize can bus with predefined number of rx and tx mailboxes,
+ * CAN0->CAN_MB[0] is used for transmitting
+ * CAN0->CAN_MB[1,2] is used for receiving
+ *
+ * \retval Success(0) or failure(1)
+ */
+uint8_t can_init_def_tx_rx_mb() { return can_init(1,2); }
+
+/**
+ * \brief Initialize can bus
+ *
+ * \param num_tx_mb Number of transmit mailboxes, 	tx mb indexes: [0
+ * , num_tx_mb-1]
+ *
+ * \param num_rx_mb Number of receive mailboxes, 	rx mb indexes:
+ * [num_tx_mb, num_rx_mb-1]
+ *
+ * \retval Success(0) or failure(1)
+ */
+
+
+uint8_t can_init(uint8_t num_tx_mb,uint8_t num_rx_mb) {
+	
+	//Make sure num_rx_mb and num_tx_mb is valid
+	if(num_rx_mb > 8 | num_tx_mb > 8 | num_rx_mb + num_tx_mb > 8)
+	{
+		return 1; //Too many mailboxes is configured
+	}
+
+  uint32_t ul_status;
+
+  // Disable can
+  CAN0->CAN_MR &= ~CAN_MR_CANEN;
+  // Clear status register on read
+  ul_status = CAN0->CAN_SR;
+
+  // Disable interrupts on CANH and CANL pins
+  PIOA->PIO_IDR = PIO_PA8A_URXD | PIO_PA9A_UTXD;
+
+  // Select CAN0 RX and TX in PIOA
+  uint32_t ul_sr = PIOA->PIO_ABSR;
+  PIOA->PIO_ABSR = ~(PIO_PA1A_CANRX0 | PIO_PA0A_CANTX0) & ul_sr;
+
+  /*// Select CAN0 RX and TX in PIOA
+  PIOA->PIO_ABSR &= ~(PIO_PA1A_CANRX0 | PIO_PA0A_CANTX0);
+  */
+  
+  // Disable the Parallel IO (PIO) of the Rx and Tx pins so that the peripheral
+  // controller can use them
+  PIOA->PIO_PDR = PIO_PA1A_CANRX0 | PIO_PA0A_CANTX0;
+
+  // Enable pull up on CANH and CANL pin
+  PIOA->PIO_PUER = (PIO_PA1A_CANRX0 | PIO_PA0A_CANTX0);
+
+  // Enable Clock for CAN0 in PMC
+  PMC->PMC_PCR = PMC_PCR_EN | (0 << PMC_PCR_DIV_Pos) | PMC_PCR_CMD |
+                 (ID_CAN0 << PMC_PCR_PID_Pos); // DIV = 1(can clk = MCK/2), CMD
+                                               // = 1 (write), PID = 2B (CAN0)
+  PMC->PMC_PCER1 |= 1 << (ID_CAN0 - 32);
+
+  uint32_t can_br = 0x290165; //SMP 2B =0x0, BRP=0x29 ,SJV=0x0,PROP 0x1,PHASE1=0x6,PHASE2=0x5,0x290165
+
+  // Set baudrate, Phase1, phase2 and propagation delay for can bus. Must match
+  // on all nodes!
+  CAN0->CAN_BR = can_br;
+
+  /****** Start of mailbox configuration ******/
+
+  uint32_t can_ier = 0;
+
+   /* Configure receive mailboxes */
+   for (int n = 1; n <= num_rx_mb; n++) // Simply one mailbox setup for all messages. You might want to // apply filter for them. 
+   { 
+     CAN0->CAN_MB[n].CAN_MAM = 0; // Accept all messages 
+     CAN0->CAN_MB[n].CAN_MID = CAN_MID_MIDE; // Set adress to 11bit old version was //CAN_MID_MIDE; 
+     CAN0->CAN_MB[n].CAN_MMR = (CAN_MMR_MOT_MB_RX); 
+     CAN0->CAN_MB[n].CAN_MCR |= CAN_MCR_MTCR; 
+
+     can_ier |= 1 << n; // Enable interrupt on rx mailbox 
+   } 
+  
+   /*Configure transmit mailboxes */
+   for (int n = 0; n <= num_tx_mb; n++) { 
+     CAN0->CAN_MB[n].CAN_MID = CAN_MID_MIDE; 
+     CAN0->CAN_MB[n].CAN_MMR = (CAN_MMR_MOT_MB_TX); 
+   } 
+
+/*
+  // transmit
+  CAN0->CAN_MB[0].CAN_MID = CAN_MID_MIDE;
+  CAN0->CAN_MB[0].CAN_MMR = CAN_MMR_MOT_MB_TX;
+
+  // receive
+  CAN0->CAN_MB[1].CAN_MAM = 0; // Accept all messages
+  CAN0->CAN_MB[1].CAN_MID = 0;
+  CAN0->CAN_MB[1].CAN_MMR = CAN_MMR_MOT_MB_RX;
+  CAN0->CAN_MB[1].CAN_MCR |= CAN_MCR_MTCR;
+*/
+  /****** End of mailbox configuraion ******/
+	
+
+
+  // Enable interrupt on receive mailboxes
+  CAN0->CAN_IER = can_ier;
+  
+    printf("Values after activating\r\n MB1:MSR=0x%08lX  MB1:MCR=0x%08lX  MB1:MMR=0x%08lX\r\nMB2:MSR=0x%08lX  MB2:MCR=0x%08lX  MB2:MMR=0x%08lX\r\n",
+       CAN0->CAN_MB[1].CAN_MSR,
+	   CAN0->CAN_MB[1].CAN_MCR,
+	   CAN0->CAN_MB[1].CAN_MMR,
+	   CAN0->CAN_MB[2].CAN_MSR,
+	   CAN0->CAN_MB[2].CAN_MCR,
+	   CAN0->CAN_MB[2].CAN_MMR);
+
+  // Enable interrupt in NVIC
+  NVIC_EnableIRQ(ID_CAN0);
+
+  // enable CAN
+  CAN0->CAN_MR |= CAN_MR_CANEN;
+
+  return 0;
+}
+
+/**
+ * \brief Send can message from mailbox
+ *
+ * \param can_msg message to be sent
+ *
+ * \param tx_mb_id ID of transmit mailbox to be used
+ *
+ * \retval Success(0) or failure(1)
+ */
+uint8_t can_send(CAN_MESSAGE *can_msg, uint8_t tx_mb_id) {
+  // Check that mailbox is ready
+  if (CAN0->CAN_MB[tx_mb_id].CAN_MSR & CAN_MSR_MRDY) {
+    // Set message ID and use CAN 2.0B protocol
+    CAN0->CAN_MB[tx_mb_id].CAN_MID = CAN_MID_MIDvA(
+        can_msg->id); // CAN_MID_MIDvA(can_msg->id) | CAN_MID_MIDE ;
+
+    // Make sure message is not to long
+    if (can_msg->data_length > 7) {
+      can_msg->data_length = 7;
+      // Message is to long, sending only the first 8 bytes
+    }
+    // Put message in can data registers
+    CAN0->CAN_MB[tx_mb_id].CAN_MDL = can_msg->data[3] << 24 |
+                                     can_msg->data[2] << 16 |
+                                     can_msg->data[1] << 8 | can_msg->data[0];
+    CAN0->CAN_MB[tx_mb_id].CAN_MDH = can_msg->data[7] << 24 |
+                                     can_msg->data[6] << 16 |
+                                     can_msg->data[5] << 8 | can_msg->data[4];
+
+    // Set message length and mailbox ready to send
+    CAN0->CAN_MB[tx_mb_id].CAN_MCR =
+        (can_msg->data_length << CAN_MCR_MDLC_Pos) | CAN_MCR_MTCR;
+    return 0;
+  }
+
+  else // Mailbox busy
+  {
+    return 1;
+  }
+}
+
+/**
+ * \brief Read can message from mailbox
+ *
+ * \param can_msg struct instance to save received data
+ *
+ * \param rx_mb_id ID of receive mailbox to be used
+ *
+ * \retval Success(0) or failure(1)
+ */
+uint8_t can_receive(CAN_MESSAGE *can_msg, uint8_t rx_mb_id) {
+  // Check that mailbox is ready
+  if (!(CAN0->CAN_MB[rx_mb_id].CAN_MSR & CAN_MSR_MRDY)) {
+    return 1;
+  }
+
+  // Get message ID
+  can_msg->id =
+      (uint16_t)((CAN0->CAN_MB[rx_mb_id].CAN_MID & CAN_MID_MIDvA_Msk) >>CAN_MID_MIDvA_Pos);
+
+  // Get data length
+  can_msg->data_length =
+      (uint8_t)((CAN0->CAN_MB[rx_mb_id].CAN_MSR & CAN_MSR_MDLC_Msk) >>
+                CAN_MSR_MDLC_Pos);
+
+  // Get data from CAN mailbox
+  uint32_t data_low = CAN0->CAN_MB[rx_mb_id].CAN_MDL;
+  uint32_t data_high = CAN0->CAN_MB[rx_mb_id].CAN_MDH;
+
+  // Put data in CAN_MESSAGE object
+  for (int i = 0; i < can_msg->data_length; i++) {
+    if (i < 4) {
+      can_msg->data[i] = (char)(data_low & 0xff);
+      data_low = data_low >> 8;
+    } else {
+      can_msg->data[i] = (uint8_t)(data_high & 0xff);
+      data_high = data_high >> 8;
+    }
+  }
+
+  // Reset for new receive
+  CAN0->CAN_MB[rx_mb_id].CAN_MMR = CAN_MMR_MOT_MB_RX;
+  CAN0->CAN_MB[rx_mb_id].CAN_MCR |= CAN_MCR_MTCR;
+
+  return 0;
+}
+
+//-----------------------------Our own functions-------------------------
+
+uint8_t print_canmsg(const CAN_MESSAGE *msg) {
+
+  printf("CAN RX  id=0x%06X  data:", msg->id, msg->data_length);
+  for (uint8_t i = 0; i < msg->data_length; i++) {
+    printf("%c", (uint8_t)msg->data[i]);
+  }
+  printf("\r\n");
+  return 0;
+}
+
+
+//DEBUGING function for forcing params for  
+void force_mailbox_layout_safe(void) {
+	// Disable CAN before reconfiguring MOT/MID/MAM
+	CAN0->CAN_MR &= ~CAN_MR_CANEN;
+	(void)CAN0->CAN_SR; // read to clear
+
+	// MB0: TX
+	CAN0->CAN_MB[0].CAN_MMR = CAN_MMR_MOT_MB_TX;
+
+	// MB1: accept-all EXTENDED (29-bit) — OVERWRITE mode
+	CAN0->CAN_MB[1].CAN_MMR = CAN_MMR_MOT_MB_RX_OVERWRITE;
+	CAN0->CAN_MB[1].CAN_MAM = 0;                // no filtering
+	CAN0->CAN_MB[1].CAN_MID = CAN_MID_MIDE;     // MIDE=1 → extended layout
+	CAN0->CAN_MB[1].CAN_MCR = CAN_MCR_MTCR;     // arm
+
+	// MB2: accept-all STANDARD (11-bit) — OVERWRITE mode
+	CAN0->CAN_MB[2].CAN_MMR = CAN_MMR_MOT_MB_RX_OVERWRITE;
+	CAN0->CAN_MB[2].CAN_MAM = 0;                // no filtering
+	CAN0->CAN_MB[2].CAN_MID = 0;                // MIDE=0 → standard layout
+	CAN0->CAN_MB[2].CAN_MCR = CAN_MCR_MTCR;     // arm
+
+	// Enable CAN
+	CAN0->CAN_MR |= CAN_MR_CANEN;
+}
+
+int process_can_frame(){
+	
+	CAN_MESSAGE msg;
+	if (can_rxq_pull(&msg)){
+	
+		switch (msg.id){
+		
+			case CAN_ID_ERROR:{   //This ID is reserved for errors, BOTH node1 and node2
+		
+				// TODO: handle error / stop game
+		
+			break;
+			}
+			case CAN_ID_GAMEOVER:{//This ID is reserved for gameover message from node2
+		
+			
+			break;
+			}
+			case CAN_ID_GAMESTART:{//This ID is reserved for starting a new game from node1
+			
+				// TODO: start game
+			
+			break;
+			}
+			case CAN_ID_JOYPOS:{  //This ID is reserved for sending Joystick position and button state
+					
+				struct io_joystick_position joy_pos = { (int8_t)msg.data[0], (int8_t)msg.data[1] };
+				struct io_avr_buttons btn;
+				btn.right = (uint8_t)msg.data[2];
+				btn.left  = (uint8_t)msg.data[3];
+				btn.nav   = (uint8_t)msg.data[4];
+
+				//printf("%c[2J",27);
+				printf("Buttons R=0x%02X L=0x%02X N=0x%02X, pos x:%d, y:%d\r",
+				btn.right, btn.left, btn.nav, joy_pos.x, joy_pos.y);
+				// update_control(joy_pos, btn);		
+			
+				//update_control(joy_pos, btn); //TODO
+								
+			break;
+			}
+			case CAN_ID_SOLONOID:{//This ID is reserved for sending trigger signal for the solonoid
+		
+				// TODO: trigger solonoid
+		
+			break;
+			}
+			case CAN_ID_MOTORPOS:{//This ID is reserved for sending current motor position
+		
+			break;
+			}
+			case CAN_ID_SCORE:{   //This ID is reserved for sending gamescore
+		
+			break;
+			}
+			case CAN_ID_DEFAULT:{ //This ID is for anything else
+		
+			break;
+			}
+			default:{
+				
+			}
+		}
+	}
+	
+}
+
+
+
+/*
+
+// ---------- Diagnostics ----------
+static void print_can_health_once(void) {
+    uint32_t sr  = CAN0->CAN_SR;
+    uint32_t ecr = CAN0->CAN_ECR;
+
+    uint8_t rec = (ecr & CAN_ECR_REC_Msk) >> CAN_ECR_REC_Pos;
+    uint8_t tec = (ecr & CAN_ECR_TEC_Msk) >> CAN_ECR_TEC_Pos;
+
+    printf("[CAN] ECR: REC=%u TEC=%u  SR:", rec, tec);
+    if (sr & CAN_SR_BOFF)  printf(" BOFF");
+    if (sr & CAN_SR_ERRP)  printf(" ERRP");
+    if (sr & CAN_SR_WARN)  printf(" WARN");
+    if (sr & CAN_SR_AERR)  printf(" AERR");
+    if (sr & CAN_SR_SERR)  printf(" SERR");
+    if (sr & CAN_SR_FERR)  printf(" FERR");
+    if (sr & CAN_SR_BERR)  printf(" BERR");
+    if (sr & CAN_SR_CERR)  printf(" CERR");
+    if (sr & CAN_SR_RBSY)  printf(" RBSY");
+    if (sr & CAN_SR_TBSY)  printf(" TBSY");
+    if (sr & CAN_SR_OVLSY) printf(" OVLSY");
+    printf("\n");
+}
+
+static void print_mb_state(uint8_t mb) {
+    uint32_t msr = CAN0->CAN_MB[mb].CAN_MSR;
+    uint8_t  dlc = (msr & CAN_MSR_MDLC_Msk) >> CAN_MSR_MDLC_Pos;
+    printf("[MB%u] MSR=0x%08lX  MRDY=%u  MMI=%u  RTR=%u  DLC=%u\n",
+           mb,
+           (unsigned long)msr,
+           (msr & CAN_MSR_MRDY) ? 1 : 0,
+           (msr & CAN_MSR_MMI)  ? 1 : 0,
+           (msr & CAN_MSR_MRTR) ? 1 : 0,
+           dlc);
+}
+
+static uint32_t extract_id_from_mb(uint8_t mb) {
+    uint32_t mid = CAN0->CAN_MB[mb].CAN_MID;
+    if (mid & CAN_MID_MIDE) {
+        // Extended (29-bit): SID(11) + EID(18)
+        uint32_t sid = (mid & CAN_MID_MIDvA_Msk) >> CAN_MID_MIDvA_Pos;
+        uint32_t eid = (mid & CAN_MID_MIDvB_Msk) >> CAN_MID_MIDvB_Pos;
+        return (sid << 18) | eid;
+    } else {
+        // Standard (11-bit)
+        return (mid & CAN_MID_MIDvA_Msk) >> CAN_MID_MIDvA_Pos;
+    }
+}
+
+
+static void dump_mb_roles(void) {
+    for (int i = 0; i < 3; i++) {
+        uint32_t mmr = CAN0->CAN_MB[i].CAN_MMR;
+        uint32_t mid = CAN0->CAN_MB[i].CAN_MID;
+        uint32_t mot = (mmr >> 24) & 0x7;
+        const char* role = (mot == 1) ? "RX"
+                           : (mot == 2) ? "RX_OVR"
+                           : (mot == 3) ? "TX"
+                           : "DIS";
+        printf("MB%d: MOT=%s  MIDE=%u\n", i, role, (mid & CAN_MID_MIDE) ? 1 : 0);
+    }
+}
+
+*/

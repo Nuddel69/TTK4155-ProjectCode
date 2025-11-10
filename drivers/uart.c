@@ -1,8 +1,6 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
-#include <errno.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <util/delay.h>
 
 #include "uart.h"
@@ -22,9 +20,16 @@ int USART_init(struct USART_config *config) {
   UCSR0C = (1 << URSEL0) | (1 << USBS0) | (3 << UCSZ00);
 
   sei();
-  fdevopen(USART_Transmit, USART_Receive);
+  // fdevopen(USART_Transmit, USART_Receive);
 
   return 0;
+}
+
+int USART_endl(void) {
+  int status = 0;
+  status = USART_Transmit('\x0D');
+  status = USART_Transmit('\x0A');
+  return status;
 }
 
 int USART_Transmit(unsigned char data) {
@@ -43,12 +48,14 @@ int USART_SendString(char *data) {
   int status;
   int counter = 0;
   while (data[counter] != '\0') {
-    USART_Transmit(data[counter]);
+    if (data[counter] == '\n') {
+      status = USART_Transmit('\x0D');
+      status = USART_Transmit('\x0A');
+    } else {
+      status = USART_Transmit(data[counter]);
+    }
     counter++;
   }
-  status = USART_Transmit('\x0D');
-  status = USART_Transmit('\x0A');
-
   return status;
 }
 

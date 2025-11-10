@@ -3,8 +3,12 @@
 
 #include "adc.h"
 #include "io.h"
+#include "log.h"
 #include "spi.h"
 #include "utils.h"
+#include "can.h"
+
+LOG_MODULE_DEFINE("IO")
 
 #define JOYSTICK_THRESHOLD 10
 
@@ -489,6 +493,7 @@ int io_oled_blink(struct io_oled_device *dev, uint8_t blinks) {
   }
   return 0;
 }
+
 
 int io_oled_write_data(struct io_oled_device *dev, uint8_t data) {
   return _io_oled_write(dev, data);

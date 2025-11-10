@@ -35,10 +35,8 @@ static struct menu_item settings_menu [] = {
 static struct menu_item main_menu[] = {
     {"Start game", PAGE_PLAY_GAME, NULL, 0},
     {"High scores", PAGE_HIGH_SCORES, NULL, 0},
-    {"Settings", PAGE_NULL, settings_menu, 2},
+    {"Settings", PAGE_SETTINGS, settings_menu, 2},
 };
-
-//static const char *menu_items[] = {"Start game", "High scores", "Settings"};
 
 // Initialize menu_cfg struct with menus defined above
 struct menu_cfg menu = {
@@ -52,6 +50,8 @@ struct menu_cfg menu = {
   .parent_menu = NULL,
   .parent_length = 0,
 };
+
+//menu.length = sizeof(menu_items) / sizeof(menu_items[0]);
 
 int main() {
   int status = 0;
@@ -70,11 +70,6 @@ int main() {
 
   status = io_avr_init(&avr);
   STATUS_ASSERT(status)
-
-  // Old menu initialization
-  //menu.oled = &oled;
-  //menu.items = menu_items;
-  //menu.length = sizeof(menu_items) / sizeof(menu_items[0]);
 
   status = menu_init(&menu);
   STATUS_ASSERT(status)

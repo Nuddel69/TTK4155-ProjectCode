@@ -8,25 +8,6 @@
 #define MEDIUM_FONT &OLED_FONT_5x7
 #define SMALL_FONT &OLED_FONT_4x6
 
-// TODOS:
-// - Add submenus
-// -- generalize menu items to a struct as a child to a parent struct?
-// -- generalize item lists and allow nested menus
-// - Implement settings page options such as joystick calibration, brightness adjustment etc
-// - Get rid of hardcoded values for menu item positions (rows & columns)
-// - Printing high scores on high scores page
-
-/* static const char *settings_menu_items[] = {
-    "Adjust Brightness",
-    "Calibrate Joystick",
-};
-
-static const char *main_menu_items[] = {
-    "Start Game",
-    "Highs Scores",
-    "Settings",
-}; */
-
 /**
  * \brief Initializes the menu struct and OLED display
  * \param[in] menu The menu configuration struct
@@ -35,13 +16,9 @@ static const char *main_menu_items[] = {
 int menu_init(struct menu_cfg *menu) {
     int status = 0;
 
-    // Removed as they're initialized in main.c for now
-    //menu->cursor_pos = 0;
-    //menu->current_page = PAGE_WELCOME;
-
     io_oled_init(menu->oled);
-    io_oled_blink(menu->oled, 2);         // Blink twice to indicate ready
-    page_dispatch(menu);                  // Initialize with loading the welcome page
+    io_oled_blink(menu->oled, 1);
+    page_dispatch(menu);
 
     return status;
 }
@@ -56,15 +33,12 @@ int welcome_display(struct menu_cfg *menu) {
 
     io_oled_clear_all(menu->oled);
 
-    //io_oled_clear_line(menu->oled, 0);
     io_oled_home(menu->oled);
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Welcome");
 
-    //io_oled_clear_line(menu->oled, 1);
     io_oled_pos(menu->oled, 1, 0);
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "-------------");
 
-    // Draws the cursor. Only redraws the cursor when the joystick is moved
     draw_cursor(menu);
 
     // Printing menu items
@@ -86,7 +60,7 @@ int play_game_display(struct menu_cfg *menu) {
     int status = 0;
 
     io_oled_clear_all(menu->oled);
-    //io_oled_clear_line(menu->oled,0);
+
     io_oled_home(menu->oled);
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Play game");
 
@@ -102,7 +76,7 @@ int high_scores_display(struct menu_cfg *menu) {
     int status = 0;
 
     io_oled_clear_all(menu->oled);
-    //io_oled_clear_line(menu->oled,0);
+
     io_oled_home(menu->oled);
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "High scores");
 
@@ -119,15 +93,12 @@ int settings_display(struct menu_cfg *menu) {
 
     io_oled_clear_all(menu->oled);
 
-    //io_oled_clear_line(menu->oled,0);
     io_oled_home(menu->oled);
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Settings");
 
-    //io_oled_clear_line(menu->oled, 1);
     io_oled_pos(menu->oled, 1, 0);
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "-------------");
 
-    // Draws the cursor. Only redraws the cursor when the joystick is moved
     draw_cursor(menu);
 
     // Printing menu items
@@ -144,9 +115,9 @@ int brightness_display(struct menu_cfg *menu){
     int status = 0;
 
     io_oled_clear_all(menu->oled);
-    //io_oled_clear_line(menu->oled,0);
+
     io_oled_home(menu->oled);
-    io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Adjusting brightness..");
+    io_oled_print_with_font(menu->oled, SMALL_FONT, "Adjusting brightness..");
 
     return status;
 }
@@ -155,9 +126,9 @@ int calibrate_joystick_display(struct menu_cfg *menu) {
     int status = 0;
 
     io_oled_clear_all(menu->oled);
-    //io_oled_clear_line(menu->oled,0);
+
     io_oled_home(menu->oled);
-    io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Calibrating joystick..");
+    io_oled_print_with_font(menu->oled, SMALL_FONT, "Calibrating joystick..");
 
     return status;
 }
@@ -176,7 +147,7 @@ int draw_cursor(struct menu_cfg *menu) {
             io_oled_print_with_font(menu->oled, SMALL_FONT, "> ");
         } else {
             // Clearing the cursor position
-            for (uint8_t i = 0; i < 6; i++) {
+            for (uint8_t j = 0; j < 6; j++) {
                 io_oled_write_data(menu->oled, 0x00);
             }
         }
@@ -217,7 +188,6 @@ int cursor_update(struct menu_cfg *menu, struct io_avr_buttons *btn) {
         }
     }
 
-    // Remember the last state of each button
     prev_ND = btn->ND;
     prev_NU = btn->NU;
 
@@ -262,38 +232,35 @@ int page_select_old(struct menu_cfg *menu, struct io_avr_buttons *btn) {
  */
 int page_select(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     int status = 0;
+    static uint8_t prev_NR = 0;
+    
+    if(btn->NR && !prev_NR) {
+        // Get currently selected menu item
+        // - Q: why do I need an ampersand here?
+        struct menu_item *selected_item = &menu->items[menu->cursor_pos];
 
-    // Only trigger on button press
-    if(!btn->NR) {
-        return status;
-    }
-
-    // Get currently selexted menu item
-    // - Q: why do I need an ampersand here?
-    struct menu_item *selected_item = &menu->items[menu->cursor_pos];
-
-    // --- Case 1: The selected item does have a submenu ---
-    if(selected_item->submenu != NULL && selected_item->submenu > 0) {
-        // Save current menu as parent
+        // Save current menu as parent before moving anywhere
         menu->parent_menu = menu->items;
         menu->parent_length = menu->length;
 
-        // Enter submenu
-        menu->items = selected_item->submenu;
-        menu->length = selected_item->submenu_length;
-        menu->cursor_pos = 0;
+        // --- Case 1: The selected item has a submenu ---
+        if(selected_item->submenu != NULL) {
+            // Set submenu info
+            menu->items = selected_item->submenu;
+            menu->length = selected_item->submenu_length;
+            menu->cursor_pos = 0;
 
-        // It's set in set_page()
-        // menu->current_page = selected->target_page;
+            // Go to the requested page
+            return set_page(menu, selected_item->target_page);
+        }
 
-        // Redraw new menu
-        return set_page(menu, selected_item->target_page);
+        // --- Case 2: Leaf page ---
+        else {
+            return set_page(menu, selected_item->target_page);
+        }
     }
 
-    // --- Case 2: The selected item has a target page ---
-    if(selected_item->target_page != PAGE_NULL) {
-        return set_page(menu, selected_item->target_page);
-    }
+    prev_NR = btn->NR;
 
     return status;
 }
@@ -347,85 +314,97 @@ int page_dispatch(struct menu_cfg *menu) {
     return status;
 }
 
-/**
- * \brief Goes back to the welcome page if not already there based on left button from the IO board
- * \param[in] menu The menu configuration struct
- * \param[in] btn The button states struct
- * \return Errno.
- */
-int page_back_old(struct menu_cfg *menu, struct io_avr_buttons *btn) {
+int page_back(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     int status = 0;
+    static uint8_t prev_NL = 0;
 
-    if (btn->L7) {
-        if (menu->current_page != PAGE_WELCOME) {
-            return set_page(menu, PAGE_WELCOME);
+    if(btn->NL && !prev_NL) {
+
+        // If we have a parent menu, go back to that
+        if(menu->parent_menu != NULL) {
+            // Restore parent
+            menu->items = menu->parent_menu;
+            menu->length = menu->parent_length;
+            menu->cursor_pos = 0;
+
+            // If we just went back to the root, clear parent pointers
+            if(menu->items == menu->root_items) {
+                menu->parent_menu = NULL;
+                menu->parent_length = 0;
+                return(set_page(menu, PAGE_WELCOME));
+            }
+
+            // Otherwise, go to parents page (e.g. Brightness -> Settings)
+            menu->parent_menu = menu->root_items;
+            menu->parent_length = menu->root_length;
+            return(set_page(menu, PAGE_SETTINGS));
         }
     }
+
+    prev_NL = btn->NL;
+
     return status;
 }
 
-// Handles three cases:
-// 1. If you're inside a submenu (e.g. Settings), go back to the parent menu
-// 2. If you're inside a page (e.g. Play game, High Scores), go back to the previous menu
-// 3. If you're in the main menu (root), do nothing
-int page_back(struct menu_cfg *menu, struct io_avr_buttons *btn) {
+
+int page_back_old(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     int status = 0;
+    static uint8_t prev_NL = 0;
 
-    // Only trigger when the button is pressed
-    if(!btn->NL){
-        return status;
+    // Only trigger on rising edge
+    if(btn->NL && !prev_NL) {
+        // --- Case 1: Currently in a submenu ---
+        if(menu->parent_menu != NULL) {
+            // Restore parent menu
+            menu->items = menu->parent_menu;
+            menu->length = menu->parent_length;
+            menu->cursor_pos = 0;
+
+            // Clear parent reference (since we climbed up to root)
+            menu->parent_menu = NULL;
+            menu->parent_length = 0;
+
+            // Go back to the root page
+            return set_page(menu, PAGE_WELCOME);
+        }
+
+        // --- Case 2: Currently on a page ---
+        switch(menu->current_page) {
+            // Pages belonging to root
+            case PAGE_PLAY_GAME:
+            case PAGE_HIGH_SCORES:
+
+                menu->items = menu->root_items;
+                menu->length = menu->root_length;
+                menu->cursor_pos = 0;
+
+                // Clear parent reference (since we climbed up to root)
+                menu->parent_menu = NULL;
+                menu->parent_length = 0;
+
+                return set_page(menu, PAGE_WELCOME);
+
+            // Pages belonging to Settings
+            case PAGE_ADJUST_BRIGHTNESS:
+            case PAGE_CALIBRATE_JOYSTICK:
+            
+                menu->items = menu->parent_menu;
+                menu->length = menu->parent_length;
+                menu->cursor_pos = 0;
+
+                // Update parent reference
+                menu->parent_menu = menu->root_items;
+                menu->parent_length = menu->root_length;
+
+                return set_page(menu, PAGE_SETTINGS);
+
+            default:
+                break;
+        }
     }
 
-    // --- Case 1: Currently in a submenu ---
-    if(menu->parent_menu != NULL) {
-        // Restore parent menu
-        menu->items = menu->parent_menu;
-        menu->length = menu->parent_length;
-        menu->cursor_pos = 0;
-
-        // Clear parent reference (since we climbed up to root)
-        menu->parent_menu = NULL;
-        menu->parent_length = 0;
-
-        // Go back to the root page
-        return set_page(menu, PAGE_WELCOME);
-    }
-
-    // --- Case 2: Currently on a page ---
-    switch(menu->current_page) {
-        // Pages belonging to root
-        case PAGE_PLAY_GAME:
-        case PAGE_HIGH_SCORES:
-
-        menu->items = menu->root_items;
-        menu->length = menu->root_length;
-        menu->cursor_pos = 0;
-
-        // Clear parent reference (since we climbed up to root)
-        menu->parent_menu = NULL;
-        menu->parent_length = 0;
-
-        return set_page(menu, PAGE_WELCOME);
-
-        // Pages belonging to Settings
-        case PAGE_ADJUST_BRIGHTNESS:
-        case PAGE_CALIBRATE_JOYSTICK:
-        
-        menu->items = menu->parent_menu;
-        menu->length = menu->parent_length;
-        menu->cursor_pos = 0;
-
-        // Updaet parent reference
-        menu->parent_menu = menu->root_items;
-        menu->parent_length = menu->root_length;
-
-        return set_page(menu, PAGE_SETTINGS);
-
-        default:
-            break;
-    }
-
-    // --- Case 3: Currently at the main menu (root) ---
+    // Store current state for next cycle
+    prev_NL = btn->NL;
 
     return status;
 }
@@ -439,14 +418,14 @@ int page_back(struct menu_cfg *menu, struct io_avr_buttons *btn) {
 int menu_handler(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     int status = 0;
 
-    // Only allow cursor movement and page selection if we're on the welcome page, if so:
-    if (menu->current_page == PAGE_WELCOME) {
+    // Only allow cursor movement and page selection if we're on welcome page or settings
+    if (menu->current_page == PAGE_WELCOME || menu->current_page == PAGE_SETTINGS) {
         cursor_update(menu, btn);
         draw_cursor(menu);
         page_select(menu, btn);
-    } else {
-        page_back(menu, btn);
     }
+
+    page_back(menu, btn);
 
     return status;
 }

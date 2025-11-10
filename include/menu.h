@@ -12,7 +12,6 @@ enum page_id{
     PAGE_SETTINGS,
     PAGE_ADJUST_BRIGHTNESS,
     PAGE_CALIBRATE_JOYSTICK,
-    PAGE_NULL,
 };
 
 /* struct menu_cfg_old{
@@ -69,8 +68,8 @@ int page_select_old(struct menu_cfg *menu, struct io_avr_buttons *btn);
 int page_select(struct menu_cfg *menu, struct io_avr_buttons *btn);
 int set_page(struct menu_cfg *menu, enum page_id page);
 int page_dispatch(struct menu_cfg *menu);
-int page_back_old(struct menu_cfg *menu, struct io_avr_buttons *btn);
 int page_back(struct menu_cfg *menu, struct io_avr_buttons *btn);
+int page_back_old(struct menu_cfg *menu, struct io_avr_buttons *btn);
 int menu_handler(struct menu_cfg *menu, struct io_avr_buttons *btn);
 
 #endif // ICLUDE_MENU_H

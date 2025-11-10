@@ -14,14 +14,6 @@ enum page_id{
     PAGE_CALIBRATE_JOYSTICK,
 };
 
-/* struct menu_cfg_old{
-    struct io_oled_device *oled;    // Pointer to the OLED device
-    const char **items;             // Array of menu item strings
-    uint8_t length;                 // Number of items in the menu
-    int8_t cursor_pos;              // Current position of cursor in the menu
-    enum page_id current_page;      // Current page identifier
-}; */
-
 // Represents the current menu configuration and state.
 // Each menu configuration struct pointes to an OLED device and contains information about the current menu state.
 // The current menu state may then change on navigation and selection of menu items.

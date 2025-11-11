@@ -13,7 +13,7 @@
 int adc_init(void){
 	
 	//Enable power to ADC 
-	PMC->PMC_PCER1 = PMC_PCER1_PID37;  // ID_ADC=37 PCER1 bit 5
+	PMC->PMC_PCER1 |= PMC_PCER1_PID37;  // ID_ADC=37 PCER1 bit 5
 	
 	//Disable writeprotect (p.1353 datasheet)
 	ADC->ADC_WPMR =  ADC_WPMR_WPKEY_PASSWD; //ADC in ASCII shifted 8 (0x414443)<<8); 

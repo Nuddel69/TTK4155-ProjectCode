@@ -41,6 +41,8 @@ uint8_t motor_dir_and_speed(struct motor_device *dev,int32_t speed){
 	}else{
 		dev->phdi->PIO_CODR |= 1 << dev->phdi_pin;
 	}
+	
+	//Set speed
 	PWM_set_dty(&dev->_enpw_dev, (dev->period) * (uint32_t)speed_abs);
 	return 0;
 	

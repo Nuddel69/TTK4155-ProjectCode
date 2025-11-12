@@ -6,14 +6,13 @@
 #include <stdint.h>
 
 #define MAX_MOTOR_SPEED 1000
-#define MIN_MOTOR_SPEED 50
+#define MIN_MOTOR_SPEED 100
+#define MAX_WINDUP 1000
+
 
 struct motor_device {
-  Pio *enpw;
-  uint8_t enqw_pin;
   Pio *phdi;
   uint8_t phdi_pin;
-  float period;
   struct PWM_device _enpw_dev;
 };
 

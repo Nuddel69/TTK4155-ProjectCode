@@ -1,50 +1,56 @@
 #include <stdint.h>
+#include "motor.h"
 
 
-uint8_t PID(uint8_t inn, uint8_t ref, uint8_t Kp, uint8_t Ki, uint8_t Kd,uint8_t *out){
+PID_init(struct pid_controller *PID,uint32_t Kp,uint32_t Ki,uint32_t Kd){
+	
+	PID->Kp = Kp;
+	PID->Ki = Ki;
+	PID->Kd = Kd;
 
-//Max limits for integral
-const int16_t MAX_windup = 1000;
-const int16_t MIN_windup = -1000;
-
-//Max limits for output
-const int16_t MAX_out = 1000;
-const int32_t MIN_out = -1000;
-
-const uint8_t dt = 1; //assuming constant timestep between measurments
-
-//These values should carry between calls
-static uint8_t prev_inn = 0;
-static uint32_t integral = 0;
-
-
-//Find current error
-int16_t error = (int16_t)ref - (int16_t)inn;
-
-//Update current integral
-integral += error*dt;
-
-// Anti windup for integral
-if (integral> MAX_windup){
-    integral = MAX_windup;
-}else if(integral < MIN_windup){
-    integral = MIN_windup;
+	PID->integrator = 0;
+	PID->prev_in = 0;
+	PID->last_time = time_now(); 
+  
+	PID->MAX_out = MAX_MOTOR_SPEED;
+	PID->MAX_windup = MAX_WINDUP;
+	
 }
 
-//Calculate output
-int32_t outvalue = Kp*error+Ki*integral-Kd*(inn-prev_inn)/dt;
 
-//Limit output
-if (outvalue > MAX_out){
-    outvalue = MAX_out;
-}else if(outvalue < MIN_out){
-    outvalue = MIN_out;
-}
+uint8_t PID(uint8_t inn, uint8_t ref,struct pid_controller *PID){
 
-prev_inn = inn;
-*out = outvalue;
 
-return 0;
+	uint32_t dt = time_now() - PID->last_time;   
+
+	//Find current error
+	uint16_t pos=(int16_t)encoder_get_pos();
+	int16_t error = (int16_t)ref - pos;
+
+	//Update current integral
+	PID->integrator += error*dt;
+
+	// Anti windup for integral
+	if (PID->integrator > PID->MAX_WINDUP){
+		PID->integrator = PID->MAX_WINDUP;
+	}else if(PID->integrator < -PID->MAX_WINDUP){
+		PID->integrator = -PID->MAX_WINDUP;
+	}
+
+	//Calculate output
+	int32_t outvalue = PID->Kp*error+PID->Ki*PID->integrator-PID->Kd*(pos-PID->prev_in)/dt;
+
+	//Limit output
+	if abs(outvalue > PID->MAX_out){
+		if (outvalue > 0){
+			outvalue = PID->MAX_out;
+		}else if(outvalue<0){
+			outvalue = -PID->MAX_out;
+		}
+
+	PID->prev_in = inn;
+	
+	return outvalue;
 }
 
 

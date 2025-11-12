@@ -19,6 +19,7 @@
 #include "uart.h"
 #include "adc.h"
 #include "encoder.h"
+#include "motor.h"
 // #include "../uart_and_printf/printf-stdarg.h"
 
 #define DEBUG 0
@@ -32,6 +33,23 @@ CAN_MESSAGE dummy_msg ={{0x8},{8},{"HiWorld"}};
 	
 // struct PWM_device servo_pwm = ;
 struct Servo_device servo = {{PIOB, 13, 1, 20000, 1500}, 900, 1500, 2100};
+	
+struct motor_device motor = {PIOC, 23, {PIOB, 12, 0, 20000, 12000}};
+	
+	
+struct pid_controller{
+uint32_t Kp;
+uint32_t Ki;
+uint32_t Kd;
+
+uint32_t integrator;
+uint32_t prev_in;
+uint32_t last_time; 
+  
+int16_t MAX_out;
+int16_t MAX_windup;
+
+};
 	
 	
 int main(void) {
@@ -57,6 +75,9 @@ int main(void) {
   
   servo_init(&servo);
   
+  motor_init(&motor);
+  //PWM_init(&motor._enpw_dev);
+  
   if (encoder_init()!=0){
 	//Print relevant register values
 	encoder_debug_dump();
@@ -79,23 +100,30 @@ int main(void) {
 		//}
 		
 		//process_can_frame();
-		servo_set_percentage(&servo, 100);
-		time_spinFor(msecs(1000));
-		servo_set_percentage(&servo, 0);
-		time_spinFor(msecs(1000));
+		//servo_set_percentage(&servo, 100);
+		//PWM_set_dty(&motor._enpw_dev, 10000);
+		//time_spinFor(msecs(1000));
+		//PWM_set_dty(&motor._enpw_dev, 15000);
+		//time_spinFor(msecs(1000));
+		//servo_set_percentage(&servo, 0);
+		//time_spinFor(msecs(1000));
 		//if (can_send(&dummy_msg, 0) == 0) {
 		//	printf("[TX] STD id=0x%03X dlc=%d\r\n", dummy_msg.id, dummy_msg.data_length);
 		//	} else {
 			//printf("[TX] mailbox busy\r\n");
 		//}
 		
+		//time_spinFor(msecs(500));
+		if ((int32_t)TC2->TC_CHANNEL[0].TC_CV>0){
+		//time_spinFor(msecs(2000));
+			motor_dir_and_speed(&motor,PID 12000);
+		}
+		
 		//uint16_t volts_12bit = adc_read_once();
 		//uint16_t volts=(volts_12bit*3.3)/4096; //(ADC_value*Ref_max_voltage)/(12bit_max)
 		
 		//printf("Voltage ADC: %u\r\n",volts_12bit);
 		
-		int32_t pos = (int32_t)TC2->TC_CHANNEL[0].TC_CV;
-		printf("%d\r\n",pos);
 		}
 
     //time_spinFor(msecs(500));

@@ -22,8 +22,13 @@ struct can_device can = {SSE2};
 
 // Data Containers
 struct io_joystick_position pos;
-struct CAN_frame can_msg = {0x100, 0x08, "CAN Dumb", 1, 0};
+struct CAN_frame can_msg = {0xFACB, 0x08, "CAN Dumb", 0, 0};
 struct io_avr_buttons btn;
+struct CAN_frame dummy_msg;
+
+
+
+
 
 int main() {
   int status = 0;
@@ -49,8 +54,12 @@ int main() {
   LOG_INF("---Init complete---")
 
   while (1) {
-    can_write(&can, can_msg);
+    tx_joy_btn(&joy,&avr,&can);
     // USART_SendString("Hello World!\n");
-    _delay_ms(100);
+	_delay_ms(100);
+	
+	while (can_rxq_pull(&dummy_msg)) {
+		process_can_frame(&dummy_msg);
+	}
   }
 }

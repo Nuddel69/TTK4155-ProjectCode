@@ -141,35 +141,88 @@ int can_rxq_pull(struct CAN_frame *out){
 	return 1;
 }
 
-/*
-int8_t CAN_write(struct can_device *dev, uint8_t address,
-                 struct CAN_frame data_frame) {
 
-  // TXB0SIDH,
-  MCP2515_write(dev, 0x31, data_frame.id);
-  // TXB0SIDL
-  MCP2515_write(dev, 0x32, (data_frame.id << 8));
-
-  uint8_t DLC;
-  // TXB0DLC
-  if (data_frame.rtr) {
-    DLC = (data_frame.dlc | (1 << 6));
-  } else {
-    DLC = data_frame.dlc;
-  }
-
-  // Set DLC
-  MCP2515_write(dev, 0x35, DLC);
-
-  // Set data TXB0Dm Data going out from buffer 0
-    MCP2515_write(dev, 0x36, data_frame.data);
-
-  //Inform controller that we are ready to send on buffer0
-  spi_send(&dev->spi,0x81);
-
-  return 0;
+int tx_joy_btn(struct io_joystick_device *joy_dev,struct io_avr_device *avr_dev, struct can_device *can_dev){
+	
+	//Read ADC
+	struct io_joystick_position joy_pos;
+	io_joystick_read_position(joy_dev, &joy_pos);
+	
+	struct io_avr_buttons btn;
+	io_avr_buttons_read(avr_dev,&btn);
+	
+	//Frame Data
+	struct CAN_frame msg = {CAN_ID_JOYPOS,0x08,{joy_pos.x,joy_pos.y,btn.right,btn.left,btn.nav,0,0,0},0, 0};
+	
+	//Transmit data
+	can_write(&can, msg);
+	
+	
+	return 0;
 }
-*/
+
+int tx_gamestart(struct can_device *can_dev){
+	
+	//Frame Data
+	struct CAN_frame msg = {CAN_ID_GAMESTART,0x08,{0,0,0,0,0,0},1, 0};
+	
+	//Transmit data
+	can_write(&can, msg);
+	return 0;
+}
+
+int tx_error(struct can_device *can_dev){
+	
+	//Frame Data
+	struct CAN_frame msg = {CAN_ID_ERROR,0x08,{0,0,0,0,0,0},1, 0};
+	
+	//Transmit data
+	can_write(&can, msg);
+	return 0;
+}
+
+int process_can_frame(struct CAN_frame *can_frame){
+	
+	switch (can_frame->id){
+		
+		case CAN_ID_ERROR:{   //This ID is reserved for errors, BOTH node1 and node2
+			
+			STATUS_ASSERT(1);
+			break;
+		}
+		case CAN_ID_GAMEOVER:{//This ID is reserved for gameover message from node2
+			
+			break;
+		}
+		case CAN_ID_GAMESTART:{//This ID is reserved for starting a new game from node1
+			
+			break;
+		}
+		case CAN_ID_JOYPOS:{  //This ID is reserved for sending Joystick position and button state
+			
+			break;
+		}
+		case CAN_ID_SOLONOID:{//This ID is reserved for sending trigger signal for the solonoid
+			
+			break;
+		}
+		case CAN_ID_MOTORPOS:{//This ID is reserved for sending current motor position
+			
+			break;
+		}
+		case CAN_ID_SCORE:{   //This ID is reserved for sending gamescore
+			
+			break;
+		}
+		case CAN_ID_DEFAULT:{ //This ID is for anything else
+			break;
+		}
+		default:{
+			
+		}
+	}
+	
+}
 
 //------------------//
 // MCP2515 Specific //
@@ -302,67 +355,6 @@ int8_t MCP2515_init(struct can_device *dev) {
     LOG_ERR("MCP2515 could not be set to NORMAL mode when init completed", -9);
     return -9;
   }
-
-  /*
-
-  uint8_t cnf1 = 0x00;
-  uint8_t cnf2 = 0xB1;
-  uint8_t cnf3 = 0x05;
-
-  // Program bit timing
-  MCP2515_write(dev, 0x2A, cnf1);
-  MCP2515_write(dev, 0x29, cnf2);
-  MCP2515_write(dev, 0x28, cnf3);
-
-  // RX masks: accept all messages. masks = 0, filters = 0
-  MCP2515_write(dev, 0x20, 0x00); // RXM0SIDH
-  MCP2515_write(dev, 0x21, 0x00); //+1
-  MCP2515_write(dev, 0x22, 0x00); //+2
-  MCP2515_write(dev, 0x23, 0x00); //+3
-
-  MCP2515_write(dev, 0x24, 0x00); // RXM1SIDH
-  MCP2515_write(dev, 0x25, 0x00); //+1
-  MCP2515_write(dev, 0x26, 0x00); //+2
-  MCP2515_write(dev, 0x27, 0x00); //+3
-
-
-  // Set filters to zero, RXF0SIDH-RXF5SIDH
-  const uint8_t filt_bases[6] = {0x00, 0x04, 0x08, 0x10, 0x14, 0x18};
-
-  for (uint8_t i = 0; i < 6; i++) {
-    MCP2515_write(dev, filt_bases[i] + 0, 0x00); // SIDH
-    MCP2515_write(dev, filt_bases[i] + 1, 0x00); // SIDL
-    MCP2515_write(dev, filt_bases[i] + 2, 0x00); // EID8
-    MCP2515_write(dev, filt_bases[i] + 3, 0x00); // EID0
-  }
-
-  // Set RXB0CTRL and RXB1CTRL receive control register
-  uint8_t rxb0 = 0x60; // receive all
-  MCP2515_write(dev, 0x30, rxb0);
-  uint8_t rxb1 = 0x60; // receive all
-  MCP2515_write(dev, 0x40, rxb1);
-
-  // Enable interrupts for (RX0IE|RX1IE)
-  MCP2515_write(dev, 0x2B, 0x03);
-
-  */
-
-  // OBS! This MUST be the final register we set. sets NORMAL mode, disables
-  // ability to config
-
-  // Comment this out if we want to communicate with other nodes
-  // MCP2515_bit_modify(dev, 0x0F, 0x70, 0x40); // Control regiser , mask,
-  // Loopback Comment this back in if you comment out the line above
-  // MCP2515_bit_modify(dev, 0x0F, 0xE0, MODE_NORMAL); // Control regiser ,
-  // mask, normal mode
-  // Confirm that the controller has switched to normal mode
-
-  /* MCP2515_read(dev, 0x0E, &value);
-  if ((value & 0xE0) != MODE_LOOPBACK<<5) {
-    printf("Failed to switch controller to normal mode when initialzing");
-    return -3;
-  }
-  */
 
   return 0;
 }

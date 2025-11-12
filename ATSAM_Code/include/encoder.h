@@ -9,6 +9,10 @@
 #ifndef ENCODER_H_
 #define ENCODER_H_
 
+#ifndef DEBUG 
+#define DEBUG 0
+#endif
+
 #define ENCODER_A_PIN     (1 << 25)   // PC25 TIOA6
 #define ENCODER_B_PIN     (1 << 26)   // PC26 TIOB6
 

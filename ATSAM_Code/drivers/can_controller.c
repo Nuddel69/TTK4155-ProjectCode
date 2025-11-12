@@ -103,17 +103,6 @@ uint8_t can_init(uint8_t num_tx_mb,uint8_t num_rx_mb) {
      CAN0->CAN_MB[n].CAN_MMR = (CAN_MMR_MOT_MB_TX); 
    } 
 
-/*
-  // transmit
-  CAN0->CAN_MB[0].CAN_MID = CAN_MID_MIDE;
-  CAN0->CAN_MB[0].CAN_MMR = CAN_MMR_MOT_MB_TX;
-
-  // receive
-  CAN0->CAN_MB[1].CAN_MAM = 0; // Accept all messages
-  CAN0->CAN_MB[1].CAN_MID = 0;
-  CAN0->CAN_MB[1].CAN_MMR = CAN_MMR_MOT_MB_RX;
-  CAN0->CAN_MB[1].CAN_MCR |= CAN_MCR_MTCR;
-*/
   /****** End of mailbox configuraion ******/
 	
 
@@ -121,14 +110,6 @@ uint8_t can_init(uint8_t num_tx_mb,uint8_t num_rx_mb) {
   // Enable interrupt on receive mailboxes
   CAN0->CAN_IER = can_ier;
   
-    /*printf("Values after activating\r\n MB1:MSR=0x%08lX  MB1:MCR=0x%08lX  MB1:MMR=0x%08lX\r\nMB2:MSR=0x%08lX  MB2:MCR=0x%08lX  MB2:MMR=0x%08lX\r\n",
-       CAN0->CAN_MB[1].CAN_MSR,
-	   CAN0->CAN_MB[1].CAN_MCR,
-	   CAN0->CAN_MB[1].CAN_MMR,
-	   CAN0->CAN_MB[2].CAN_MSR,
-	   CAN0->CAN_MB[2].CAN_MCR,
-	   CAN0->CAN_MB[2].CAN_MMR);
-   */
   // Enable interrupt in NVIC
   NVIC_EnableIRQ(ID_CAN0);
 
@@ -329,71 +310,3 @@ int process_can_frame(){
 	}
 	
 }
-
-
-
-/*
-
-// ---------- Diagnostics ----------
-static void print_can_health_once(void) {
-    uint32_t sr  = CAN0->CAN_SR;
-    uint32_t ecr = CAN0->CAN_ECR;
-
-    uint8_t rec = (ecr & CAN_ECR_REC_Msk) >> CAN_ECR_REC_Pos;
-    uint8_t tec = (ecr & CAN_ECR_TEC_Msk) >> CAN_ECR_TEC_Pos;
-
-    printf("[CAN] ECR: REC=%u TEC=%u  SR:", rec, tec);
-    if (sr & CAN_SR_BOFF)  printf(" BOFF");
-    if (sr & CAN_SR_ERRP)  printf(" ERRP");
-    if (sr & CAN_SR_WARN)  printf(" WARN");
-    if (sr & CAN_SR_AERR)  printf(" AERR");
-    if (sr & CAN_SR_SERR)  printf(" SERR");
-    if (sr & CAN_SR_FERR)  printf(" FERR");
-    if (sr & CAN_SR_BERR)  printf(" BERR");
-    if (sr & CAN_SR_CERR)  printf(" CERR");
-    if (sr & CAN_SR_RBSY)  printf(" RBSY");
-    if (sr & CAN_SR_TBSY)  printf(" TBSY");
-    if (sr & CAN_SR_OVLSY) printf(" OVLSY");
-    printf("\n");
-}
-
-static void print_mb_state(uint8_t mb) {
-    uint32_t msr = CAN0->CAN_MB[mb].CAN_MSR;
-    uint8_t  dlc = (msr & CAN_MSR_MDLC_Msk) >> CAN_MSR_MDLC_Pos;
-    printf("[MB%u] MSR=0x%08lX  MRDY=%u  MMI=%u  RTR=%u  DLC=%u\n",
-           mb,
-           (unsigned long)msr,
-           (msr & CAN_MSR_MRDY) ? 1 : 0,
-           (msr & CAN_MSR_MMI)  ? 1 : 0,
-           (msr & CAN_MSR_MRTR) ? 1 : 0,
-           dlc);
-}
-
-static uint32_t extract_id_from_mb(uint8_t mb) {
-    uint32_t mid = CAN0->CAN_MB[mb].CAN_MID;
-    if (mid & CAN_MID_MIDE) {
-        // Extended (29-bit): SID(11) + EID(18)
-        uint32_t sid = (mid & CAN_MID_MIDvA_Msk) >> CAN_MID_MIDvA_Pos;
-        uint32_t eid = (mid & CAN_MID_MIDvB_Msk) >> CAN_MID_MIDvB_Pos;
-        return (sid << 18) | eid;
-    } else {
-        // Standard (11-bit)
-        return (mid & CAN_MID_MIDvA_Msk) >> CAN_MID_MIDvA_Pos;
-    }
-}
-
-
-static void dump_mb_roles(void) {
-    for (int i = 0; i < 3; i++) {
-        uint32_t mmr = CAN0->CAN_MB[i].CAN_MMR;
-        uint32_t mid = CAN0->CAN_MB[i].CAN_MID;
-        uint32_t mot = (mmr >> 24) & 0x7;
-        const char* role = (mot == 1) ? "RX"
-                           : (mot == 2) ? "RX_OVR"
-                           : (mot == 3) ? "TX"
-                           : "DIS";
-        printf("MB%d: MOT=%s  MIDE=%u\n", i, role, (mid & CAN_MID_MIDE) ? 1 : 0);
-    }
-}
-
-*/

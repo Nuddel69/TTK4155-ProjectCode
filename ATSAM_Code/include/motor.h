@@ -5,6 +5,9 @@
 #include "sam.h"
 #include <stdint.h>
 
+#define MAX_MOTOR_SPEED 1000
+#define MIN_MOTOR_SPEED 50
+
 struct motor_device {
   Pio *enpw;
   uint8_t enqw_pin;

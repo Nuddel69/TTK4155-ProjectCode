@@ -46,7 +46,8 @@ uint8_t motor_dir_and_speed(struct motor_device *dev,int32_t speed){
 	}
 	
 	//Set speed
-	PWM_set_dty(&dev->_enpw_dev, dev->_enpw_dev.resting_dty);
+	//PWM_set_dty(&dev->_enpw_dev, dev->_enpw_dev.resting_dty);
+	PWM_set_dty(&dev->_enpw_dev, speed_abs);
 	//PWM_set_dty(&dev->_enpw_dev, (dev->_enpw_dev.period) * (uint32_t)speed_abs);
 	return 0;
 	

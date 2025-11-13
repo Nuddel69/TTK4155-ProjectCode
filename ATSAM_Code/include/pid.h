@@ -11,9 +11,9 @@
 #include "motor.h"
 #include <stdint.h>
 
-#define KP_DEFAULT 1
-#define KI_DEFAULT 0
-#define KD_DEFAULT 0
+#define KP_DEFAULT 20
+#define KI_DEFAULT 5
+#define KD_DEFAULT 1
 
 #define PID_MAX_OUT 20000
 #define PID_MAX_WINDUP 1000
@@ -32,8 +32,7 @@ struct pid_controller {
   int32_t MAX_windup;
 };
 
-uint8_t pid_init(struct pid_controller *PID, uint32_t Kp, uint32_t Ki,
-                 uint32_t Kd);
+uint8_t pid_init(struct pid_controller *PID, uint32_t Kp, uint32_t Ki,uint32_t Kd);
 int32_t pid(int32_t inn, int32_t ref, struct pid_controller *PID);
 uint32_t pwm_dir_and_speed(struct motor_device *motor_dev,
                            struct pid_controller *pid_ctrl, int32_t pos_ref);

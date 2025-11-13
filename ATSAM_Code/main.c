@@ -147,12 +147,13 @@ int main(void) {
   printf("-----Node2 Init complete------\r\n");
 
   uint64_t inittime = time_now();
+  motor_pid.last_time = inittime;
   uint32_t counter = 0;
 
   while (1) {
 	  
 	  process_can_frame();
-	  pwm_dir_and_speed(&motor, &motor_pid, -joy_pos.x*100);
+	  pwm_dir_and_speed(&motor, &motor_pid, -joy_pos.x);
 	  int32_t inn = (int32_t)TC2->TC_CHANNEL[0].TC_CV;
 	  //printf("Current X ref:%d and Xpos:%d \r\n",joy_pos.x,inn);
 	 // time_spinFor(100);

@@ -6,8 +6,7 @@
 #include "pid.h"
 #include "time.h"
 
-uint8_t pid_init(struct pid_controller *PID, uint32_t Kp, uint32_t Ki,
-                 uint32_t Kd) {
+uint8_t pid_init(struct pid_controller *PID, uint32_t Kp, uint32_t Ki, uint32_t Kd) {
 
   PID->Kp = Kp;
   PID->Ki = Ki;
@@ -26,10 +25,13 @@ uint8_t pid_init(struct pid_controller *PID, uint32_t Kp, uint32_t Ki,
 int32_t pid(int32_t inn, int32_t ref, struct pid_controller *PID) {
 
   uint32_t dt = time_now() - PID->last_time;
+  if (dt == 0){
+	dt = 1;
+  }
 
   // Find current error
   int32_t pos = TC2->TC_CHANNEL[0].TC_CV;
-  int32_t error = ref - pos;
+  int32_t error = (int32_t)ref - pos;
 
   // Update current integral
   PID->integrator += error * dt;
@@ -65,6 +67,7 @@ uint32_t pwm_dir_and_speed(struct motor_device *motor_dev,
 
   int32_t inn = (int32_t)TC2->TC_CHANNEL[0].TC_CV;
   int32_t motor_input = pid(inn, pos_ref, pid_ctrl);
+  printf("Trying to send motor input:%d\r\n",motor_input);
   motor_dir_and_speed(motor_dev, -motor_input);
 
   return 0;

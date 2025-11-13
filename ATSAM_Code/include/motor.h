@@ -5,8 +5,8 @@
 #include "sam.h"
 #include <stdint.h>
 
-#define MAX_MOTOR_SPEED 20000 //MAX PWM dutycycle in us
-#define MIN_MOTOR_SPEED 5000  //Min PWM dutycycle in us
+#define MAX_MOTOR_SPEED 4000 //MAX PWM dutycycle in us
+#define MIN_MOTOR_SPEED 2000  //Min PWM dutycycle in us
 
 
 struct motor_device {

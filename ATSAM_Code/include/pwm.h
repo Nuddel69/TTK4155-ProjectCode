@@ -14,5 +14,6 @@ struct PWM_device {
 };
 
 uint8_t PWM_init(struct PWM_device *dev);
-uint8_t PWM_set_dty(struct PWM_device *dev, uint32_t dty);
+uint8_t PWM_set_dty(struct PWM_device *dev, uint64_t dty);
+uint8_t PWM_set_period(struct PWM_device *dev, uint64_t period);
 #endif // INCLUDE_INCLUDE_PWM_H_

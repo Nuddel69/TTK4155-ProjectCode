@@ -106,7 +106,7 @@ int process_can_frame() {
 
 // struct PWM_device servo_pwm = ;
 struct Servo_device servo = {{PIOB, 13, 1, 20000, 1500}, 900, 1500, 2100};
-struct motor_device motor = {PIOC, 23, {PIOB, 12, 0, 20000, 12000}};
+struct motor_device motor = {PIOC, 23, {PIOB, 12, 0, 20000, 000}};
 struct solenoid_device solenoid = {PIOB, 25};
 
 struct pid_controller motor_pid = {KP_DEFAULT, KI_DEFAULT,  KD_DEFAULT,    0, 0,
@@ -134,6 +134,8 @@ int main(void) {
   }
 
   servo_init(&servo);
+  
+  solenoid_init(&solenoid);
 
   motor_init(&motor);
   // PWM_init(&motor._enpw_dev);
@@ -146,30 +148,54 @@ int main(void) {
 
   // Turn Watchdog off
   WDT->WDT_MR = WDT_MR_WDDIS;
-
-  printf("-----Node2 Init complete------\r\n");
-
+  
+  
   uint64_t inittime = time_now();
+  
+  //Reset Timer and PID at start
   motor_pid.last_time = inittime;
+  TC2->TC_CHANNEL[0].TC_CCR = TC_CCR_SWTRG;
   uint32_t counter = 0;
 
   uint8_t button_fired = 0;
 
+  printf("-----Node2 Init complete------\r\n");
+
+
   while (1) {
 
     process_can_frame();
-    pwm_dir_and_speed(&motor, &motor_pid, -joy_pos.x * 100);
+    pwm_dir_and_speed(&motor, &motor_pid, (joy_pos.x-27)*50);
     int32_t inn = (int32_t)TC2->TC_CHANNEL[0].TC_CV;
+	printf("Current X ref:%d and Xpos:%d \r\n",joy_pos.x,inn);
 
-    if (btn.R2 && !button_fired) {
+    if (btn.R6 && !button_fired) {
       solenoid_pulse(&solenoid, 40);
       button_fired = 1;
     }
-    if (!btn.R2 && button_fired) {
+    if (!btn.R6 && button_fired) {
       button_fired = 0;
     }
-
-    // printf("Current X ref:%d and Xpos:%d \r\n",joy_pos.x,inn);
+	
+	/*
+	if (btn.R5) {
+		servo_set_percentage(&servo, 100);
+	}
+	if (btn.R4) {
+		servo_set_percentage(&servo, 0);
+	}
+	
+	servo_set_percentage(&servo, 50);
+	*/
+	/*
+	time_spinFor(84000000);
+	servo_set_percentage(&servo, 0);
+	time_spinFor(84000000);
+	servo_set_percentage(&servo, 100);
+	*/	
+	
+	//uint16_t IR_val = adc_read_once();
+	//printf("IR;%d \r\n",IR_val);
     // time_spinFor(100);
   }
   return 0;

@@ -40,9 +40,9 @@ uint8_t motor_dir_and_speed(struct motor_device *dev,int32_t speed){
 	
 	// Set direction
 	if (speed>0){
-		dev->phdi->PIO_SODR |= 1 << dev->phdi_pin;
-	}else{
 		dev->phdi->PIO_CODR |= 1 << dev->phdi_pin;
+	}else{
+		dev->phdi->PIO_SODR |= 1 << dev->phdi_pin;
 	}
 	
 	//Set speed

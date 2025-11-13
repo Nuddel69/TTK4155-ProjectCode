@@ -11,11 +11,11 @@
 #include "motor.h"
 #include <stdint.h>
 
-#define KP_DEFAULT 20
-#define KI_DEFAULT 5
-#define KD_DEFAULT 1
+#define KP_DEFAULT 1
+#define KI_DEFAULT 0
+#define KD_DEFAULT 0
 
-#define PID_MAX_OUT 20000
+#define PID_MAX_OUT 8000
 #define PID_MAX_WINDUP 1000
 
 struct pid_controller {
@@ -24,8 +24,10 @@ struct pid_controller {
   uint32_t Ki;
   uint32_t Kd;
 
-  uint32_t integrator;
-  uint32_t prev_error;
+  int32_t integrator;
+  
+  int32_t prev_error;
+  
   uint32_t last_time;
 
   int32_t MAX_out;

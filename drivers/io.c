@@ -136,6 +136,7 @@ static int _io_oled_write(struct io_oled_device *dev, uint8_t data) {
                        // PB2 DISP_CS Low, Chipselect is driven by SPI
   spi_send(&dev->spi, data);
   //_delay_us(3);         // Not sure if we need a delay, add if its not working
+  dev->current_column++;
 
   return 0;
 }
@@ -153,9 +154,22 @@ int io_oled_init(struct io_oled_device *dev) {
 
   // Reset
   PORTB &= ~(1 << PB4); // Set PB4 low
-  _delay_us(5);         // Wait 5us
+  _delay_us(5);         // Wait 5us, change to 10us maybe?
   PORTB |= (1 << PB4);  // Set PB4 high
-  _delay_ms(1); // Making sure its restarted before we start sending commands
+  _delay_ms(1); // Making sure its restarted before we start sending commands, change it to 10ms maybe?
+
+/*   // --- Configure OLED control pins --- //
+  // Set directions *after* setting desired logic states to avoid glitching low
+  PORTB |= (1 << PB2);  // CS high (inactive)
+  PORTB |= (1 << PB4);  // RESET high (idle)
+  PORTB &= ~(1 << PB1); // D/C low (command mode default)
+  DDRB  |= (1 << PB4) | (1 << PB1) | (1 << PB2);
+
+  // --- Hardware reset sequence --- //
+  PORTB &= ~(1 << PB4); // RESET low
+  _delay_us(10);        // hold ≥3µs
+  PORTB |= (1 << PB4);  // RESET high
+  _delay_ms(10);        // wait ≥3–10ms for internal circuits to stabilize */
 
   // Display OFF
   _io_oled_cmd(dev, 0xAE);
@@ -176,16 +190,19 @@ int io_oled_init(struct io_oled_device *dev) {
   _io_oled_cmd(dev, 0x80); // freq.mode
 
   _io_oled_cmd(dev, 0x81); // Contrast control
-  _io_oled_cmd(dev, 0xB0); // Set from 0x00-0xFF, 0x50 is ok
+  //_io_oled_cmd(dev, 0xAA); // Set from 0x00-0xFF, 0x50 is ok
+  _io_oled_cmd(dev, 0xFF); // NEW
 
   _io_oled_cmd(dev, 0xD9); // Set precharged period
   _io_oled_cmd(dev, 0x21);
+  //_io_oled_cmd(dev, 0xF1); // NEW
 
   _io_oled_cmd(dev, 0x20); // Set memory adressing mode
   _io_oled_cmd(dev, 0x02); // 0x02 = Page (alternativly 0x00 = Horizontal)
 
   _io_oled_cmd(dev, 0xDB); // VCOM deselect level mode
   _io_oled_cmd(dev, 0x30);
+  //_io_oled_cmd(dev, 0x20); // NEW
 
   _io_oled_cmd(dev, 0xAD); // Master config
   _io_oled_cmd(dev, 0x00); // Slave
@@ -207,11 +224,11 @@ int io_oled_init(struct io_oled_device *dev) {
   _io_oled_cmd(dev, 0xAF);
 
   // Turn display off
-  _io_oled_cmd(dev, 0xAE);
-  _delay_ms(10);
+  //_io_oled_cmd(dev, 0xAE);
+  //_delay_ms(10);
 
   // Turn display on
-  _io_oled_cmd(dev, 0xAF);
+  //_io_oled_cmd(dev, 0xAF);
 
   return status;
 }
@@ -246,6 +263,7 @@ int io_oled_goto_line(struct io_oled_device *dev, int line) {
   if (line > 7)
     line = 7;                              // Out of bounds
   _io_oled_cmd(dev, 0xB0 | (line & 0x07)); // 0xB0-0xB7
+  dev->current_page = line;                // Update index of current page
 
   return 0;
 }
@@ -255,6 +273,7 @@ int io_oled_goto_column(struct io_oled_device *dev, int column) {
   // Columns are split into low/high area commands 0x00-0x0F and 0x10-0x1F
   _io_oled_cmd(dev, 0x00 | (column & 0x0F));        // lower
   _io_oled_cmd(dev, 0x10 | ((column >> 4) & 0x0F)); // higher
+  dev->current_column = column;                        // Update index of current column
 
   return 0;
 }
@@ -270,6 +289,26 @@ int io_oled_clear_line(struct io_oled_device *dev, int line) {
   }
   return 0;
 }
+
+/**
+ * \brief Clears all lines on the OLED (fills entire display with black)
+ * \param[in] dev Pointer to the OLED device struct
+ * \return Errno (0 = success, -1 = failure)
+ */
+int io_oled_clear_all(struct io_oled_device *dev) {
+    int status = 0;
+
+    // There are 8 pages (0–7) on a 64-pixel-tall display
+    for (uint8_t line = 0; line < 8; line++) {
+        status = io_oled_clear_line(dev, line);
+        if (status < 0) {
+            return status;  // early exit on failure
+        }
+    }
+
+    return 0;
+}
+
 
 int io_oled_pos(struct io_oled_device *dev, int line, int column) {
 
@@ -316,13 +355,15 @@ int io_oled_print_arrow(struct io_oled_device *dev, uint8_t row, uint8_t col) {
 }
 
 // Write one glyph from specified font in font.h (ASCII 32..126).
-uint8_t io_oled_write_glyph(struct io_oled_device *dev,
-                            const struct oled_font *font, char character_id) {
+uint8_t io_oled_write_glyph(struct io_oled_device *dev, const struct oled_font *font, char character_id) {
+  
+  uint8_t start_page = dev->current_page;
+  uint8_t start_column = dev->current_column;
 
-  // Space as default value
-  uint8_t glyph_id = 0;
-
+  // --- Draw the glyph on the current page --- //
   // Make sure char_id in range
+  uint8_t glyph_id = 0;// Space as default value
+  
   if ((uint8_t)character_id >= 32 && (uint8_t)character_id <= 126) {
     glyph_id = (uint8_t)character_id - 32;
   }
@@ -335,13 +376,32 @@ uint8_t io_oled_write_glyph(struct io_oled_device *dev,
     uint8_t col = pgm_read_byte(base + c);
     _io_oled_write(dev, col);
   }
+
   // Add spacing after glyph
   for (uint8_t s = 0; s < font->spacing; ++s) {
     _io_oled_write(dev, 0x00);
   }
 
-  // Returns columns written
-  return (uint8_t)(font->bytes_per_glyph + font->spacing);
+  uint8_t total_cols = (uint8_t)(font->bytes_per_glyph + font->spacing);
+
+  // --- Clear the columns on all other pages --- //
+/*   for (uint8_t page = 0; page < 8; page++) {
+    if (page == start_page) continue;
+    io_oled_goto_line(dev, page);
+    io_oled_goto_column(dev, start_column);
+    for (uint8_t i = 0; i < total_cols; i++) {
+      _io_oled_write(dev, 0x00);
+    }
+  } */
+
+  // restore cursor to end of glyph on original page
+ /*  io_oled_goto_line(dev, start_page);
+  io_oled_goto_column(dev, (uint8_t)(start_column + total_cols)); */
+
+  //Returns columns written (commented out for testing with clearing other pages)
+  //return (uint8_t)(font->bytes_per_glyph + font->spacing);
+
+  return total_cols;
 }
 
 int io_oled_print_with_font(struct io_oled_device *dev,
@@ -421,7 +481,7 @@ int io_oled_blink(struct io_oled_device *dev, uint8_t blinks) {
     for (uint8_t row = 0; row < 8; row++) {
       io_oled_goto_line(dev, row); // new line
       io_oled_goto_column(dev, 0); // new carrige return
-      for (uint8_t col = 0; col < 126; col++) {
+      for (uint8_t col = 0; col < 128; col++) {
         if (blink % 2 == 0) {
           _io_oled_write(dev, 0xFF);
         } else {
@@ -434,3 +494,11 @@ int io_oled_blink(struct io_oled_device *dev, uint8_t blinks) {
   return 0;
 }
 
+
+int io_oled_write_data(struct io_oled_device *dev, uint8_t data) {
+  return _io_oled_write(dev, data);
+}
+
+int io_oled_write_command(struct io_oled_device *dev, uint8_t command) {
+  return _io_oled_cmd(dev, command);
+}

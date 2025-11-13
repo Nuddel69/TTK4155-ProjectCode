@@ -17,6 +17,7 @@ SOURCE_FILES = \
 	drivers/motor.c \
 	drivers/solenoid.c \
 	drivers/encoder.c \
+	drivers/pid.c \
 	drivers/pwm.c \
 	drivers/adc.c \
 	drivers/uart.c \

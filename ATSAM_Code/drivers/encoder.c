@@ -90,12 +90,12 @@ int8_t encoder_init(void) {
   return 0;
 }
 
-static inline void encoder_zero(void) {
+void encoder_zero(void) {
   // Reset zero ref
   TC2->TC_CHANNEL[0].TC_CCR = TC_CCR_SWTRG;
 }
 
-static inline int32_t encoder_get_pos(void) {
+int32_t encoder_get_pos(void) {
   // 32-bit count value from CH0
   return (int32_t)TC2->TC_CHANNEL[0].TC_CV;
 }

@@ -18,8 +18,8 @@
 #define ENCODER_B_PIN (1 << 26) // PC26 TIOB6
 
 int8_t encoder_init(void);
-inline void encoder_zero(void);
-inline int32_t encoder_get_pos(void);
+void encoder_zero(void);
+int32_t encoder_get_pos(void);
 
 // TEMP TESTING FUNCTION
 void encoder_test_print(void);

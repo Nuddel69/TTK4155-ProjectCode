@@ -105,7 +105,7 @@ int process_can_frame() {
 }
 
 // struct PWM_device servo_pwm = ;
-struct Servo_device servo = {{PIOB, 13, 1, 20000, 1500}, 900, 1500, 2100};
+struct Servo_device servo = {{PIOB, 13, 1, 20000, 1500}, 2100, 1500, 900};
 struct motor_device motor = {PIOC, 23, {PIOB, 12, 0, 20000, 000}};
 struct solenoid_device solenoid = {PIOB, 25};
 
@@ -134,7 +134,7 @@ int main(void) {
   }
 
   servo_init(&servo);
-  
+
   solenoid_init(&solenoid);
 
   motor_init(&motor);
@@ -148,11 +148,10 @@ int main(void) {
 
   // Turn Watchdog off
   WDT->WDT_MR = WDT_MR_WDDIS;
-  
-  
+
   uint64_t inittime = time_now();
-  
-  //Reset Timer and PID at start
+
+  // Reset Timer and PID at start
   motor_pid.last_time = inittime;
   TC2->TC_CHANNEL[0].TC_CCR = TC_CCR_SWTRG;
   uint32_t counter = 0;
@@ -161,13 +160,13 @@ int main(void) {
 
   printf("-----Node2 Init complete------\r\n");
 
-
+  uint8_t coconut = 0;
   while (1) {
 
     process_can_frame();
-    pwm_dir_and_speed(&motor, &motor_pid, (joy_pos.x-27)*50);
+    pwm_dir_and_speed(&motor, &motor_pid, (joy_pos.x - 27) * 50);
     int32_t inn = (int32_t)TC2->TC_CHANNEL[0].TC_CV;
-	printf("Current X ref:%d and Xpos:%d \r\n",joy_pos.x,inn);
+    printf("Current X ref:%d and Xpos:%d \r\n", joy_pos.x, inn);
 
     if (btn.R6 && !button_fired) {
       solenoid_pulse(&solenoid, 40);
@@ -176,26 +175,29 @@ int main(void) {
     if (!btn.R6 && button_fired) {
       button_fired = 0;
     }
-	
-	/*
-	if (btn.R5) {
-		servo_set_percentage(&servo, 100);
-	}
-	if (btn.R4) {
-		servo_set_percentage(&servo, 0);
-	}
-	
-	servo_set_percentage(&servo, 50);
-	*/
-	/*
-	time_spinFor(84000000);
-	servo_set_percentage(&servo, 0);
-	time_spinFor(84000000);
-	servo_set_percentage(&servo, 100);
-	*/	
-	
-	//uint16_t IR_val = adc_read_once();
-	//printf("IR;%d \r\n",IR_val);
+
+    servo_set_percentage(&servo, coconut % 100);
+    coconut += 1;
+
+    /*
+    if (btn.R5) {
+            servo_set_percentage(&servo, 100);
+    }
+    if (btn.R4) {
+            servo_set_percentage(&servo, 0);
+    }
+
+    servo_set_percentage(&servo, 50);
+    */
+    /*
+    time_spinFor(84000000);
+    servo_set_percentage(&servo, 0);
+    time_spinFor(84000000);
+    servo_set_percentage(&servo, 100);
+    */
+
+    // uint16_t IR_val = adc_read_once();
+    // printf("IR;%d \r\n",IR_val);
     // time_spinFor(100);
   }
   return 0;

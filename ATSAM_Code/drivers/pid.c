@@ -1,67 +1,71 @@
 #include <stdint.h>
+#include <stdlib.h>
+
+#include "encoder.h"
 #include "motor.h"
 #include "pid.h"
-#include "encoder.h"
+#include "time.h"
 
-uint8_t pid_init(struct pid_controller *PID,uint32_t Kp,uint32_t Ki,uint32_t Kd){
-	
-	PID->Kp = Kp;
-	PID->Ki = Ki;
-	PID->Kd = Kd;
+uint8_t pid_init(struct pid_controller *PID, uint32_t Kp, uint32_t Ki,
+                 uint32_t Kd) {
 
-	PID->integrator = 0;
-	PID->prev_error = 0;
-	PID->last_time = time_now(); 
-  
-	PID->MAX_out = PID_MAX_OUT;
-	PID->MAX_windup = PID_MAX_WINDUP;
-	
-	return 0;
+  PID->Kp = Kp;
+  PID->Ki = Ki;
+  PID->Kd = Kd;
+
+  PID->integrator = 0;
+  PID->prev_error = 0;
+  PID->last_time = time_now();
+
+  PID->MAX_out = PID_MAX_OUT;
+  PID->MAX_windup = PID_MAX_WINDUP;
+
+  return 0;
 }
 
+int32_t pid(int32_t inn, int32_t ref, struct pid_controller *PID) {
 
-int32_t pid(int32_t inn, int32_t ref,struct pid_controller *PID){
+  uint32_t dt = time_now() - PID->last_time;
 
+  // Find current error
+  uint16_t pos = (int16_t)encoder_get_pos();
+  int16_t error = (int16_t)ref - pos;
 
-	uint32_t dt = time_now() - PID->last_time;   
+  // Update current integral
+  PID->integrator += error * dt;
 
-	//Find current error
-	uint16_t pos=(int16_t)encoder_get_pos();
-	int16_t error = (int16_t)ref - pos;
+  // Anti windup for integral
+  if (PID->integrator > PID->MAX_windup) {
+    PID->integrator = PID->MAX_windup;
+  } else if (PID->integrator < (-PID->MAX_windup)) {
+    PID->integrator = -PID->MAX_windup;
+  }
 
-	//Update current integral
-	PID->integrator += error*dt;
+  // Calculate output
+  int32_t outvalue = PID->Kp * error + PID->Ki * PID->integrator -
+                     PID->Kd * (error - PID->prev_error) / dt;
 
-	// Anti windup for integral
-	if (PID->integrator > PID->MAX_windup){
-		PID->integrator = PID->MAX_windup;
-	}else if(PID->integrator < (-PID->MAX_windup)){
-		PID->integrator = -PID->MAX_windup;
-	}
+  // Limit output
+  uint32_t abs_out = abs(outvalue);
+  if (abs_out > PID->MAX_out) {
+    if (outvalue > 0) {
+      outvalue = PID->MAX_out;
+    } else if (outvalue < 0) {
+      outvalue = -PID->MAX_out;
+    }
+  }
 
-	//Calculate output
-	int32_t outvalue = PID->Kp*error+PID->Ki*PID->integrator-PID->Kd*(error-PID->prev_error)/dt;
+  PID->prev_error = error;
 
-	//Limit output
-	uint32_t abs_out = abs(outvalue);
-	if (abs_out > PID->MAX_out){
-		if (outvalue > 0){
-			outvalue = PID->MAX_out;
-		}else if(outvalue<0){
-			outvalue = -PID->MAX_out;
-		}
-
-	PID->prev_error = error;
-	
-	return outvalue;
+  return outvalue;
 }
 
+uint32_t pwm_dir_and_speed(struct motor_device *motor_dev,
+                           struct pid_controller *pid_ctrl, int32_t pos_ref) {
 
-uint32_t pwm_dir_and_speed(struct motor_device *motor_dev, struct pid_controller *pid_ctrl, int32_t pos_ref){
-	
-	int32_t inn = encoder_get_pos();
-	int32_t motor_input = pid(inn, pos_ref, pid_ctrl);
-	motor_dir_and_speed(motor_dev,motor_input);
-	
-	return 0;
+  int32_t inn = encoder_get_pos();
+  int32_t motor_input = pid(inn, pos_ref, pid_ctrl);
+  motor_dir_and_speed(motor_dev, motor_input);
+
+  return 0;
 }

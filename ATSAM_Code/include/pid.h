@@ -3,11 +3,13 @@
  *
  * Created: 13.11.2025 08:26:21
  *  Author: wighu
- */ 
-
+ */
 
 #ifndef PID_H_
 #define PID_H_
+
+#include "motor.h"
+#include <stdint.h>
 
 #define KP_DEFAULT 1
 #define KI_DEFAULT 0
@@ -16,26 +18,24 @@
 #define PID_MAX_OUT 20000
 #define PID_MAX_WINDUP 1000
 
-struct pid_controller{
-	
-	uint32_t Kp;
-	uint32_t Ki;
-	uint32_t Kd;
+struct pid_controller {
 
-	uint32_t integrator;
-	uint32_t prev_error;
-	uint32_t last_time;
-	
-	int32_t MAX_out;
-	int32_t MAX_windup;
+  uint32_t Kp;
+  uint32_t Ki;
+  uint32_t Kd;
+
+  uint32_t integrator;
+  uint32_t prev_error;
+  uint32_t last_time;
+
+  int32_t MAX_out;
+  int32_t MAX_windup;
 };
 
-
-
-uint8_t pid_init(struct pid_controller *PID ,uint32_t Kp,uint32_t Ki,uint32_t Kd);
-int32_t pid(int32_t inn, int32_t ref,struct pid_controller *PID);
-uint32_t pwm_dir_and_speed(struct motor_device *motor_dev, struct pid_controller *pid_ctrl, int32_t pos_ref);
-
-
+uint8_t pid_init(struct pid_controller *PID, uint32_t Kp, uint32_t Ki,
+                 uint32_t Kd);
+int32_t pid(int32_t inn, int32_t ref, struct pid_controller *PID);
+uint32_t pwm_dir_and_speed(struct motor_device *motor_dev,
+                           struct pid_controller *pid_ctrl, int32_t pos_ref);
 
 #endif /* PID_H_ */

@@ -3,7 +3,6 @@
 #include "pid.h"
 #include "encoder.h"
 
-
 uint8_t pid_init(struct pid_controller *PID,uint32_t Kp,uint32_t Ki,uint32_t Kd){
 	
 	PID->Kp = Kp;
@@ -66,6 +65,3 @@ uint32_t pwm_dir_and_speed(struct motor_device *motor_dev, struct pid_controller
 	
 	return 0;
 }
-
-
-// uint8_t Kalman(state){}

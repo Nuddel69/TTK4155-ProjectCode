@@ -7,7 +7,7 @@
 
 
 #include "sam.h"
-#include "adc.h"
+#include "ir.h"
 
 //Init a single ADC channel in freerun mode
 int adc_init(void){

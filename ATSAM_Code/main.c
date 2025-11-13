@@ -17,7 +17,7 @@
 #include "sam.h"
 #include "time.h"
 #include "uart.h"
-#include "adc.h"
+#include "ir.h"
 #include "encoder.h"
 #include "motor.h"
 #include "pid.h"
@@ -82,6 +82,6 @@ int main(void){
   while (1) {
 	  
 	
-
+  }
   return 0;
 }

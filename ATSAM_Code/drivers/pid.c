@@ -28,8 +28,8 @@ int32_t pid(int32_t inn, int32_t ref, struct pid_controller *PID) {
   uint32_t dt = time_now() - PID->last_time;
 
   // Find current error
-  uint16_t pos = (int16_t)encoder_get_pos();
-  int16_t error = (int16_t)ref - pos;
+  int32_t pos = TC2->TC_CHANNEL[0].TC_CV;
+  int32_t error = ref - pos;
 
   // Update current integral
   PID->integrator += error * dt;
@@ -63,9 +63,9 @@ int32_t pid(int32_t inn, int32_t ref, struct pid_controller *PID) {
 uint32_t pwm_dir_and_speed(struct motor_device *motor_dev,
                            struct pid_controller *pid_ctrl, int32_t pos_ref) {
 
-  int32_t inn = encoder_get_pos();
+  int32_t inn = (int32_t)TC2->TC_CHANNEL[0].TC_CV;
   int32_t motor_input = pid(inn, pos_ref, pid_ctrl);
-  motor_dir_and_speed(motor_dev, motor_input);
+  motor_dir_and_speed(motor_dev, -motor_input);
 
   return 0;
 }

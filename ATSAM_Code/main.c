@@ -67,7 +67,7 @@ int process_can_frame(){
 				btn.nav   = (uint8_t)msg.data[4];
 
 				//printf("%c[2J",27);
-				printf("Buttons R=0x%02X L=0x%02X N=0x%02X, pos x:%d, y:%d\r",
+				printf("Buttons R=0x%02X L=0x%02X N=0x%02X, pos x:%d, y:%d\r\n",
 				btn.right, btn.left, btn.nav, joy_pos.x, joy_pos.y);
 				// update_control(joy_pos, btn);
 				
@@ -152,7 +152,10 @@ int main(void) {
   while (1) {
 	  
 	  process_can_frame();
-	  pwm_dir_and_speed(&motor, &motor_pid, joy_pos.x*10);
+	  pwm_dir_and_speed(&motor, &motor_pid, -joy_pos.x*100);
+	  int32_t inn = (int32_t)TC2->TC_CHANNEL[0].TC_CV;
+	  //printf("Current X ref:%d and Xpos:%d \r\n",joy_pos.x,inn);
+	 // time_spinFor(100);
 	  
   }
   return 0;

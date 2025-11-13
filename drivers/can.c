@@ -46,30 +46,29 @@ int8_t can_init(struct can_device *dev) {
 }
 
 int8_t can_write(struct can_device *dev, struct CAN_frame msg) {
-	
-	
-if (msg.extended) {
-  // 29bit ID 
-  uint32_t id = msg.id & 0x1FFFFFFF;
 
-  uint8_t EID0 =  id        & 0xFF;         // EID[7:0]
-  uint8_t EID8 = (id >> 8)  & 0xFF;         // EID[15:8]
-  uint8_t SIDL = ((id >> 16) & 0x03)        // EID[17:16] -> SIDL<1:0>
-  | 0x08                                    // EXIDE=1 (bit3)
-  | ((id >> 18) & 0xE0);                    // SID[2:0]  -> SIDL<7:5>
-  uint8_t SIDH = (id >> 21) & 0xFF;         // SID[10:3] -> SIDH
+  if (msg.extended) {
+    // 29bit ID
+    uint32_t id = msg.id & 0x1FFFFFFF;
 
-  MCP2515_write(dev, MCP2515_TXB0SIDH, SIDH);
-  MCP2515_write(dev, MCP2515_TXB0SIDL, SIDL);
-  MCP2515_write(dev, MCP2515_TXB0EID8, EID8);
-  MCP2515_write(dev, MCP2515_TXB0EID0, EID0);
-} else { // 11bit ID
-  uint8_t ID_MSB = (0x7F8 & msg.id) >> 3;
-  uint8_t ID_LSB = (0x7 & msg.id) << 5;
+    uint8_t EID0 = id & 0xFF;             // EID[7:0]
+    uint8_t EID8 = (id >> 8) & 0xFF;      // EID[15:8]
+    uint8_t SIDL = ((id >> 16) & 0x03)    // EID[17:16] -> SIDL<1:0>
+                   | 0x08                 // EXIDE=1 (bit3)
+                   | ((id >> 18) & 0xE0); // SID[2:0]  -> SIDL<7:5>
+    uint8_t SIDH = (id >> 21) & 0xFF;     // SID[10:3] -> SIDH
 
-  MCP2515_write(dev, MCP2515_TXB0SIDH, ID_MSB);
-  MCP2515_write(dev, MCP2515_TXB0SIDL, ID_LSB);
-}
+    MCP2515_write(dev, MCP2515_TXB0SIDH, SIDH);
+    MCP2515_write(dev, MCP2515_TXB0SIDL, SIDL);
+    MCP2515_write(dev, MCP2515_TXB0EID8, EID8);
+    MCP2515_write(dev, MCP2515_TXB0EID0, EID0);
+  } else { // 11bit ID
+    uint8_t ID_MSB = (0x7F8 & msg.id) >> 3;
+    uint8_t ID_LSB = (0x7 & msg.id) << 5;
+
+    MCP2515_write(dev, MCP2515_TXB0SIDH, ID_MSB);
+    MCP2515_write(dev, MCP2515_TXB0SIDL, ID_LSB);
+  }
   MCP2515_write(dev, TXB0DLC, msg.dlc);
 
   uint8_t buff0_status;
@@ -119,109 +118,25 @@ int8_t can_read(struct can_device *dev, struct CAN_frame *out) {
   return 0;
 }
 
-
 static inline int can_rxq_add(struct CAN_frame *msg) {
-	
-	uint8_t next = (uint8_t)((rxq_head + 1) & (CAN_RXQ_SIZE - 1));
-	if (next == rxq_tail){
-		return 0;
-	}
-	rxq[rxq_head] = *msg;
-	rxq_head = next;
-	return 1;
+
+  uint8_t next = (uint8_t)((rxq_head + 1) & (CAN_RXQ_SIZE - 1));
+  if (next == rxq_tail) {
+    return 0;
+  }
+  rxq[rxq_head] = *msg;
+  rxq_head = next;
+  return 1;
 }
 
 // Pull from RX buffer
-int can_rxq_pull(struct CAN_frame *out){
-	if (rxq_tail == rxq_head){
-		return 0;
-	}
-	*out = rxq[rxq_tail];
-	rxq_tail = (uint8_t)((rxq_tail + 1) & (CAN_RXQ_SIZE - 1));
-	return 1;
-}
-
-
-int tx_joy_btn(struct io_joystick_device *joy_dev,struct io_avr_device *avr_dev, struct can_device *can_dev){
-	
-	//Read ADC
-	struct io_joystick_position joy_pos;
-	io_joystick_read_position(joy_dev, &joy_pos);
-	
-	struct io_avr_buttons btn;
-	io_avr_buttons_read(avr_dev,&btn);
-	
-	//Frame Data
-	struct CAN_frame msg = {CAN_ID_JOYPOS,0x08,{joy_pos.x,joy_pos.y,btn.right,btn.left,btn.nav,0,0,0},0, 0};
-	
-	//Transmit data
-	can_write(&can, msg);
-	
-	
-	return 0;
-}
-
-int tx_gamestart(struct can_device *can_dev){
-	
-	//Frame Data
-	struct CAN_frame msg = {CAN_ID_GAMESTART,0x08,{0,0,0,0,0,0},1, 0};
-	
-	//Transmit data
-	can_write(&can, msg);
-	return 0;
-}
-
-int tx_error(struct can_device *can_dev){
-	
-	//Frame Data
-	struct CAN_frame msg = {CAN_ID_ERROR,0x08,{0,0,0,0,0,0},1, 0};
-	
-	//Transmit data
-	can_write(&can, msg);
-	return 0;
-}
-
-int process_can_frame(struct CAN_frame *can_frame){
-	
-	switch (can_frame->id){
-		
-		case CAN_ID_ERROR:{   //This ID is reserved for errors, BOTH node1 and node2
-			
-			STATUS_ASSERT(1);
-			break;
-		}
-		case CAN_ID_GAMEOVER:{//This ID is reserved for gameover message from node2
-			
-			break;
-		}
-		case CAN_ID_GAMESTART:{//This ID is reserved for starting a new game from node1
-			
-			break;
-		}
-		case CAN_ID_JOYPOS:{  //This ID is reserved for sending Joystick position and button state
-			
-			break;
-		}
-		case CAN_ID_SOLONOID:{//This ID is reserved for sending trigger signal for the solonoid
-			
-			break;
-		}
-		case CAN_ID_MOTORPOS:{//This ID is reserved for sending current motor position
-			
-			break;
-		}
-		case CAN_ID_SCORE:{   //This ID is reserved for sending gamescore
-			
-			break;
-		}
-		case CAN_ID_DEFAULT:{ //This ID is for anything else
-			break;
-		}
-		default:{
-			
-		}
-	}
-	
+int can_rxq_pull(struct CAN_frame *out) {
+  if (rxq_tail == rxq_head) {
+    return 0;
+  }
+  *out = rxq[rxq_tail];
+  rxq_tail = (uint8_t)((rxq_tail + 1) & (CAN_RXQ_SIZE - 1));
+  return 1;
 }
 
 //------------------//
@@ -237,13 +152,13 @@ ISR(INT2_vect) {
 
   if (status & rx_buff_0_full) {
     can_read(can_irq, &new_message);
-	can_rxq_add(&new_message);
+    can_rxq_add(&new_message);
     LOG_INF("RX0 Full");
   }
 
   if (status & rx_buff_1_full) {
     can_read(can_irq, &new_message);
-	can_rxq_add(&new_message);
+    can_rxq_add(&new_message);
     LOG_INF("RX1 Full");
   }
 

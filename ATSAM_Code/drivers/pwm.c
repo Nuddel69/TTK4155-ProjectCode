@@ -5,10 +5,6 @@
 
 #define _MCK 84000000
 #define _MCK_DIV 128
-#define _PERIOD 0x3345  // 20 ms
-#define _DTY_MIN 0x30F6 // 0.9 ms
-#define _DTY_MID 0x2F6C // 1.5 ms
-#define _DTY_MAX 0x2DE2 // 2.1 ms
 
 uint8_t PWM_init(struct PWM_device *dev) {
   // Enable the clock for PWM - Uses Master Clock (MCK) (PID36 from Table 9-1 in
@@ -24,23 +20,22 @@ uint8_t PWM_init(struct PWM_device *dev) {
       (1u << (dev->pin)); // Set peripheral function B for the device pin
 
   // Disable PWM write protect (WPKEY = PWM in ASCII)
-  PWM->PWM_WPCR |= (PWM_WPCR_WPCMD(dev->channel) |
-                    1u << (dev->channel + 2) /* Offset to account for cmd */ |
-                    PWM_WPCR_WPKEY(0x50574D));
+  PWM->PWM_WPCR = (PWM_WPCR_WPCMD(0) | PWM_WPCR_WPRG2 | PWM_WPCR_WPRG3 |
+                   PWM_WPCR_WPKEY(0x50574D));
 
   // MCK prescaling - 84MHz/128
-  PWM->PWM_CH_NUM[dev->channel].PWM_CMR |= PWM_CMR_CPRE_MCK_DIV_128;
+  PWM->PWM_CH_NUM[dev->channel].PWM_CMR |=
+      PWM_CMR_CPRE_MCK_DIV_128 | PWM_CMR_CPOL;
 
-  // CPRD = (Period*MCK)/128, Period in ms
-  int cprd = ((dev->period * 0.001) * _MCK) / _MCK_DIV;
-  PWM->PWM_CH_NUM[dev->channel].PWM_CPRD |= PWM_CPRD_CPRD(cprd);
+  // Set the initial period
+  // CPRD = ((Period*MCK)/128), Period in us
+  int cprd = ((dev->period) * 0.000001 * _MCK) / _MCK_DIV;
+  PWM->PWM_CH_NUM[dev->channel].PWM_CPRD = PWM_CPRD_CPRD(cprd);
 
   // Set the initial dutycycle
-  PWM_set_dty(dev, dev->resting_dty);
-
-  // Enable PWM write protect
-  PWM->PWM_WPCR |= (PWM_WPCR_WPCMD(dev->channel) | PWM_WPCR_WPRG1 |
-                    PWM_WPCR_WPKEY(0x50574D));
+  // CDTY = ((Period-DTY)*MCK)/128, DTY in us
+  int cdty = (((dev->resting_dty) * 0.000001) * _MCK) / _MCK_DIV;
+  PWM->PWM_CH_NUM[dev->channel].PWM_CDTY = PWM_CDTY_CDTY(cdty);
 
   // Enable PWM
   PWM->PWM_ENA |= 1u << dev->channel;
@@ -48,22 +43,20 @@ uint8_t PWM_init(struct PWM_device *dev) {
   return 0;
 }
 
-uint8_t PWM_set_dty(struct PWM_device *dev, float dty) {
-  // CDTY = ((Period-DTY)*MCK)/128, DTY in ms
-  int cdty = (((dev->period - dty) * 0.001) * _MCK) / _MCK_DIV;
-  PWM->PWM_CH_NUM[dev->channel].PWM_CDTYUPD |= PWM_CDTY_CDTY(cdty);
+uint8_t PWM_set_dty(struct PWM_device *dev, uint64_t dty) {
+  // CDTY = ((Period-DTY)*MCK)/128, DTY in us
+  int cdty = (((dty) * 0.000001) * _MCK) / _MCK_DIV;
+  if (cdty < 0) {
+    return 1;
+  }
+
+  PWM->PWM_CH_NUM[dev->channel].PWM_CDTYUPD = PWM_CDTY_CDTY(cdty);
+  return 0;
 }
 
-// uint8_t PWM_max_dty(struct PWM_device *dev) {
-//   // CDTY = ((Period-DTY)*MCK)/128, DTY in ms
-//   PWM->PWM_CH_NUM[dev->channel].PWM_CDTYUPD |= PWM_CDTY_CDTY(_DTY_MAX);
-//
-//   return 0;
-// }
-
-// uint8_t PWM_min_dty(struct PWM_device *dev) {
-//   // CDTY = ((Period-DTY)*MCK)/128, DTY in ms
-//   PWM->PWM_CH_NUM[dev->channel].PWM_CDTYUPD |= PWM_CDTY_CDTY(_DTY_MIN);
-//
-//   return 0;
-// }
+uint8_t PWM_set_period(struct PWM_device *dev, uint64_t period) {
+  // CPRD = ((Period*MCK)/128), Period in us
+  int cprd = ((dev->period) * 0.000001 * _MCK) / _MCK_DIV;
+  PWM->PWM_CH_NUM[dev->channel].PWM_CPRDUPD = PWM_CPRD_CPRD(cprd);
+  return 0;
+}

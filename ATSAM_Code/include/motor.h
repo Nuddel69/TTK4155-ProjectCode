@@ -5,15 +5,13 @@
 #include "sam.h"
 #include <stdint.h>
 
-#define MAX_MOTOR_SPEED 1000
-#define MIN_MOTOR_SPEED 50
+#define MAX_MOTOR_SPEED 4000 //MAX PWM dutycycle in us
+#define MIN_MOTOR_SPEED 2000  //Min PWM dutycycle in us
+
 
 struct motor_device {
-  Pio *enpw;
-  uint8_t enqw_pin;
   Pio *phdi;
   uint8_t phdi_pin;
-  float period;
   struct PWM_device _enpw_dev;
 };
 
@@ -22,5 +20,7 @@ uint8_t motor_init(struct motor_device *dev);
 uint8_t motor_left(struct motor_device *dev, uint8_t speed);
 uint8_t motor_right(struct motor_device *dev, uint8_t speed);
 uint8_t motor_stop(struct motor_device *dev);
+
+uint8_t motor_dir_and_speed(struct motor_device *dev,int32_t speed);
 
 #endif // INCLUDE_INCLUDE_MOTOR_H_

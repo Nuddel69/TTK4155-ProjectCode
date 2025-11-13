@@ -16,9 +16,11 @@ SOURCE_FILES = \
 	drivers/servo.c \
 	drivers/motor.c \
 	drivers/solenoid.c \
+	drivers/encoder.c \
+	drivers/pid.c \
 	drivers/pwm.c \
+	drivers/adc.c \
 	drivers/uart.c \
-	drivers/utils.c
 
 # Feel free to ignore anything below this line
 VPATH:= $(dir $(SOURCE_FILES))

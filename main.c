@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <stdio.h>
 #include <util/delay.h>
 
 #include "can.h"
@@ -17,10 +18,10 @@ LOG_MODULE_DEFINE("main")
 
 // Device Configs
 struct USART_config config = {BAUD, F_CPU};
-struct can_device can = {SSE2};
 struct io_joystick_device joy = {0, 1, 0, 0};
 struct io_oled_device oled = {SSB2};
 struct io_avr_device avr = {SSB3};
+struct can_device can = {SSE2};
 
 // Data Containers
 struct io_joystick_position pos;
@@ -54,10 +55,9 @@ struct menu_cfg menu = {
     .parent_length = 0,
 };
 
-// menu.length = sizeof(menu_items) / sizeof(menu_items[0]);
-
 int tx_joy_btn(struct io_joystick_device *joy_dev,
                struct io_avr_device *avr_dev, struct can_device *can_dev) {
+
   // Read ADC
   struct io_joystick_position joy_pos;
   io_joystick_read_position(joy_dev, &joy_pos);

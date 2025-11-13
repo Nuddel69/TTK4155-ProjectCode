@@ -20,6 +20,7 @@
 #include "adc.h"
 #include "encoder.h"
 #include "motor.h"
+#include "pid.h"
 // #include "../uart_and_printf/printf-stdarg.h"
 
 #define DEBUG 0
@@ -33,26 +34,12 @@ CAN_MESSAGE dummy_msg ={{0x8},{8},{"HiWorld"}};
 	
 // struct PWM_device servo_pwm = ;
 struct Servo_device servo = {{PIOB, 13, 1, 20000, 1500}, 900, 1500, 2100};
-	
 struct motor_device motor = {PIOC, 23, {PIOB, 12, 0, 20000, 12000}};
 	
-	
-struct pid_controller{
-uint32_t Kp;
-uint32_t Ki;
-uint32_t Kd;
-
-uint32_t integrator;
-uint32_t prev_in;
-uint32_t last_time; 
-  
-int16_t MAX_out;
-int16_t MAX_windup;
-
-};
+struct pid_controller motor_pid =  {KP_DEFAULT,KI_DEFAULT,KD_DEFAULT,0,0,0,PID_MAX_OUT,PID_MAX_WINDUP};
 	
 	
-int main(void) {
+int main(void){
 
   SystemInit();
 
@@ -91,58 +78,10 @@ int main(void) {
   
   uint64_t inittime = time_now();
   uint32_t counter = 0;
-  //NVIC_DisableIRQ(ID_CAN0);
 
   while (1) {
-		//Get message from buffer
-		//if (can_rxq_pull(&msg)){
-		//	print_canmsg(&msg);
-		//}
-		
-		//process_can_frame();
-		//servo_set_percentage(&servo, 100);
-		//PWM_set_dty(&motor._enpw_dev, 10000);
-		//time_spinFor(msecs(1000));
-		//PWM_set_dty(&motor._enpw_dev, 15000);
-		//time_spinFor(msecs(1000));
-		//servo_set_percentage(&servo, 0);
-		//time_spinFor(msecs(1000));
-		//if (can_send(&dummy_msg, 0) == 0) {
-		//	printf("[TX] STD id=0x%03X dlc=%d\r\n", dummy_msg.id, dummy_msg.data_length);
-		//	} else {
-			//printf("[TX] mailbox busy\r\n");
-		//}
-		
-		//time_spinFor(msecs(500));
-		if ((int32_t)TC2->TC_CHANNEL[0].TC_CV>0){
-		//time_spinFor(msecs(2000));
-			motor_dir_and_speed(&motor,PID 12000);
-		}
-		
-		//uint16_t volts_12bit = adc_read_once();
-		//uint16_t volts=(volts_12bit*3.3)/4096; //(ADC_value*Ref_max_voltage)/(12bit_max)
-		
-		//printf("Voltage ADC: %u\r\n",volts_12bit);
-		
-		}
+	  
+	
 
-    //time_spinFor(msecs(500));
-	//printf("Still waiting\r\n");
-    //PIOB->PIO_SODR = (1 << 27);
-    //time_spinFor(msecs(50));
-    //PIOB->PIO_CODR = (1 << 27);
-
-    //printf("Current time: %.3f :3\r\n", totalSeconds(time_now() - inittime));
-    // Check RX mailbox 1
-    //if (can_receive(&msg, 1) == 0) {
-	  //printf("Current time: %.3f :3\r\n", totalSeconds(time_now() - inittime));
-      //print_canmsg(&msg);
-    //}
-    // Check RX mailbox 2
-    //if (can_receive(&msg, 2) == 0) {
-	  //printf("Current time: %.3f :3\r\n", totalSeconds(time_now() - inittime));
-      //print_canmsg(&msg);
-
-  //}
   return 0;
 }

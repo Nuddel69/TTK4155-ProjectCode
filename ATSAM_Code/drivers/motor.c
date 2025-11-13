@@ -3,8 +3,10 @@
 #include "motor.h"
 #include "pwm.h"
 #include "sam3x8e.h"
+#include "pid.h"
+#include "encoder.h"
 
-uint8_t motor_init(struct motor_device *dev) {
+uint8_t motor_init(struct motor_device *dev){
 
   // Initialise PWM pin
   //dev->_enpw_dev.port = dev->enpw;

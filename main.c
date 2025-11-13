@@ -1,8 +1,10 @@
 #include <stddef.h>
+#include <stdio.h>
 #include <util/delay.h>
 
 #include "can.h"
 #include "io.h"
+#include "menu.h"
 #include "log.h"
 #include "spi.h"
 #include "timer.h"
@@ -17,6 +19,7 @@ LOG_MODULE_DEFINE("main")
 // Device Configs
 struct USART_config config = {BAUD, F_CPU};
 struct io_joystick_device joy = {0, 1, 0, 0};
+struct io_oled_device oled = {SSB2};
 struct io_avr_device avr = {SSB3};
 struct can_device can = {SSE2};
 
@@ -26,6 +29,31 @@ struct CAN_frame can_msg = {0xFACB, 0x08, "CAN Dumb", 0, 0};
 struct io_avr_buttons btn;
 struct CAN_frame dummy_msg;
 
+// Define settings sub menu
+static struct menu_item settings_menu [] = {
+    {"Adjust brightness", PAGE_ADJUST_BRIGHTNESS, NULL, 0},
+    {"Calibrate joystick", PAGE_CALIBRATE_JOYSTICK, NULL, 0},
+};
+
+// Define main menu
+static struct menu_item main_menu[] = {
+    {"Start game", PAGE_PLAY_GAME, NULL, 0},
+    {"High scores", PAGE_HIGH_SCORES, NULL, 0},
+    {"Settings", PAGE_SETTINGS, settings_menu, 2},
+};
+
+// Initialize menu_cfg struct with menus defined above
+struct menu_cfg menu = {
+  .oled = &oled,
+  .items = main_menu,
+  .length = 3,
+  .cursor_pos = 0,
+  .current_page = PAGE_WELCOME,
+  .root_items = main_menu,
+  .root_length = 3,
+  .parent_menu = NULL,
+  .parent_length = 0,
+};
 
 
 int tx_joy_btn(struct io_joystick_device *joy_dev,struct io_avr_device *avr_dev, struct can_device *can_dev){
@@ -129,12 +157,18 @@ int main() {
   status = io_avr_init(&avr);
   STATUS_ASSERT(status)
 
+  status = menu_init(&menu);
+  STATUS_ASSERT(status)
+
   status = can_init(&can);
   STATUS_ASSERT(status)
 
   LOG_INF("---Init complete---")
 
   while (1) {
+	io_avr_buttons_read(&avr, &btn);    // Read button inputs from IO board
+    menu_handler(&menu, &btn);          // Handle menu based on button inputs
+
     tx_joy_btn(&joy,&avr,&can);
     // USART_SendString("Hello World!\n");
 	_delay_ms(100);

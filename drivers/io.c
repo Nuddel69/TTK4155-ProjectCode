@@ -1,12 +1,15 @@
 #include <avr/pgmspace.h>
+#include <stdint.h>
 #include <util/delay.h>
 
 #include "adc.h"
+#include "can.h"
 #include "io.h"
 #include "log.h"
 #include "spi.h"
+#include "uart.h"
 #include "utils.h"
-#include "can.h"
+#include <stdio.h>
 
 LOG_MODULE_DEFINE("IO")
 
@@ -29,23 +32,34 @@ int io_joystick_init(struct io_joystick_device *dev) {
 
   ADC_init();
 
-  status = io_joystick_calibrate(dev);
-
   return status;
 }
+
 int io_joystick_read_position(struct io_joystick_device *dev,
                               struct io_joystick_position *buffer) {
   struct ADC_meas data;
 
   ADC_read_all(&data);
-  /*   buffer->x = (map(data.channel[dev->adc_channel_x], 0, 127, (-100), 100))
-    + dev->x_offset; buffer->y = (map(data.channel[dev->adc_channel_y], 0, 127,
-    (-100), 100)) + dev->y_offset; */
 
-  buffer->x = (map(data.channel[dev->adc_channel_x], 0, 255, (-100), 100)) +
-              dev->x_offset;
-  buffer->y = (map(data.channel[dev->adc_channel_y], 0, 255, (-100), 100)) +
-              dev->y_offset;
+  uint8_t raw_x = data.channel[dev->adc_channel_x];
+  uint8_t raw_y = data.channel[dev->adc_channel_y];
+
+  if (raw_x < dev->x_min)
+    raw_x = dev->x_min;
+  if (raw_x > dev->x_max)
+    raw_x = dev->x_max;
+  if (raw_y < dev->y_min)
+    raw_y = dev->y_min;
+  if (raw_y > dev->y_max)
+    raw_y = dev->y_max;
+
+  buffer->x = map(raw_x, dev->x_min, dev->x_max, -127, 127);
+  buffer->y = map(raw_y, dev->y_min, dev->y_max, -127, 127);
+
+  if (buffer->x > -5 && buffer->x < 5)
+    buffer->x = 0;
+  if (buffer->y > -5 && buffer->y < 5)
+    buffer->y = 0;
 
   return 0;
 }
@@ -69,20 +83,21 @@ int io_joystick_read_direction(struct io_joystick_device *dev,
 
   return status;
 }
-int io_joystick_calibrate(struct io_joystick_device *dev) {
-  int status = 0;
 
-  struct io_joystick_position pos;
-  status = io_joystick_read_position(dev, &pos);
-  if (status) {
-    return status;
-  }
-
-  dev->x_offset = pos.x * -1;
-  dev->y_offset = pos.y * -1;
-
-  return 0;
-}
+// int io_joystick_calibrate(struct io_joystick_device *dev) {
+//   int status = 0;
+//
+//   struct io_joystick_position pos;
+//   status = io_joystick_read_position(dev, &pos);
+//   if (status) {
+//     return status;
+//   }
+//
+//   dev->x_offset = pos.x * -1;
+//   dev->y_offset = pos.y * -1;
+//
+//   return 0;
+// }
 
 //-------------------//
 //   Button Inputs   //
@@ -135,7 +150,8 @@ static int _io_oled_write(struct io_oled_device *dev, uint8_t data) {
   PORTB |= (1 << PB1); // D/!C set high
                        // PB2 DISP_CS Low, Chipselect is driven by SPI
   spi_send(&dev->spi, data);
-  //_delay_us(3);         // Not sure if we need a delay, add if its not working
+  //_delay_us(3);         // Not sure if we need a delay, add if its not
+  // working
   dev->current_column++;
 
   return 0;
@@ -156,20 +172,21 @@ int io_oled_init(struct io_oled_device *dev) {
   PORTB &= ~(1 << PB4); // Set PB4 low
   _delay_us(5);         // Wait 5us, change to 10us maybe?
   PORTB |= (1 << PB4);  // Set PB4 high
-  _delay_ms(1); // Making sure its restarted before we start sending commands, change it to 10ms maybe?
+  _delay_ms(1); // Making sure its restarted before we start sending commands,
+                // change it to 10ms maybe?
 
-/*   // --- Configure OLED control pins --- //
-  // Set directions *after* setting desired logic states to avoid glitching low
-  PORTB |= (1 << PB2);  // CS high (inactive)
-  PORTB |= (1 << PB4);  // RESET high (idle)
-  PORTB &= ~(1 << PB1); // D/C low (command mode default)
-  DDRB  |= (1 << PB4) | (1 << PB1) | (1 << PB2);
+  /*   // --- Configure OLED control pins --- //
+    // Set directions *after* setting desired logic states to avoid glitching
+    low PORTB |= (1 << PB2);  // CS high (inactive) PORTB |= (1 << PB4);  //
+    RESET high (idle) PORTB &= ~(1 << PB1); // D/C low (command mode default)
+    DDRB  |= (1 << PB4) | (1 << PB1) | (1 << PB2);
 
-  // --- Hardware reset sequence --- //
-  PORTB &= ~(1 << PB4); // RESET low
-  _delay_us(10);        // hold ≥3µs
-  PORTB |= (1 << PB4);  // RESET high
-  _delay_ms(10);        // wait ≥3–10ms for internal circuits to stabilize */
+    // --- Hardware reset sequence --- //
+    PORTB &= ~(1 << PB4); // RESET low
+    _delay_us(10);        // hold ≥3µs
+    PORTB |= (1 << PB4);  // RESET high
+    _delay_ms(10);        // wait ≥3–10ms for internal circuits to stabilize
+  */
 
   // Display OFF
   _io_oled_cmd(dev, 0xAE);
@@ -273,7 +290,7 @@ int io_oled_goto_column(struct io_oled_device *dev, int column) {
   // Columns are split into low/high area commands 0x00-0x0F and 0x10-0x1F
   _io_oled_cmd(dev, 0x00 | (column & 0x0F));        // lower
   _io_oled_cmd(dev, 0x10 | ((column >> 4) & 0x0F)); // higher
-  dev->current_column = column;                        // Update index of current column
+  dev->current_column = column; // Update index of current column
 
   return 0;
 }
@@ -296,19 +313,18 @@ int io_oled_clear_line(struct io_oled_device *dev, int line) {
  * \return Errno (0 = success, -1 = failure)
  */
 int io_oled_clear_all(struct io_oled_device *dev) {
-    int status = 0;
+  int status = 0;
 
-    // There are 8 pages (0–7) on a 64-pixel-tall display
-    for (uint8_t line = 0; line < 8; line++) {
-        status = io_oled_clear_line(dev, line);
-        if (status < 0) {
-            return status;  // early exit on failure
-        }
+  // There are 8 pages (0–7) on a 64-pixel-tall display
+  for (uint8_t line = 0; line < 8; line++) {
+    status = io_oled_clear_line(dev, line);
+    if (status < 0) {
+      return status; // early exit on failure
     }
+  }
 
-    return 0;
+  return 0;
 }
-
 
 int io_oled_pos(struct io_oled_device *dev, int line, int column) {
 
@@ -355,15 +371,16 @@ int io_oled_print_arrow(struct io_oled_device *dev, uint8_t row, uint8_t col) {
 }
 
 // Write one glyph from specified font in font.h (ASCII 32..126).
-uint8_t io_oled_write_glyph(struct io_oled_device *dev, const struct oled_font *font, char character_id) {
-  
+uint8_t io_oled_write_glyph(struct io_oled_device *dev,
+                            const struct oled_font *font, char character_id) {
+
   uint8_t start_page = dev->current_page;
   uint8_t start_column = dev->current_column;
 
   // --- Draw the glyph on the current page --- //
   // Make sure char_id in range
-  uint8_t glyph_id = 0;// Space as default value
-  
+  uint8_t glyph_id = 0; // Space as default value
+
   if ((uint8_t)character_id >= 32 && (uint8_t)character_id <= 126) {
     glyph_id = (uint8_t)character_id - 32;
   }
@@ -385,21 +402,21 @@ uint8_t io_oled_write_glyph(struct io_oled_device *dev, const struct oled_font *
   uint8_t total_cols = (uint8_t)(font->bytes_per_glyph + font->spacing);
 
   // --- Clear the columns on all other pages --- //
-/*   for (uint8_t page = 0; page < 8; page++) {
-    if (page == start_page) continue;
-    io_oled_goto_line(dev, page);
-    io_oled_goto_column(dev, start_column);
-    for (uint8_t i = 0; i < total_cols; i++) {
-      _io_oled_write(dev, 0x00);
-    }
-  } */
+  /*   for (uint8_t page = 0; page < 8; page++) {
+      if (page == start_page) continue;
+      io_oled_goto_line(dev, page);
+      io_oled_goto_column(dev, start_column);
+      for (uint8_t i = 0; i < total_cols; i++) {
+        _io_oled_write(dev, 0x00);
+      }
+    } */
 
   // restore cursor to end of glyph on original page
- /*  io_oled_goto_line(dev, start_page);
-  io_oled_goto_column(dev, (uint8_t)(start_column + total_cols)); */
+  /*  io_oled_goto_line(dev, start_page);
+   io_oled_goto_column(dev, (uint8_t)(start_column + total_cols)); */
 
-  //Returns columns written (commented out for testing with clearing other pages)
-  //return (uint8_t)(font->bytes_per_glyph + font->spacing);
+  // Returns columns written (commented out for testing with clearing other
+  // pages) return (uint8_t)(font->bytes_per_glyph + font->spacing);
 
   return total_cols;
 }
@@ -493,7 +510,6 @@ int io_oled_blink(struct io_oled_device *dev, uint8_t blinks) {
   }
   return 0;
 }
-
 
 int io_oled_write_data(struct io_oled_device *dev, uint8_t data) {
   return _io_oled_write(dev, data);

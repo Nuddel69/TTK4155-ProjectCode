@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <util/delay.h>
 
 #include "can.h"
@@ -18,7 +19,23 @@ LOG_MODULE_DEFINE("main")
 
 // Device Configs
 struct USART_config config = {BAUD, F_CPU};
-struct io_joystick_device joy = {0, 1, 0, 0};
+
+/* Joystick Samples
+ *
+ * Idle:
+ * x: 160
+ * y: 165
+ *
+ * Min:
+ * x: 66
+ * y: 72
+ *
+ * Max:
+ * x: 250
+ * y: 246
+ *
+ */
+struct io_joystick_device joy = {0, 1, 67, 69, 247, 247};
 struct io_oled_device oled = {SSB2};
 struct io_avr_device avr = {SSB3};
 struct can_device can = {SSE2};
@@ -105,7 +122,6 @@ int process_can_frame(struct CAN_frame *can_frame) {
 
   case CAN_ID_ERROR: { // This ID is reserved for errors, BOTH node1 and node2
 
-    STATUS_ASSERT(1);
     break;
   }
   case CAN_ID_GAMEOVER: { // This ID is reserved for gameover message from node2
@@ -123,7 +139,7 @@ int process_can_frame(struct CAN_frame *can_frame) {
     break;
   }
   case CAN_ID_SOLONOID: { // This ID is reserved for sending trigger signal for
-                          // the solonoid
+    // the solonoid
 
     break;
   }
@@ -142,6 +158,7 @@ int process_can_frame(struct CAN_frame *can_frame) {
   default: {
   }
   }
+  return 0;
 }
 
 int main() {
@@ -172,14 +189,14 @@ int main() {
 
   while (1) {
     io_avr_buttons_read(&avr, &btn); // Read button inputs from IO board
-    menu_handler(&menu, &btn);       // Handle menu based on button inputs
+    io_joystick_read_position(&joy, &pos);
+    menu_handler(&menu, &btn); // Handle menu based on button inputs
 
     tx_joy_btn(&joy, &avr, &can);
-    // USART_SendString("Hello World!\n");
     _delay_ms(100);
 
-    while (can_rxq_pull(&dummy_msg)) {
-      process_can_frame(&dummy_msg);
-    }
+    // while (can_rxq_pull(&dummy_msg)) {
+    //   process_can_frame(&dummy_msg);
+    // }
   }
 }

@@ -1,12 +1,16 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <stdint.h>
+// #include <stdio.h>
 #include <util/delay.h>
 
 #include "uart.h"
 
 char receive_buf = 0;
-ISR(USART0_RXC_vect) { USART_Receive(); }
+// ISR(USART0_RXC_vect) { USART_Receive(); }
+
+// static FILE stdout_uart =
+//     FDEV_SETUP_STREAM(USART_Transmit, USART_Receive, _FDEV_SETUP_RW);
 
 int USART_init(struct USART_config *config) {
   uint16_t ubrr = (config->fosc / 16 / config->baud) - 1;
@@ -14,12 +18,12 @@ int USART_init(struct USART_config *config) {
   UBRR0L = (unsigned char)ubrr;
 
   // Enable RX & TX & RXC interrupt
-  UCSR0B = (1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0);
+  UCSR0B = (1 << RXEN0) | (1 << TXEN0) /*| (1 << RXCIE0)*/;
 
   // Format 9600 8N1
   UCSR0C = (1 << URSEL0) | (1 << USBS0) | (3 << UCSZ00);
 
-  sei();
+  // sei();
   // fdevopen(USART_Transmit, USART_Receive);
 
   return 0;

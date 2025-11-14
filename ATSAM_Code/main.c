@@ -17,6 +17,7 @@
 #include "led.h"
 #include "motor.h"
 #include "pid.h"
+#include "pwm.h"
 #include "sam.h"
 #include "sam3x8e.h"
 #include "servo.h"
@@ -106,6 +107,7 @@ int process_can_frame() {
 
 // struct PWM_device servo_pwm = ;
 struct Servo_device servo = {{PIOB, 13, 1, 20000, 1500}, 2100, 1500, 900};
+struct Servo_device motor_srv = {{PIOB, 12, 0, 20000, 1500}, 2100, 1500, 900};
 struct motor_device motor = {PIOC, 23, {PIOB, 12, 0, 20000, 000}};
 struct solenoid_device solenoid = {PIOB, 25};
 
@@ -134,6 +136,7 @@ int main(void) {
   }
 
   servo_init(&servo);
+  servo_init(&motor_srv);
 
   solenoid_init(&solenoid);
 
@@ -164,7 +167,7 @@ int main(void) {
   while (1) {
 
     process_can_frame();
-    pwm_dir_and_speed(&motor, &motor_pid, (joy_pos.x - 27) * 50);
+    // pwm_dir_and_speed(&motor, &motor_pid, (joy_pos.x - 27) * 50);
     int32_t inn = (int32_t)TC2->TC_CHANNEL[0].TC_CV;
     printf("Current X ref:%d and Xpos:%d \r\n", joy_pos.x, inn);
 
@@ -176,25 +179,10 @@ int main(void) {
       button_fired = 0;
     }
 
-    servo_set_percentage(&servo, coconut % 100);
-    coconut += 1;
+    // servo_set_percentage(&servo, coconut % 100);
+    coconut += 2;
 
-    /*
-    if (btn.R5) {
-            servo_set_percentage(&servo, 100);
-    }
-    if (btn.R4) {
-            servo_set_percentage(&servo, 0);
-    }
-
-    servo_set_percentage(&servo, 50);
-    */
-    /*
-    time_spinFor(84000000);
-    servo_set_percentage(&servo, 0);
-    time_spinFor(84000000);
-    servo_set_percentage(&servo, 100);
-    */
+    servo_set_range(&servo, joy_pos.y);
 
     // uint16_t IR_val = adc_read_once();
     // printf("IR;%d \r\n",IR_val);

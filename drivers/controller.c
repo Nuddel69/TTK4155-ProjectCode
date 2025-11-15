@@ -70,7 +70,7 @@ int8_t tx_joy_btn(struct io_joystick_device *joy_dev,
 int8_t tx_gamestart(struct can_device *can_dev) {
 
 	// Frame Data
-	struct CAN_frame msg = {CAN_ID_GAMESTART, 0x08, {0, 0, 0, 0, 0, 0}, 1, 0};
+	struct CAN_frame msg = {CAN_ID_GAMESTART, 0x01, {1}, 1, 0};
 
   // Transmit data
   can_write(can_dev, msg);
@@ -80,7 +80,7 @@ int8_t tx_gamestart(struct can_device *can_dev) {
 int8_t tx_reset(struct can_device *can_dev) {
 
 	// Frame Data
-	struct CAN_frame msg = {CAN_ID_RESET, 0x08, {0, 0, 0, 0, 0, 0}, 1, 0};
+	struct CAN_frame msg = {CAN_ID_RESET, 0x01, {0}, 1, 0};
 
   // Transmit data
   can_write(can_dev, msg);
@@ -90,7 +90,7 @@ int8_t tx_reset(struct can_device *can_dev) {
 int8_t tx_error(struct can_device *can_dev) {
 
 	// Frame Data
-	struct CAN_frame msg = {CAN_ID_ERROR, 0x08, {0, 0, 0, 0, 0, 0}, 1, 0};
+	struct CAN_frame msg = {CAN_ID_ERROR, 0x08, {0}, 1, 0};
 
   // Transmit data
   can_write(can_dev, msg);

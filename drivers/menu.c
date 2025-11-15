@@ -200,36 +200,6 @@ int cursor_update(struct menu_cfg *menu, struct io_avr_buttons *btn) {
  * \param[in] btn The button states struct
  * \return Errno.
  */
-int page_select_old(struct menu_cfg *menu, struct io_avr_buttons *btn) {
-    int status = 0;
-
-    // Only trigger on button press
-    if(!btn->NB) {
-        return status;
-    }
-
-    if (btn->NB) {
-        switch (menu->cursor_pos) {
-        case 0:
-            return set_page(menu, PAGE_PLAY_GAME);
-        case 1:
-            return set_page(menu, PAGE_HIGH_SCORES);
-        case 2:
-            return set_page(menu, PAGE_SETTINGS);
-        default:
-            return status;
-        }
-    }
-
-    return status;
-}
-
-/**
- * \brief Selects the current menu item based on nav button from the IO board
- * \param[in] menu The menu configuration struct
- * \param[in] btn The button states struct
- * \return Errno.
- */
 int page_select(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     int status = 0;
     static uint8_t prev_NR = 0;
@@ -341,69 +311,6 @@ int page_back(struct menu_cfg *menu, struct io_avr_buttons *btn) {
         }
     }
 
-    prev_NL = btn->NL;
-
-    return status;
-}
-
-
-int page_back_old(struct menu_cfg *menu, struct io_avr_buttons *btn) {
-    int status = 0;
-    static uint8_t prev_NL = 0;
-
-    // Only trigger on rising edge
-    if(btn->NL && !prev_NL) {
-        // --- Case 1: Currently in a submenu ---
-        if(menu->parent_menu != NULL) {
-            // Restore parent menu
-            menu->items = menu->parent_menu;
-            menu->length = menu->parent_length;
-            menu->cursor_pos = 0;
-
-            // Clear parent reference (since we climbed up to root)
-            menu->parent_menu = NULL;
-            menu->parent_length = 0;
-
-            // Go back to the root page
-            return set_page(menu, PAGE_WELCOME);
-        }
-
-        // --- Case 2: Currently on a page ---
-        switch(menu->current_page) {
-            // Pages belonging to root
-            case PAGE_PLAY_GAME:
-            case PAGE_HIGH_SCORES:
-
-                menu->items = menu->root_items;
-                menu->length = menu->root_length;
-                menu->cursor_pos = 0;
-
-                // Clear parent reference (since we climbed up to root)
-                menu->parent_menu = NULL;
-                menu->parent_length = 0;
-
-                return set_page(menu, PAGE_WELCOME);
-
-            // Pages belonging to Settings
-            case PAGE_ADJUST_BRIGHTNESS:
-            case PAGE_CALIBRATE_JOYSTICK:
-            
-                menu->items = menu->parent_menu;
-                menu->length = menu->parent_length;
-                menu->cursor_pos = 0;
-
-                // Update parent reference
-                menu->parent_menu = menu->root_items;
-                menu->parent_length = menu->root_length;
-
-                return set_page(menu, PAGE_SETTINGS);
-
-            default:
-                break;
-        }
-    }
-
-    // Store current state for next cycle
     prev_NL = btn->NL;
 
     return status;

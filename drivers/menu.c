@@ -36,7 +36,8 @@ int welcome_display(struct menu_cfg *menu) {
     io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Welcome");
 
     io_oled_pos(menu->oled, 1, 0);
-    io_oled_print_with_font(menu->oled, MEDIUM_FONT, "-------------");
+    //io_oled_print_with_font(menu->oled, MEDIUM_FONT, "-------------");
+    io_oled_print_with_font(menu->oled, MEDIUM_FONT, "---------");
 
     draw_cursor(menu);
 

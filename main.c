@@ -194,10 +194,10 @@ int main() {
     io_joystick_read_position(&joy, &pos);  // Read joystick input from IO board
     menu_handler(&menu, &btn);              // Handle menu based on button inputs
 
-    tx_joy_btn(&joy, &avr, &can);
+    //tx_joy_btn(&joy, &avr, &can);
     _delay_ms(100);
 
-    static enum page_id last_state = PAGE_WELCOME;
+    /* static enum page_id last_state = PAGE_WELCOME;
 
     if (menu.current_page != last_state) {
       if(menu.current_page == PAGE_PLAY_GAME) {
@@ -205,7 +205,7 @@ int main() {
       }
 
       last_state = menu.current_page;
-    }
+    } */
 
     // while (can_rxq_pull(&dummy_msg)) {
     //   process_can_frame(&dummy_msg);

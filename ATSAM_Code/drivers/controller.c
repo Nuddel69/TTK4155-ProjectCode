@@ -18,7 +18,7 @@ uint8_t process_can_frame(struct control_state *ctrl) {
 		switch (msg.id) {
 
 			case CAN_ID_ERROR: { // This ID is reserved for errors, BOTH node1 and node2
-
+				
 				// TODO: handle error / stop game
 
 				break;
@@ -36,7 +36,6 @@ uint8_t process_can_frame(struct control_state *ctrl) {
 			}
 			case CAN_ID_JOYPOS: { // This ID is reserved for sending Joystick position
 				// and button state
-
 				ctrl->joy_x = (int8_t)msg.data[0];
 				ctrl->joy_y = (int8_t)msg.data[1];
 				ctrl->btn.right = (uint8_t)msg.data[2];

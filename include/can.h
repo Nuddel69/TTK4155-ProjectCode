@@ -11,12 +11,12 @@
 #define CAN_ID_GAMEOVER 0x02
 #define CAN_ID_GAMESTART 0x03
 #define CAN_ID_JOYPOS 0x04
-#define CAN_ID_SOLONOID 0x05
-#define CAN_ID_MOTORPOS 0x06
+#define CAN_ID_RESET 0x05
+#define CAN_ID_READY 0x06
 #define CAN_ID_SCORE 0x07
 #define CAN_ID_DEFAULT 0x08
 
-#define CAN_RXQ_SIZE 16
+#define CAN_RXQ_SIZE 8
 
 struct can_msg {
   uint8_t adress;
@@ -63,7 +63,7 @@ int8_t MCP2515_bit_modify(struct can_device *dev, uint8_t reg, uint8_t mask,
 int8_t MCP2515_reset(struct can_device *dev);
 int8_t MCP2515_read_status(struct can_device *dev, uint8_t *out);
 
-static inline int can_rxq_add(struct CAN_frame *msg);
+inline int can_rxq_add(struct CAN_frame *msg);
 int can_rxq_pull(struct CAN_frame *out);
 
 #endif // INCLUDE_CAN_H_

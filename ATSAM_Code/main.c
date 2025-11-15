@@ -24,8 +24,8 @@
 #include "solenoid.h"
 #include "time.h"
 #include "uart.h"
-
-#define DEBUG 0
+#include "game.h"
+#include "controller.h"
 
 #define baudrate 9600
 #define F_CPU 84000000
@@ -35,80 +35,12 @@ CAN_MESSAGE dummy_msg = {0x8, 8, {"HiWorld"}};
 
 struct io_joystick_position joy_pos = {0, 0};
 struct io_avr_buttons btn;
-
-int process_can_frame() {
-
-  CAN_MESSAGE msg;
-  if (can_rxq_pull(&msg)) {
-
-    switch (msg.id) {
-
-    case CAN_ID_ERROR: { // This ID is reserved for errors, BOTH node1 and node2
-
-      // TODO: handle error / stop game
-
-      break;
-    }
-    case CAN_ID_GAMEOVER: { // This ID is reserved for gameover message from
-                            // node2
-
-      break;
-    }
-    case CAN_ID_GAMESTART: { // This ID is reserved for starting a new game from
-                             // node1
-
-      // TODO: start game
-
-      break;
-    }
-    case CAN_ID_JOYPOS: { // This ID is reserved for sending Joystick position
-                          // and button state
-
-      joy_pos.x = (int8_t)msg.data[0];
-      joy_pos.y = (int8_t)msg.data[1];
-      btn.right = (uint8_t)msg.data[2];
-      btn.left = (uint8_t)msg.data[3];
-      btn.nav = (uint8_t)msg.data[4];
-
-      // printf("%c[2J",27);
-      printf("Buttons R=0x%02X L=0x%02X N=0x%02X, pos x:%d, y:%d\r\n",
-             btn.right, btn.left, btn.nav, joy_pos.x, joy_pos.y);
-      // update_control(joy_pos, btn);
-
-      // update_control(joy_pos, btn); //TODO
-
-      break;
-    }
-    case CAN_ID_SOLONOID: { // This ID is reserved for sending trigger signal
-                            // for the solonoid
-
-      // TODO: trigger solonoid
-
-      break;
-    }
-    case CAN_ID_MOTORPOS: { // This ID is reserved for sending current motor
-                            // position
-
-      break;
-    }
-    case CAN_ID_SCORE: { // This ID is reserved for sending gamescore
-
-      break;
-    }
-    case CAN_ID_DEFAULT: { // This ID is for anything else
-
-      break;
-    }
-    default: {
-    }
-    }
-  }
-}
+struct control_state ctrl = {0,0,{0,0,0},0,0,0,0,0,0};
 
 // struct PWM_device servo_pwm = ;
 struct Servo_device servo = {{PIOB, 13, 1, 20000, 1500}, 2100, 1500, 900};
 struct Servo_device motor_srv = {{PIOB, 12, 0, 20000, 1500}, 2100, 1500, 900};
-struct motor_device motor = {PIOC, 23, {PIOB, 12, 0, 20000, 000}};
+struct motor_device motor = {PIOC, 23, {PIOB, 12, 0, 20000, 00000}};
 struct solenoid_device solenoid = {PIOB, 25};
 
 struct pid_controller motor_pid = {KP_DEFAULT, KI_DEFAULT,  KD_DEFAULT,    0, 0,
@@ -136,11 +68,12 @@ int main(void) {
   }
 
   servo_init(&servo);
-  servo_init(&motor_srv);
+  motor_init(&motor);
 
   solenoid_init(&solenoid);
 
   motor_init(&motor);
+  motor_stop(&motor);
   // PWM_init(&motor._enpw_dev);
 
   if (encoder_init() != 0) {
@@ -160,16 +93,16 @@ int main(void) {
   uint32_t counter = 0;
 
   uint8_t button_fired = 0;
-
+  motor_reset_pos(&motor_srv);
   printf("-----Node2 Init complete------\r\n");
 
   uint8_t coconut = 0;
   while (1) {
 
-    process_can_frame();
+    process_can_frame(&ctrl);
     // pwm_dir_and_speed(&motor, &motor_pid, (joy_pos.x - 27) * 50);
     int32_t inn = (int32_t)TC2->TC_CHANNEL[0].TC_CV;
-    printf("Current X ref:%d and Xpos:%d \r\n", joy_pos.x, inn);
+    printf("Current X ref:%d and Xpos:%d \r\n", ctrl.joy_x, inn);
 
     if (btn.R6 && !button_fired) {
       solenoid_pulse(&solenoid, 40);

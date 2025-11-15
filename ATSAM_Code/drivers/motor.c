@@ -81,6 +81,7 @@ uint8_t motor_stop(struct motor_device *dev) {
 
 uint8_t motor_reset_pos(struct motor_device *dev){
 	
+	printf("Entering reset position");
 	//Set inital conditions and start
 	encoder_zero();
 	int32_t pos = 0;
@@ -90,39 +91,40 @@ uint8_t motor_reset_pos(struct motor_device *dev){
 	
 	//Run until hit endstop
 	while(1){
-		motor_dir_and_speed(dev, -4000);
+		printf("Still moving to endstop \r\n");
+		motor_dir_and_speed(dev, 8000);
 
 		pos = encoder_get_pos();
 
 		// Encodervalue changed = still moving
-		if (pos != last_pos) {
+		if (abs(pos-last_pos)>50) {
 			last_pos = pos;
 			last_change = time_now();
 		}
 
 		// If encoder not changed in 50ms
-		if (msecs(time_now() - last_change) > 100) {
+		if ((time_now() - last_change) > msecs(50)) {
+			printf("Done, finding endpoint exiting while \r\n");
 			break;
 		}
 
-		// IF IT TAKES LONGER THEN 3 SECS TO FIND ENDSTOP WE STOP
-		if (seconds(time_now() - start_time) > 3) {
+		// encoder wont stop
+		if (time_now() - start_time > seconds(1)) {
+			printf("Waited 1 sec");
 			motor_stop(dev);
-			return -1;  //failed
+			break;
 		}
 	}
 
-// Stop and reset encoder
+	// Stop and reset encoder
 	motor_stop(dev);
 	encoder_zero();
-
-	time_spinFor(msecs(100));
-
+	pos = encoder_get_pos();
+	
 	while (1) {
+		motor_dir_and_speed(dev, -8000);
+		// Check if past set point
 		pos = encoder_get_pos();
-		motor_dir_and_speed(dev, 4000);
-
-		// Passed set point
 		if (abs(pos) > 2500) {
 			break;
 		}

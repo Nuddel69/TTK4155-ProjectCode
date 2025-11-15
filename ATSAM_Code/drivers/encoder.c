@@ -64,9 +64,9 @@ int8_t encoder_init(void) {
   // If we need to reverse polarity add, |TC_BMR_INVA|TC_BMR_INVB
   uint32_t bmr =
       TC_BMR_QDEN          // enable QDEC
-      | TC_BMR_POSEN;       // position measurement on ch0
-      //| TC_BMR_EDGPHA      // count on both A and B edges, for higher resolution
-      //| TC_BMR_MAXFILT(3); // filter
+      | TC_BMR_POSEN       // position measurement on ch0
+      | TC_BMR_EDGPHA      // count on both A and B edges, for higher resolution
+      | TC_BMR_MAXFILT(3); // filter
 
   TC2->TC_BMR = bmr;
 

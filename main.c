@@ -117,7 +117,6 @@ int main() {
 	//can_write(&can, msg);
 
     static enum page_id last_state = PAGE_WELCOME;
-	tx_joy_btn(&joy, &avr, &can);
     if (menu.current_page != last_state) {
       if(menu.current_page == PAGE_PLAY_GAME) {
         tx_gamestart(&can);

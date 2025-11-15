@@ -12,6 +12,7 @@ enum page_id{
     PAGE_SETTINGS,
     PAGE_ADJUST_BRIGHTNESS,
     PAGE_CALIBRATE_JOYSTICK,
+    PAGE_GAME_OVER,
 };
 
 // Represents the current menu configuration and state.

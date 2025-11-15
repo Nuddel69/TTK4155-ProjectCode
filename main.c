@@ -75,7 +75,7 @@ struct menu_cfg menu = {
     .parent_length = 0,
 };
 
-
+struct control_state ctrl = {0};
 
 int main() {
   int status = 0;
@@ -108,15 +108,11 @@ int main() {
     io_joystick_read_position(&joy, &pos);  // Read joystick input from IO board
     menu_handler(&menu, &btn);              // Handle menu based on button inputs
 
-    //tx_joy_btn(&joy, &avr, &can);
     _delay_ms(100);
 	
-	struct CAN_frame msg = {CAN_ID_GAMESTART, 0x08, {1, 2, 3, 4, 5, 6,7,8}, 1, 0};
-
-	// Transmit data
-	//can_write(&can, msg);
-	
-	tx_gamestart(&can);
+    // Can message send test
+	  //struct CAN_frame msg = {CAN_ID_GAMESTART, 0x08, {1, 2, 3, 4, 5, 6,7,8}, 1, 0};
+	  //tx_gamestart(&can);
 
     static enum page_id last_state = PAGE_WELCOME;
     if (menu.current_page != last_state) {
@@ -125,10 +121,13 @@ int main() {
       }
 
       last_state = menu.current_page;
-    } 
+    }
 
-    // while (can_rxq_pull(&dummy_msg)) {
-    //   process_can_frame(&dummy_msg);
-    // }
+    process_can_frame(&ctrl);
+
+    if (ctrl.game_over == 1) {
+      ctrl.game_over = 0;
+      menu.current_page = PAGE_GAME_OVER;
+    }
   }
 }

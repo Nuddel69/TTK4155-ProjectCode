@@ -133,6 +133,19 @@ int calibrate_joystick_display(struct menu_cfg *menu) {
     return status;
 }
 
+int game_over_display(struct menu_cfg *menu) {
+    int status = 0;
+
+    io_oled_clear_all(menu->oled);
+    io_oled_home(menu->oled);
+    io_oled_print_with_font(menu->oled, MEDIUM_FONT, "GAME OVER");
+
+    io_oled_pos(menu->oled, 2, 0);
+    io_oled_print_with_font(menu->oled, SMALL_FONT, "Returning to main menu...");
+
+    return status;
+}
+
 /**
  * \brief Draws the cursor (">") at the current cursor position in the menu
  * \param[in] menu The menu configuration struct
@@ -276,6 +289,8 @@ int page_dispatch(struct menu_cfg *menu) {
         return brightness_display(menu);
     case PAGE_CALIBRATE_JOYSTICK:
         return calibrate_joystick_display(menu);
+    case PAGE_GAME_OVER:
+        return game_over_display(menu);
     default:
         menu->current_page = PAGE_WELCOME;
         return welcome_display(menu);
@@ -324,6 +339,32 @@ int page_back(struct menu_cfg *menu, struct io_avr_buttons *btn) {
  */
 int menu_handler(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     int status = 0;
+    static uint16_t game_over_timer = 0;
+
+    if(menu->current_page == PAGE_GAME_OVER) {
+        if(game_over_timer == 0) {
+            page_dispatch(menu);
+        }
+        
+        game_over_timer++;
+
+        if(game_over_timer > 20) {
+            game_over_timer = 0;
+
+            // Reset to root menu
+            menu->items = menu->root_items;
+            menu->length = menu->root_length;
+            menu->cursor_pos = 0;
+
+            // Clear parent
+            menu->parent_menu = NULL;
+            menu->parent_length = 0;
+
+            // Move back to welcome page
+            menu->current_page = PAGE_WELCOME;
+            page_dispatch(menu);
+        }
+    }
 
     // Only allow cursor movement and page selection if we're on welcome page or settings page
     if (menu->current_page == PAGE_WELCOME || menu->current_page == PAGE_SETTINGS) {

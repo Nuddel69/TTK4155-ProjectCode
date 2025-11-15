@@ -78,3 +78,59 @@ uint8_t motor_stop(struct motor_device *dev) {
   PWM_set_dty(&dev->_enpw_dev, 0);
   return 0;
 }
+
+uint8_t motor_reset_pos(struct motor_device *dev){
+	
+	//Set inital conditions and start
+	encoder_zero();
+	int32_t pos = 0;
+	int32_t last_pos = encoder_get_pos();
+	uint32_t last_change = time_now();
+	uint32_t start_time  = time_now();
+	
+	//Run until hit endstop
+	while(1){
+		motor_dir_and_speed(dev, -4000);
+
+		pos = encoder_get_pos();
+
+		// Encodervalue changed = still moving
+		if (pos != last_pos) {
+			last_pos = pos;
+			last_change = time_now();
+		}
+
+		// If encoder not changed in 50ms
+		if (msecs(time_now() - last_change) > 100) {
+			break;
+		}
+
+		// IF IT TAKES LONGER THEN 3 SECS TO FIND ENDSTOP WE STOP
+		if (seconds(time_now() - start_time) > 3) {
+			motor_stop(dev);
+			return -1;  //failed
+		}
+	}
+
+// Stop and reset encoder
+	motor_stop(dev);
+	encoder_zero();
+
+	time_spinFor(msecs(100));
+
+	while (1) {
+		pos = encoder_get_pos();
+		motor_dir_and_speed(dev, 4000);
+
+		// Passed set point
+		if (abs(pos) > 2500) {
+			break;
+		}
+	}
+
+	// Stop and make this new zero
+	motor_stop(dev);
+	encoder_zero();  
+
+return 0; // success
+}

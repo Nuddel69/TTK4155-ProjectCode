@@ -16,7 +16,7 @@ int8_t encoder_init(void) {
   // All registers listed on page 629++(GPIO) 879(TC) and in the datasheet.
 
   // Disable write protect for PMC
-  PMC->PMC_WPMR = TC_WPMR_WPKEY(0x54494D);
+  PMC->PMC_WPMR = TC_WPMR_WPKEY_PASSWD;
 
   // Enable clock
   // TC2 clock (ID 1(33)), in PCER1
@@ -55,7 +55,7 @@ int8_t encoder_init(void) {
   }
 
   // CH0 clock must be enabled to access WPMR, disable WP, key "TIM" in ASCII
-  TC2->TC_WPMR = TC_WPMR_WPKEY(0x54494D);
+  TC2->TC_WPMR = TC_WPMR_WPKEY_PASSWD;
   TC2->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN;
 
   // Configure TC2 for Quadrature decode on CH0 , see page 901++
@@ -64,9 +64,9 @@ int8_t encoder_init(void) {
   // If we need to reverse polarity add, |TC_BMR_INVA|TC_BMR_INVB
   uint32_t bmr =
       TC_BMR_QDEN          // enable QDEC
-      | TC_BMR_POSEN       // position measurement on ch0
-      | TC_BMR_EDGPHA      // count on both A and B edges, for higher resolution
-      | TC_BMR_MAXFILT(3); // filter
+      | TC_BMR_POSEN;       // position measurement on ch0
+      //| TC_BMR_EDGPHA      // count on both A and B edges, for higher resolution
+      //| TC_BMR_MAXFILT(3); // filter
 
   TC2->TC_BMR = bmr;
 

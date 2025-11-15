@@ -16,7 +16,7 @@ int adc_init(void) {
 
   // Disable writeprotect (p.1353 datasheet)
   ADC->ADC_WPMR =
-      ADC_WPMR_WPKEY(0x414443); // ADC in ASCII shifted 8 (0x414443)<<8);
+      ADC_WPMR_WPKEY_PASSWD; // ADC in ASCII shifted 8 (0x414443)<<8);
 
   // Enable chosen channel(AD7 ch=0)
   ADC->ADC_CHER = ADC_CHER_CH0;
@@ -55,7 +55,7 @@ uint16_t adc_read_once(void) {
   return (uint16_t)(ADC->ADC_CDR[0] & 0x0FFF);
 }
 
-int attempt_score(uint8_t *score) {
+int attempt_score(uint8_t *lives) {
 
   // STATE
   static uint16_t baseline = 0; // EMA baseline
@@ -112,7 +112,7 @@ int attempt_score(uint8_t *score) {
 
   if (!blocked && count >= 8) {
     blocked = 1;
-    (*score)++;
+    (*lives)--;
   }
   if (blocked && count == 0) {
     blocked = 0;

@@ -14,19 +14,19 @@
 #include <stdint.h>
 
 #define CAN_ID_ERROR     0x01
-#define CAN_ID_GAMEOVER  0x02
-#define CAN_ID_GAMESTART 0x03
-#define CAN_ID_JOYPOS    0x04
-#define CAN_ID_SOLONOID  0x05
-#define CAN_ID_MOTORPOS  0x06
-#define CAN_ID_SCORE     0x07
-#define CAN_ID_DEFAULT   0x08
-
+#define CAN_ID_GAMEOVER  0x02 //Sendt from NODE2, inform NODE1 that the game is over or lost a life aswell as its remaining lifes, and current score
+#define CAN_ID_GAMESTART 0x03 //Tell game to start
+#define CAN_ID_JOYPOS    0x04 //Joystick, and buttons
+#define CAN_ID_RESET     0x05 //Inform game to move to standby state
+#define CAN_ID_READY     0x06 //Not used
+#define CAN_ID_SCORE     0x07 //Not used
+#define CAN_ID_DEFAULT   0x08 
 
 struct io_joystick_position {
 	int x; // X value in % from the middle
 	int y; // Y value in % from the middle
 };
+
 
 struct __attribute__((packed)) io_avr_buttons {
 	union {

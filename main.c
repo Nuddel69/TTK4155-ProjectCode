@@ -70,12 +70,12 @@ struct menu_cfg menu = {
     .cursor_pos = 0,
     .current_page = PAGE_WELCOME,
     .root_items = main_menu,
-    .root_length = 3,
+    .root_length = 1,
     .parent_menu = NULL,
     .parent_length = 0,
 };
 
-struct control_state ctrl = {0};
+struct control_state ctrl = {0, 0, 1, 0};
 
 int main() {
   int status = 0;
@@ -103,6 +103,8 @@ int main() {
 
   LOG_INF("---Init complete---")
 
+  static enum page_id last_state = PAGE_WELCOME;
+
   while (1) {
     io_avr_buttons_read(&avr, &btn);        // Read button inputs from IO board
     io_joystick_read_position(&joy, &pos);  // Read joystick input from IO board
@@ -114,7 +116,6 @@ int main() {
 	  //struct CAN_frame msg = {CAN_ID_GAMESTART, 0x08, {1, 2, 3, 4, 5, 6,7,8}, 1, 0};
 	  //tx_gamestart(&can);
 
-    static enum page_id last_state = PAGE_WELCOME;
     if (menu.current_page != last_state) {
       if(menu.current_page == PAGE_PLAY_GAME) {
         tx_gamestart(&can);
@@ -126,7 +127,9 @@ int main() {
     process_can_frame(&ctrl);
 
     if (ctrl.game_over == 1) {
+      LOG_INF("GAME OVER flag received!")
       ctrl.game_over = 0;
+      ctrl.lifes = 1;
       menu.current_page = PAGE_GAME_OVER;
     }
   }

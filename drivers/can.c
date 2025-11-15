@@ -134,6 +134,7 @@ int can_rxq_pull(struct CAN_frame *out) {
   if (rxq_tail == rxq_head) {
     return 0;
   }
+  LOG_INF("Coconut 2!")
   *out = rxq[rxq_tail];
   rxq_tail = (uint8_t)((rxq_tail + 1) & (CAN_RXQ_SIZE - 1));
   return 1;

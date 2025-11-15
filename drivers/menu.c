@@ -336,3 +336,4 @@ int menu_handler(struct menu_cfg *menu, struct io_avr_buttons *btn) {
 
     return status;
 }
+

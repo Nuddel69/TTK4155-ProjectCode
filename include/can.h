@@ -63,7 +63,7 @@ int8_t MCP2515_bit_modify(struct can_device *dev, uint8_t reg, uint8_t mask,
 int8_t MCP2515_reset(struct can_device *dev);
 int8_t MCP2515_read_status(struct can_device *dev, uint8_t *out);
 
-inline int can_rxq_add(struct CAN_frame *msg);
+int can_rxq_add(struct CAN_frame *msg);
 int can_rxq_pull(struct CAN_frame *out);
 
 #endif // INCLUDE_CAN_H_

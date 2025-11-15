@@ -392,13 +392,15 @@ int io_oled_test(struct io_oled_device *dev) {
 
   io_oled_home(dev);
 
-  for (uint8_t i = 0; i < 64; i++) {  // print half a line
+  // print half a line
+  for (uint8_t i = 0; i < 64; i++) {
     _io_oled_write(dev, 0xff);
   }
 
   io_oled_goto_line(dev, 1);          // new line
 
-  for (uint8_t i = 0; i < 64; i++) {  // print half a line
+  // print half a line
+  for (uint8_t i = 0; i < 64; i++) {
     _io_oled_write(dev, 0xff);
   }
 
@@ -451,8 +453,8 @@ int io_oled_blink(struct io_oled_device *dev, uint8_t blinks) {
 
   for (uint8_t blink = 0; blink < 2 * blinks; blink++) {
     for (uint8_t row = 0; row < 8; row++) {
-      io_oled_goto_line(dev, row); // new line
-      io_oled_goto_column(dev, 0); // new carrige return
+      io_oled_goto_line(dev, row);
+      io_oled_goto_column(dev, 0);
       for (uint8_t col = 0; col < 128; col++) {
         if (blink % 2 == 0) {
           _io_oled_write(dev, 0xFF);

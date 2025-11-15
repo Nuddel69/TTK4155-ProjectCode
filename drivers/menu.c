@@ -324,7 +324,7 @@ int page_back(struct menu_cfg *menu, struct io_avr_buttons *btn) {
 int menu_handler(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     int status = 0;
 
-    // Only allow cursor movement and page selection if we're on welcome page or settings
+    // Only allow cursor movement and page selection if we're on welcome page or settings page
     if (menu->current_page == PAGE_WELCOME || menu->current_page == PAGE_SETTINGS) {
         cursor_update(menu, btn);
         draw_cursor(menu);

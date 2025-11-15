@@ -46,6 +46,8 @@ struct CAN_frame can_msg = {0xFACB, 0x08, "CAN Dumb", 0, 0};
 struct io_avr_buttons btn;
 struct CAN_frame dummy_msg;
 
+//extern struct can_device can;
+
 // Define settings sub menu
 static struct menu_item settings_menu[] = {
     {"Adjust brightness", PAGE_ADJUST_BRIGHTNESS, NULL, 0},
@@ -188,12 +190,22 @@ int main() {
   LOG_INF("---Init complete---")
 
   while (1) {
-    io_avr_buttons_read(&avr, &btn); // Read button inputs from IO board
-    io_joystick_read_position(&joy, &pos);
-    menu_handler(&menu, &btn); // Handle menu based on button inputs
+    io_avr_buttons_read(&avr, &btn);        // Read button inputs from IO board
+    io_joystick_read_position(&joy, &pos);  // Read joystick input from IO board
+    menu_handler(&menu, &btn);              // Handle menu based on button inputs
 
     tx_joy_btn(&joy, &avr, &can);
     _delay_ms(100);
+
+    static enum page_id last_state = PAGE_WELCOME;
+
+    if (menu.current_page != last_state) {
+      if(menu.current_page == PAGE_PLAY_GAME) {
+        tx_gamestart(&can);
+      }
+
+      last_state = menu.current_page;
+    }
 
     // while (can_rxq_pull(&dummy_msg)) {
     //   process_can_frame(&dummy_msg);

@@ -81,7 +81,7 @@ uint8_t motor_stop(struct motor_device *dev) {
 
 uint8_t motor_reset_pos(struct motor_device *dev){
 	
-	printf("Entering reset position");
+	printf("Entering reset position \r\n");
 	//Set inital conditions and start
 	encoder_zero();
 	int32_t pos = 0;
@@ -109,7 +109,7 @@ uint8_t motor_reset_pos(struct motor_device *dev){
 		}
 
 		// encoder wont stop
-		if (time_now() - start_time > seconds(1)) {
+		if (time_now() - start_time > msecs(500)) {
 			printf("Waited 1 sec");
 			motor_stop(dev);
 			break;
@@ -122,10 +122,13 @@ uint8_t motor_reset_pos(struct motor_device *dev){
 	pos = encoder_get_pos();
 	
 	while (1) {
+		printf("moving to center\r\n");
 		motor_dir_and_speed(dev, -8000);
 		// Check if past set point
 		pos = encoder_get_pos();
 		if (abs(pos) > 2500) {
+			motor_dir_and_speed(dev, 0);
+			printf("stopping at center\r\n");
 			break;
 		}
 	}

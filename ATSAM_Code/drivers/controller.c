@@ -12,27 +12,34 @@
 
 uint8_t process_can_frame(struct control_state *ctrl) {
 
+
 	CAN_MESSAGE msg;
 	if (can_rxq_pull(&msg)) {
 
 		switch (msg.id) {
+			
 
 			case CAN_ID_ERROR: { // This ID is reserved for errors, BOTH node1 and node2
 				
+				printf("ERROR message\r\n");
+				
 				// TODO: handle error / stop game
 
-				break;
+				return 0;
 			}
 			case CAN_ID_GAMEOVER: { // This ID is reserved for gameover message from
 				// node2
+				printf("GAMEOVER MESSAGE\r\n");
 
-				break;
+				return 0;
 			}
 			case CAN_ID_GAMESTART: { // This ID is reserved for starting a new game from
 				// node1
+				printf("HELLO, GAME START\r\n");
 				ctrl->game_start = 1;
 
-				break;
+
+				return 0;
 			}
 			case CAN_ID_JOYPOS: { // This ID is reserved for sending Joystick position
 				// and button state
@@ -46,29 +53,33 @@ uint8_t process_can_frame(struct control_state *ctrl) {
 				printf("Buttons R=0x%02X L=0x%02X N=0x%02X, pos x:%d, y:%d\r\n",
 				ctrl->btn.right, ctrl->btn.left, ctrl->btn.nav, ctrl->joy_x, ctrl->joy_y);
 
-				break;
+				return 0;
 			}
 			case CAN_ID_RESET: { // This ID is reserved for RESET command,from node1 to node2, indicating that the game should return to standby
 				
 				ctrl->game_reset = 1;
 
-				break;
+				return 0;
 			}
 			case CAN_ID_READY: { // This is not used
 
-				break;
+				return 0;
 			}
 			case CAN_ID_SCORE: { // This is not used
 
-				break;
+				return 0;
 			}
 			case CAN_ID_DEFAULT: { // This ID is for anything else
+				
+				printf("DEFAULT MESSAGE\r\n");
 
-				break;
+				return 0;
 			}
 			default: {
+				printf("Message had message id %d\r\n",msg.id);
 			}
 		}
 	}
+	return 0;
 }
 

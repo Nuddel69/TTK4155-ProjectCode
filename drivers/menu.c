@@ -61,7 +61,7 @@ int play_game_display(struct menu_cfg *menu) {
     io_oled_clear_all(menu->oled);
 
     io_oled_home(menu->oled);
-    io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Play game");
+    io_oled_print_with_font(menu->oled, MEDIUM_FONT, "Game in progress..");
 
     return status;
 }

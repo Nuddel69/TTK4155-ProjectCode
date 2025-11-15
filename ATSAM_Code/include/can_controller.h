@@ -15,7 +15,7 @@
 
 #define CAN_ID_ERROR     0x01
 #define CAN_ID_GAMEOVER  0x02 //Sendt from NODE2, inform NODE1 that the game is over or lost a life aswell as its remaining lifes, and current score
-#define CAN_ID_GAMESTART 0x03 //Tell game to start
+#define CAN_ID_GAMESTART 0x00 //Tell game to start
 #define CAN_ID_JOYPOS    0x04 //Joystick, and buttons
 #define CAN_ID_RESET     0x05 //Inform game to move to standby state
 #define CAN_ID_READY     0x06 //Not used

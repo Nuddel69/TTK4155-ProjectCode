@@ -115,6 +115,8 @@ int main() {
 
 	// Transmit data
 	//can_write(&can, msg);
+	
+	tx_gamestart(&can);
 
     static enum page_id last_state = PAGE_WELCOME;
     if (menu.current_page != last_state) {

@@ -60,7 +60,7 @@ uint8_t game(struct motor_device *motor_dev,struct pid_controller *motor_pid, st
 			}
 			
 			//Check goal
-			if (attempt_life(ctrl->lifes)){
+			if (check_goal(ctrl->lifes)){
 				just_died=1;
 				game_state = game_ready;
 				break;

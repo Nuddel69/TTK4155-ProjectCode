@@ -55,7 +55,7 @@ uint16_t adc_read_once(void) {
   return (uint16_t)(ADC->ADC_CDR[0] & 0x0FFF);
 }
 
-int attempt_score(uint8_t *lives) {
+int check_goal(uint8_t *lives) {
 
   // STATE
   static uint16_t baseline = 0; // EMA baseline

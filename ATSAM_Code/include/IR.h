@@ -6,6 +6,6 @@
 // Prototypes
 int adc_init(void);
 uint16_t adc_read_once(void);
-int attempt_score(uint8_t *score);
+int check_goal(uint8_t *score);
 
 #endif // INCLUDE_INCLUDE_IR_H

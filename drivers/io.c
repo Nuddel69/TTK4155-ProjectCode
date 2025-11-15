@@ -142,7 +142,7 @@ static int _io_oled_cmd(struct io_oled_device *dev, uint8_t command) {
   PORTB &= ~(1 << PB1); // D/!C=0
                         // PB2 DISP_CS Low, Chipselect is driven by SPI
   spi_send(&dev->spi, command);
-  //_delay_us(3);       // Not sure if we need a delay, add if its not working
+  //_delay_us(3);
   return 0;
 }
 
@@ -150,8 +150,7 @@ static int _io_oled_write(struct io_oled_device *dev, uint8_t data) {
   PORTB |= (1 << PB1); // D/!C set high
                        // PB2 DISP_CS Low, Chipselect is driven by SPI
   spi_send(&dev->spi, data);
-  //_delay_us(3);         // Not sure if we need a delay, add if its not
-  // working
+  //_delay_us(3);
   dev->current_column++;
 
   return 0;
@@ -166,27 +165,15 @@ int io_oled_init(struct io_oled_device *dev) {
     status = spi_init();
   }
 
+  // --- Configure OLED control pins --- //
+  // Set directions *after* setting desired logic states to avoid glitching
   DDRB |= (1 << PB4) | (1 << PB1) | (1 << PB2); // Set PB0,PB1,PB2 to outputs
 
-  // Reset
-  PORTB &= ~(1 << PB4); // Set PB4 low
-  _delay_us(5);         // Wait 5us, change to 10us maybe?
-  PORTB |= (1 << PB4);  // Set PB4 high
-  _delay_ms(1); // Making sure its restarted before we start sending commands,
-                // change it to 10ms maybe?
-
-  /*   // --- Configure OLED control pins --- //
-    // Set directions *after* setting desired logic states to avoid glitching
-    low PORTB |= (1 << PB2);  // CS high (inactive) PORTB |= (1 << PB4);  //
-    RESET high (idle) PORTB &= ~(1 << PB1); // D/C low (command mode default)
-    DDRB  |= (1 << PB4) | (1 << PB1) | (1 << PB2);
-
-    // --- Hardware reset sequence --- //
-    PORTB &= ~(1 << PB4); // RESET low
-    _delay_us(10);        // hold ≥3µs
-    PORTB |= (1 << PB4);  // RESET high
-    _delay_ms(10);        // wait ≥3–10ms for internal circuits to stabilize
-  */
+  // --- Hardware reset sequence --- //
+  PORTB &= ~(1 << PB4);
+  _delay_us(5);
+  PORTB |= (1 << PB4);
+  _delay_ms(1);
 
   // Display OFF
   _io_oled_cmd(dev, 0xAE);
@@ -207,22 +194,19 @@ int io_oled_init(struct io_oled_device *dev) {
   _io_oled_cmd(dev, 0x80); // freq.mode
 
   _io_oled_cmd(dev, 0x81); // Contrast control
-  //_io_oled_cmd(dev, 0xAA); // Set from 0x00-0xFF, 0x50 is ok
-  _io_oled_cmd(dev, 0xFF); // NEW
+  _io_oled_cmd(dev, 0xFF);
 
   _io_oled_cmd(dev, 0xD9); // Set precharged period
   _io_oled_cmd(dev, 0x21);
-  //_io_oled_cmd(dev, 0xF1); // NEW
 
   _io_oled_cmd(dev, 0x20); // Set memory adressing mode
   _io_oled_cmd(dev, 0x02); // 0x02 = Page (alternativly 0x00 = Horizontal)
 
   _io_oled_cmd(dev, 0xDB); // VCOM deselect level mode
   _io_oled_cmd(dev, 0x30);
-  //_io_oled_cmd(dev, 0x20); // NEW
 
   _io_oled_cmd(dev, 0xAD); // Master config
-  _io_oled_cmd(dev, 0x00); // Slave
+  _io_oled_cmd(dev, 0x00); // Slave config
 
   _io_oled_cmd(dev, 0xA4); // Resume to RAM content
 
@@ -240,22 +224,15 @@ int io_oled_init(struct io_oled_device *dev) {
   // Display ON
   _io_oled_cmd(dev, 0xAF);
 
-  // Turn display off
-  //_io_oled_cmd(dev, 0xAE);
-  //_delay_ms(10);
-
-  // Turn display on
-  //_io_oled_cmd(dev, 0xAF);
-
   return status;
 }
 
 int io_oled_reset(struct io_oled_device *dev) {
 
-  // Display OFF
+  // Display off
   _io_oled_cmd(dev, 0xAE);
 
-  // Reset
+  // --- Hardware reset sequence --- //
   PORTB &= ~(1 << PB4); // Set PB4 low
   _delay_us(5);         // Wait 5us
   PORTB |= (1 << PB4);  // Set PB4 high
@@ -278,9 +255,9 @@ int io_oled_home(struct io_oled_device *dev) {
 int io_oled_goto_line(struct io_oled_device *dev, int line) {
 
   if (line > 7)
-    line = 7;                              // Out of bounds
-  _io_oled_cmd(dev, 0xB0 | (line & 0x07)); // 0xB0-0xB7
-  dev->current_page = line;                // Update index of current page
+    line = 7;                                 // Out of bounds
+  _io_oled_cmd(dev, 0xB0 | (line & 0x07));    // 0xB0-0xB7
+  dev->current_page = line;                   // Update index of current page
 
   return 0;
 }
@@ -290,7 +267,7 @@ int io_oled_goto_column(struct io_oled_device *dev, int column) {
   // Columns are split into low/high area commands 0x00-0x0F and 0x10-0x1F
   _io_oled_cmd(dev, 0x00 | (column & 0x0F));        // lower
   _io_oled_cmd(dev, 0x10 | ((column >> 4) & 0x0F)); // higher
-  dev->current_column = column; // Update index of current column
+  dev->current_column = column;                     // Update index of current column
 
   return 0;
 }
@@ -334,15 +311,6 @@ int io_oled_pos(struct io_oled_device *dev, int line, int column) {
   return 0;
 }
 
-/* int io_oled_print(struct io_oled_device *dev, char *text) {
-
-  for (char *p = text; *p; ++p) {
-    io_oled_write(dev, text[p]);
-  }
-
-  return 0;
-} */
-
 int io_oled_set_brightness(struct io_oled_device *dev, uint8_t brightness) {
 
   _io_oled_cmd(dev, 0x81);
@@ -355,6 +323,7 @@ int io_oled_reset_brightness(struct io_oled_device *dev) {
 
   _io_oled_cmd(dev, 0x81);
   _io_oled_cmd(dev, 0x7F);
+
   return 0;
 }
 
@@ -378,12 +347,13 @@ uint8_t io_oled_write_glyph(struct io_oled_device *dev,
   uint8_t start_column = dev->current_column;
 
   // --- Draw the glyph on the current page --- //
-  // Make sure char_id in range
   uint8_t glyph_id = 0; // Space as default value
 
+  // Make sure char_id in range
   if ((uint8_t)character_id >= 32 && (uint8_t)character_id <= 126) {
     glyph_id = (uint8_t)character_id - 32;
   }
+
   // Find glyph in fonts.h
   uint8_t *base = (uint8_t *)font->table + (glyph_id * font->bytes_per_glyph);
 
@@ -400,23 +370,6 @@ uint8_t io_oled_write_glyph(struct io_oled_device *dev,
   }
 
   uint8_t total_cols = (uint8_t)(font->bytes_per_glyph + font->spacing);
-
-  // --- Clear the columns on all other pages --- //
-  /*   for (uint8_t page = 0; page < 8; page++) {
-      if (page == start_page) continue;
-      io_oled_goto_line(dev, page);
-      io_oled_goto_column(dev, start_column);
-      for (uint8_t i = 0; i < total_cols; i++) {
-        _io_oled_write(dev, 0x00);
-      }
-    } */
-
-  // restore cursor to end of glyph on original page
-  /*  io_oled_goto_line(dev, start_page);
-   io_oled_goto_column(dev, (uint8_t)(start_column + total_cols)); */
-
-  // Returns columns written (commented out for testing with clearing other
-  // pages) return (uint8_t)(font->bytes_per_glyph + font->spacing);
 
   return total_cols;
 }
@@ -439,20 +392,21 @@ int io_oled_test(struct io_oled_device *dev) {
 
   io_oled_home(dev);
 
-  for (uint8_t i = 0; i < 64; i++) { // print half a line
+  for (uint8_t i = 0; i < 64; i++) {  // print half a line
     _io_oled_write(dev, 0xff);
   }
 
-  io_oled_goto_line(dev, 1); // new line
+  io_oled_goto_line(dev, 1);          // new line
 
-  for (uint8_t i = 0; i < 64; i++) { // print half a line
+  for (uint8_t i = 0; i < 64; i++) {  // print half a line
     _io_oled_write(dev, 0xff);
   }
 
-  io_oled_goto_line(dev, 2);   // new line
-  io_oled_goto_column(dev, 0); // new carrige return
+  io_oled_goto_line(dev, 2);          // new line
+  io_oled_goto_column(dev, 0);        // new carrige return
 
-  for (uint8_t i = 0; i < 128; i++) { // fill every other column in a row
+  // fill every other column in a row
+  for (uint8_t i = 0; i < 128; i++) {
     if (i % 2 == 0) {
       _io_oled_write(dev, 0xff);
     } else {
@@ -460,10 +414,11 @@ int io_oled_test(struct io_oled_device *dev) {
     }
   }
 
-  io_oled_goto_line(dev, 3);   // new line
-  io_oled_goto_column(dev, 0); // new carrige return
+  io_oled_goto_line(dev, 3);          // new line
+  io_oled_goto_column(dev, 0);        // new carrige return
 
-  for (uint8_t i = 0; i < 128; i++) { // fill a row with chess pattern
+  // fill a row with chess pattern
+  for (uint8_t i = 0; i < 128; i++) {
     if (i % 2 == 0) {
       _io_oled_write(dev, 0b01010101);
     } else {

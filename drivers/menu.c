@@ -17,7 +17,6 @@ int menu_init(struct menu_cfg *menu) {
     int status = 0;
 
     io_oled_init(menu->oled);
-    io_oled_blink(menu->oled, 1);
     page_dispatch(menu);
 
     return status;

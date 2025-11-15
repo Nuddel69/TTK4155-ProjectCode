@@ -47,6 +47,7 @@ void ADC_read_all(struct ADC_meas *output) {
   }
 }
 
+/*
 void ADC_test(void) {
 
   struct ADC_meas data;
@@ -58,49 +59,5 @@ void ADC_test(void) {
          data.channel[1] - 128, data.channel[2] - 128, data.channel[3] - 128);
 
   _delay_ms(100);
-}
-
-/*
-// Read all channels sequentially after BUSY goes high (3.6 us per ch)
-void ADC_read(uint8_t *read_to_adr) {
-
-    for (uint8_t i=0; i<3; i++) {
-        //Select channel (sets PA1 and PA2 depending on channel, before pulsing
-RD) DDRA = 0xFF; // Set to outputs PINA =  i;
-
-        //Send WR
-        PINB ^= (1 << PB1);//Toggle WR
-        DDRA = 0x00; //Set to inputs
-        // Safe delay, 5 us per channel (with 1 MHz CLK) should be enough.
-        _delay_us(5);
-
-        PINB ^= (1 << PB2);//Toggle RD
-        _delay_us(5);
-        //Read channel on the ADC
-        volatile uint8_t data = PINA
-        read_to_adr[i] = data;
-    }
-    DDRA = 0xFF;
-}
-
-
-uint8_t ADC_read_ch(uint8_t ch){
-
-    //Select channel (sets PA1 and PA2 depending on channel, before pulsing RD)
-        DDRA = 0xFF; // Set to outputs
-        PINA =  i;
-
-        //Send WR
-        PINB ^= (1 << PB1);//Toggle WR
-        DDRA = 0x00; //Set to inputs
-        // Safe delay, 5 us per channel (with 1 MHz CLK) should be enough.
-        _delay_us(5);
-
-        PINB ^= (1 << PB2);//Toggle RD
-        _delay_us(5);
-        //Read channel on the ADC
-        volatile uint8_t data = PINA
-        read_to_adr[i] = data;
-
 }
 */

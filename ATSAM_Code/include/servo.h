@@ -13,5 +13,6 @@ struct Servo_device {
 
 uint8_t servo_init(struct Servo_device *dev);
 uint8_t servo_set_percentage(struct Servo_device *dev, uint8_t position);
+uint8_t servo_set_range(struct Servo_device *dev, int8_t position);
 
 #endif // INCLUDE_INCLUDE_SERVO_H_

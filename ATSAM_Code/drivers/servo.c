@@ -37,3 +37,29 @@ uint8_t servo_set_percentage(struct Servo_device *dev, uint8_t position) {
                   (position * ((dev->max_dty - dev->min_dty) / 100)));
   return 0;
 }
+
+uint8_t servo_set_range(struct Servo_device *dev, int8_t position) {
+
+  // Clamp input
+  if (position >= 127)
+    position = 127;
+  if (position <= -127)
+    position = -127;
+
+  uint16_t duty;
+
+  if (position == 0) {
+    duty = dev->mid_dty;
+  } else if (position > 0) {
+    // Scale: 0 -> mid_dty, 127 -> max_dty
+    duty = dev->mid_dty +
+           ((int32_t)position * (dev->max_dty - dev->mid_dty)) / 127;
+  } else {
+    // Scale: 0 -> mid_dty, -127 -> min_dty
+    duty = dev->mid_dty +
+           ((int32_t)position * (dev->mid_dty - dev->min_dty)) / 127;
+  }
+
+  PWM_set_dty(&dev->pwm, duty);
+  return 0;
+}

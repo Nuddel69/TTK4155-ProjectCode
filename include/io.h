@@ -29,12 +29,14 @@ struct io_oled_device {
 struct io_joystick_device {
   unsigned int adc_channel_x;
   unsigned int adc_channel_y;
-  int x_offset;
-  int y_offset;
+  int x_min;
+  int y_min;
+  int x_max;
+  int y_max;
 };
 struct io_joystick_position {
-  int x; // X value in % from the middle
-  int y; // Y value in % from the middle
+  int8_t x; // X value in % from the middle
+  int8_t y; // Y value in % from the middle
 };
 enum io_joystick_direction { LEFT, RIGHT, UP, DOWN, NEUTRAL };
 
@@ -276,7 +278,7 @@ int io_oled_blink(struct io_oled_device *dev, uint8_t blinks);
 int io_oled_write_data(struct io_oled_device *dev, uint8_t data);
 int io_oled_write_command(struct io_oled_device *dev, uint8_t command);
 
-//NEW FOR TESTING
+// NEW FOR TESTING
 int io_oled_clear_all(struct io_oled_device *dev);
 
 #endif // INCLUDE_INCLUDE_IO_H_

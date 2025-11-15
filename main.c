@@ -50,23 +50,23 @@ struct CAN_frame dummy_msg;
 //extern struct can_device can;
 
 // Define settings sub menu
-static struct menu_item settings_menu[] = {
-    {"Adjust brightness", PAGE_ADJUST_BRIGHTNESS, NULL, 0},
-    {"Calibrate joystick", PAGE_CALIBRATE_JOYSTICK, NULL, 0},
-};
+//static struct menu_item settings_menu[] = {
+//    {"Adjust brightness", PAGE_ADJUST_BRIGHTNESS, NULL, 0},
+//    {"Calibrate joystick", PAGE_CALIBRATE_JOYSTICK, NULL, 0},
+//};
 
 // Define main menu
 static struct menu_item main_menu[] = {
     {"Start game", PAGE_PLAY_GAME, NULL, 0},
-    {"High scores", PAGE_HIGH_SCORES, NULL, 0},
-    {"Settings", PAGE_SETTINGS, settings_menu, 2},
+    //{"High scores", PAGE_HIGH_SCORES, NULL, 0},
+    //{"Settings", PAGE_SETTINGS, settings_menu, 2},
 };
 
 // Initialize menu_cfg struct with menus defined above
 struct menu_cfg menu = {
     .oled = &oled,
     .items = main_menu,
-    .length = 3,
+    .length = 1,
     .cursor_pos = 0,
     .current_page = PAGE_WELCOME,
     .root_items = main_menu,

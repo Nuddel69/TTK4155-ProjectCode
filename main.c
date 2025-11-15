@@ -12,6 +12,7 @@
 #include "uart.h"
 #include "utils.h"
 #include "xmem.h"
+#include "controller.h"
 
 #define BAUD 9600
 
@@ -109,16 +110,21 @@ int main() {
 
     //tx_joy_btn(&joy, &avr, &can);
     _delay_ms(100);
+	
+	struct CAN_frame msg = {CAN_ID_GAMESTART, 0x08, {1, 2, 3, 4, 5, 6,7,8}, 1, 0};
 
-    /* static enum page_id last_state = PAGE_WELCOME;
+	// Transmit data
+	//can_write(&can, msg);
 
+    static enum page_id last_state = PAGE_WELCOME;
+	tx_joy_btn(&joy, &avr, &can);
     if (menu.current_page != last_state) {
       if(menu.current_page == PAGE_PLAY_GAME) {
         tx_gamestart(&can);
       }
 
       last_state = menu.current_page;
-    } */
+    } 
 
     // while (can_rxq_pull(&dummy_msg)) {
     //   process_can_frame(&dummy_msg);

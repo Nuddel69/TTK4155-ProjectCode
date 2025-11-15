@@ -11,6 +11,7 @@ SOURCE_FILES = \
 	drivers/can.c \
 	drivers/can_controller.c \
 	drivers/can_interrupt.c \
+	drivers/controller.c \
 	drivers/led.c \
 	drivers/time.c \
 	drivers/servo.c \

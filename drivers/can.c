@@ -118,7 +118,7 @@ int8_t can_read(struct can_device *dev, struct CAN_frame *out) {
   return 0;
 }
 
-static inline int can_rxq_add(struct CAN_frame *msg) {
+int can_rxq_add(struct CAN_frame *msg) {
 
   uint8_t next = (uint8_t)((rxq_head + 1) & (CAN_RXQ_SIZE - 1));
   if (next == rxq_tail) {

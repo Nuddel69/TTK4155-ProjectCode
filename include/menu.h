@@ -54,6 +54,7 @@ int high_scores_display(struct menu_cfg *menu);
 int settings_display(struct menu_cfg *menu);
 int brightness_display(struct menu_cfg *menu);
 int calibrate_joystick_display(struct menu_cfg *menu);
+int game_over_display(struct menu_cfg *menu);
 
 int draw_cursor(struct menu_cfg *menu);
 int cursor_update(struct menu_cfg *menu, struct io_avr_buttons *btn);

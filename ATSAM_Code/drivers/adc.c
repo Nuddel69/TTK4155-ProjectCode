@@ -16,8 +16,8 @@ int adc_init(void) {
 
   // Disable writeprotect (p.1353 datasheet)
   ADC->ADC_WPMR =
-      ADC_WPMR_WPKEY(0x414443); // ADC in ASCII shifted 8 (0x414443)<<8);
-  // ADC_WPMR_WPKEY_PASSWD; // ADC in ASCII shifted 8 (0x414443)<<8);
+     //ADC_WPMR_WPKEY(0x414443); // ADC in ASCII shifted 8 (0x414443)<<8);
+  ADC_WPMR_WPKEY_PASSWD; // ADC in ASCII shifted 8 (0x414443)<<8);
 
   // Enable chosen channel(AD7 ch=0)
   ADC->ADC_CHER = ADC_CHER_CH0;

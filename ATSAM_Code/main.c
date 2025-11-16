@@ -25,6 +25,7 @@
 #include "solenoid.h"
 #include "time.h"
 #include "uart.h"
+#include "game.h"
 
 #define DEBUG 0
 
@@ -33,11 +34,12 @@
 
 struct io_joystick_position joy_pos = {0, 0};
 struct io_avr_buttons btn;
+uint8_t game_start = 0;
 
 int process_can_frame() {
   CAN_MESSAGE msg;
   if (can_rxq_pull(&msg)) {
-		printf("Rx msg with id %d",msg.id);
+		//printf("Rx msg with id %d\r\n",msg.id);
     switch (msg.id) {
 
     case CAN_ID_ERROR: { // This ID is reserved for errors, BOTH node1 and node2
@@ -53,8 +55,9 @@ int process_can_frame() {
     }
     case CAN_ID_GAMESTART: { // This ID is reserved for starting a new game from
                              // node1
-		CAN_MESSAGE	msg = {0x02,0x8,0xFF};				 
-		can_send(&msg,0);
+		//CAN_MESSAGE	msg = {0x02,0x8,0xFF};				 
+		//can_send(&msg,0);
+		game_start=1;
 
       // TODO: start game
 
@@ -70,8 +73,8 @@ int process_can_frame() {
       btn.nav = (uint8_t)msg.data[4];
 
       // printf("%c[2J",27);
-      printf("Buttons R=0x%02X L=0x%02X N=0x%02X, pos x:%d, y:%d\r\n",
-             btn.right, btn.left, btn.nav, joy_pos.x, joy_pos.y);
+      //printf("Buttons R=0x%02X L=0x%02X N=0x%02X, pos x:%d, y:%d\r\n",
+      //      btn.right, btn.left, btn.nav, joy_pos.x, joy_pos.y);
       // update_control(joy_pos, btn);
 
       // update_control(joy_pos, btn); //TODO
@@ -94,17 +97,29 @@ int process_can_frame() {
 }
 
 // struct PWM_device servo_pwm = ;
-struct Servo_device servo = {{PIOB, 13, 1, 20000, 1500}, 2100, 1500, 900};
-struct Servo_device motor_srv = {{PIOB, 12, 0, 20000, 1500}, 2100, 1500, 900};
+struct servo_device servo = {{PIOB, 13, 1, 20000, 1500}, 2100, 1500, 900};
+//struct Servo_device motor_srv = {{PIOB, 12, 0, 20000, 1500}, 2100, 1500, 900};
 struct motor_device motor = {PIOC, 23, {PIOB, 12, 0, 20000, 000}};
 struct solenoid_device solenoid = {PIOB, 25};
 
 struct pid_controller motor_pid = {KP_DEFAULT, KI_DEFAULT,  KD_DEFAULT,    0, 0,
                                    0,          PID_MAX_OUT, PID_MAX_WINDUP};
+//Set config
+struct game_config game_conf = {&motor,
+	&motor_pid,
+	&servo,
+	&solenoid,
+	&joy_pos,
+	&btn,
+	&game_start
+};
 
 int main(void) {
 
   SystemInit();
+  
+    // Turn Watchdog off
+  WDT->WDT_MR = WDT_MR_WDDIS;
 
   int status = 0;
   CAN_MESSAGE msg;
@@ -124,7 +139,7 @@ int main(void) {
   }
 
   servo_init(&servo);
-  servo_init(&motor_srv);
+  //servo_init(&motor_srv);
 
   solenoid_init(&solenoid);
 
@@ -137,82 +152,43 @@ int main(void) {
     printf("Failed to initialize CAN\r\n");
   }
 
-  // Turn Watchdog off
-  WDT->WDT_MR = WDT_MR_WDDIS;
+
+	
 
   uint64_t inittime = time_now();
 
   // Reset Timer and PID at start
   motor_pid.last_time = inittime;
   TC2->TC_CHANNEL[0].TC_CCR = TC_CCR_SWTRG;
+  
   uint32_t counter = 0;
-
-  uint8_t button_fired = 0;
+  uint8_t button_r6_fired = 0;
+  uint8_t button_r4_fired = 0;
 
   printf("-----Node2 Init complete------\r\n");
 
-  uint8_t coconut = 0;
-  
-  //Dummy message for testing
-  	CAN_MESSAGE	node2_msg = {node2_msg.id=0x02,
-						node2_msg.data_length=0x8,
-						node2_msg.data[0]=1,
-						node2_msg.data[1]=2,
-						node2_msg.data[2]=0xAA,
-						node2_msg.data[3]=4,
-						node2_msg.data[4]=5,
-						node2_msg.data[5]=6,
-						node2_msg.data[6]=7,
-						node2_msg.data[7]=8
-						};		
-						
-	uint8_t can_counter;
-	uint8_t game_start = 0;
-
+  //uint8_t coconut = 0;
   while (1) {
 	
-	time_spinFor(msecs(500));
 	
-	//Send test
-	node2_msg.data[0]=can_counter;
-	node2_msg.data[1]=50-can_counter;
-	node2_msg.data[2] ^=0xFF;
-	printf("I am sending\r\n");
-    can_send(&node2_msg,0);
-	can_counter++;
-	
-	//Test 
-	if (can_counter==50){
-		game_start==1;
-		can_counter=0;
-	}
-	
-	
-	printf("ADC------------------\r\n");
-	uint16_t adc_val = adc_read_once();
-	uint8_t goal =simple_goal_detection();
-	printf("ADC_value:%d, Goal Check:%d \r\n",adc_val,goal);
-	
-    process_can_frame();
-    // pwm_dir_and_speed(&motor, &motor_pid, (joy_pos.x - 27) * 50);
-    int32_t inn = (int32_t)TC2->TC_CHANNEL[0].TC_CV;
-    //printf("Current X ref:%d and Xpos:%d \r\n", joy_pos.x, inn);
-
-    if (btn.R6 && !button_fired) {
-      solenoid_pulse(&solenoid, 40);
-      button_fired = 1;
+	//Reset encoder 0 position when pressing button 
+	if (btn.R4 && !button_r4_fired) {
+		printf("Resetting encoder ref");
+		encoder_zero();
+		motor_stop(&motor);
+		button_r4_fired = 1;
     }
-    if (!btn.R6 && button_fired) {
-      button_fired = 0;
+    if (!btn.R4 && button_r4_fired) {
+		button_r4_fired = 0;
     }
 
     // servo_set_percentage(&servo, coconut % 100);
-    coconut += 2;
+    //coconut += 2;
 
-    servo_set_range(&servo, joy_pos.y);
+    //servo_set_range(&servo, joy_pos.y);
 	
 	
-	basic_game(&motor,&motor_pid, 0, &game_start);
+	basic_game(&game_conf);
 
     // uint16_t IR_val = adc_read_once();
     // printf("IR;%d \r\n",IR_val);

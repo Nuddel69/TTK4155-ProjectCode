@@ -9,22 +9,22 @@
 #define _DTY_MAX 0x2DE2 // 2.1 ms
 #define _DTY_STEP
 
-uint8_t servo_init(struct Servo_device *dev) {
+uint8_t servo_init(struct servo_device *dev) {
   PWM_init(&dev->pwm);
   return 0;
 }
 
-static uint8_t _servo_max_dty(struct Servo_device *dev) {
+static uint8_t _servo_max_dty(struct servo_device *dev) {
   PWM_set_dty(&dev->pwm, dev->max_dty);
   return 0;
 }
 
-static uint8_t _servo_min_dty(struct Servo_device *dev) {
+static uint8_t _servo_min_dty(struct servo_device *dev) {
   PWM_set_dty(&dev->pwm, dev->min_dty);
   return 0;
 }
 
-uint8_t servo_set_percentage(struct Servo_device *dev, uint8_t position) {
+uint8_t servo_set_percentage(struct servo_device *dev, uint8_t position) {
   if (position >= 100) {
     _servo_max_dty(dev);
   }
@@ -38,7 +38,7 @@ uint8_t servo_set_percentage(struct Servo_device *dev, uint8_t position) {
   return 0;
 }
 
-uint8_t servo_set_range(struct Servo_device *dev, int8_t position) {
+uint8_t servo_set_range(struct servo_device *dev, int8_t position) {
 
   // Clamp input
   if (position >= 127)

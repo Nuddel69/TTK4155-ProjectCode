@@ -37,7 +37,7 @@ int32_t pid(int32_t inn, int32_t ref, struct pid_controller *PID) {
   
   
   //Deadband
-  if (abs(error) < 50){
+  if (abs(error) < 250){
 	  error = 0;
   }
 
@@ -75,7 +75,7 @@ uint32_t pwm_dir_and_speed(struct motor_device *motor_dev, struct pid_controller
 
   int32_t inn = (int32_t)TC2->TC_CHANNEL[0].TC_CV;
   int32_t motor_input = pid(inn, pos_ref, pid_ctrl);
-  printf("motor input:%d and current pos %d , go to ref %d \r\n",motor_input,inn, pos_ref);
+  //printf("motor input:%d and current pos %d , go to ref %d \r\n",motor_input,inn, pos_ref);
   motor_dir_and_speed(motor_dev, motor_input);
 
   return 0;

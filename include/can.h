@@ -45,7 +45,8 @@ struct CAN_frame {
 //------------------//
 
 int8_t can_init(struct can_device *dev);
-int8_t can_read(struct can_device *dev, struct CAN_frame *out);
+int8_t can_read_rx0(struct can_device *dev, struct CAN_frame *out);
+int8_t can_read_rx1(struct can_device *dev, struct CAN_frame *out)
 int8_t can_write(struct can_device *dev, struct CAN_frame msg);
 int8_t can_reset(struct can_device *dev, uint8_t address,
                  struct CAN_frame data_frame);

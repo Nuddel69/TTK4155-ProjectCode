@@ -6,7 +6,7 @@
 #include "uart.h"
 #include "xmem.h"
 
-LOG_MODULE_DEFINE("XMEM")
+LOG_MODULE_DEFINE("XMEM");
 
 // Initialize external memory
 int xmem_init(void) {
@@ -49,7 +49,7 @@ int SRAM_test(void) {
   uint16_t write_errors = 0;
   uint16_t retrieval_errors = 0;
 
-  LOG_INF("Starting SRAM test...")
+  LOG_INF("Starting SRAM test...");
 
   // rand() stores internal state; use it once to vary the seed each run
   uint16_t seed = (uint16_t)rand();
@@ -81,7 +81,7 @@ int SRAM_test(void) {
     }
   }
 
-  LOG_INF("SRAM test completed")
+  LOG_INF("SRAM test completed");
 
   // printf(
   //     "SRAM test completed with\n\r%4u errors in write phase and\n\r%4u

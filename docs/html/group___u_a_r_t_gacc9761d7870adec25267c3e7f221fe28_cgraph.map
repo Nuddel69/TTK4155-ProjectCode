@@ -1,8 +1,0 @@
-<map id="USART_ReceiveHandler" name="USART_ReceiveHandler">
-<area shape="rect" id="Node000001" title="Handle incoming received bytes and simple command echoing." alt="" coords="5,31,173,56"/>
-<area shape="rect" id="Node000002" href="$uart_8c.html#afd0e1c22f60c14ddfb49c4f70105ee4b" title=" " alt="" coords="221,5,359,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="173,30,208,28,203,29,174,36"/>
-<area shape="rect" id="Node000003" href="$group___u_a_r_t.html#ga90a44f50119303ce2d4198c756908fa8" title="Transmit a single byte via USART0." alt="" coords="407,31,532,56"/>
-<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="173,41,392,41,391,46,173,46"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="360,25,394,33,389,32,360,31"/>
-</map>

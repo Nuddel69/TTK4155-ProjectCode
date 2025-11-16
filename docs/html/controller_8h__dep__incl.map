@@ -1,7 +1,0 @@
-<map id="include/controller.h" name="include/controller.h">
-<area shape="rect" id="Node000001" title="Handles CAN communication for game control, joystick, and buttons." alt="" coords="63,5,192,31"/>
-<area shape="rect" id="Node000002" href="$controller_8c.html" title=" " alt="" coords="5,79,133,105"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="111,42,81,80,77,77,106,44"/>
-<area shape="rect" id="Node000003" href="$main_8c.html" title="Main entry point for the TTK4155 Node 1 firmware." alt="" coords="156,79,216,105"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="148,41,179,79,174,78,146,45"/>
-</map>

@@ -1,9 +1,0 @@
-<map id="MCP2515_write_n" name="MCP2515_write_n">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,134,31"/>
-<area shape="rect" id="Node000002" href="$group___s_p_i.html#ga52c5638173ca149f299ad1893588ede7" title="Send a sequence of bytes to a slave without reading response." alt="" coords="182,5,269,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="134,16,168,18,163,18,134,21"/>
-<area shape="rect" id="Node000003" href="$group___s_p_i.html#ga779792281c4502a65714a5ce3483cfe7" title="Full&#45;duplex SPI transfer." alt="" coords="317,5,400,31"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="269,16,304,18,299,18,270,21"/>
-<area shape="rect" id="Node000004" href="$group___s_p_i.html#ga872c6f32f50aa32f4fb491da525e1976" title="Set the slave&#45;select line for the given device." alt="" coords="448,5,592,31"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="401,16,435,18,430,18,401,21"/>
-</map>

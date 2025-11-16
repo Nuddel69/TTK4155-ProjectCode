@@ -1,5 +1,0 @@
-<map id="USART_SendString" name="USART_SendString">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,144,31"/>
-<area shape="rect" id="Node000002" href="$group___u_a_r_t.html#ga90a44f50119303ce2d4198c756908fa8" title="Transmit a single byte via USART0." alt="" coords="192,5,317,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="144,16,179,18,173,18,144,21"/>
-</map>

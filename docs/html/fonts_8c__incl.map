@@ -1,8 +1,0 @@
-<map id="fonts.c" name="fonts.c">
-<area shape="rect" id="Node000001" title=" " alt="" coords="32,5,93,31"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,153,120,178"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="62,29,57,79,60,138,55,137,52,79,59,34"/>
-<area shape="rect" id="Node000003" href="$fonts_8h.html" title=" " alt="" coords="66,79,128,105"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="69,29,87,64,82,65,68,34"/>
-<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="94,103,77,140,73,137,89,106"/>
-</map>

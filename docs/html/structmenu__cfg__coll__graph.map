@@ -1,8 +1,0 @@
-<map id="menu_cfg" name="menu_cfg">
-<area shape="rect" id="Node000001" title="Menu configuration and state." alt="" coords="63,224,165,372"/>
-<area shape="rect" id="Node000002" href="$structio__oled__device.html" title="Represents an OLED display device controlled via SPI." alt="" coords="5,5,118,112"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="74,110,97,207,92,207,72,114"/>
-<area shape="rect" id="Node000003" href="$structmenu__item.html" title="Menu item struct." alt="" coords="142,5,261,112"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="184,110,149,209,144,207,181,114"/>
-<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="260,36,280,43,288,59,285,69,279,75,275,72,281,66,283,59,277,47,262,41"/>
-</map>

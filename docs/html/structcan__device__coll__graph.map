@@ -1,3 +1,0 @@
-<map id="can_device" name="can_device">
-<area shape="rect" id="Node000001" title="Represents a CAN device, storing the SPI slave controlling the MCP2515." alt="" coords="5,5,82,72"/>
-</map>

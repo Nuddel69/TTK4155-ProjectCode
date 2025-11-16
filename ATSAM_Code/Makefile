@@ -15,6 +15,7 @@ SOURCE_FILES = \
 	drivers/led.c \
 	drivers/time.c \
 	drivers/servo.c \
+	drivers/game.c \
 	drivers/motor.c \
 	drivers/solenoid.c \
 	drivers/encoder.c \

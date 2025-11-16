@@ -15,9 +15,8 @@ int adc_init(void) {
   PMC->PMC_PCER1 |= PMC_PCER1_PID37; // ID_ADC=37 PCER1 bit 5
 
   // Disable writeprotect (p.1353 datasheet)
-  ADC->ADC_WPMR = ADC_WPMR_WPKEY_PASSWD;
-      //ADC_WPMR_WPKEY(0x414443); // ADC in ASCII shifted 8 (0x414443)<<8);
-	  
+  // ADC->ADC_WPMR = ADC_WPMR_WPKEY_PASSWD;
+  ADC_WPMR_WPKEY(0x414443); // ADC in ASCII shifted 8 (0x414443)<<8);
 
   // Enable chosen channel(AD7 ch=0)
   ADC->ADC_CHER = ADC_CHER_CH0;
@@ -121,31 +120,31 @@ uint8_t advanced_goal_goal_detection(uint8_t *score) {
   return 0;
 }
 
+uint8_t simple_goal_detection(void) {
+  // Loss if beam broken(adc<20), not reacting if adc>35
 
-uint8_t simple_goal_detection(void){
-	//Loss if beam broken(adc<20), not reacting if adc>35
-	
-	const uint16_t goal_threshold = 50; //Below this to count as a goal
-	const uint16_t clear_threshold = 300; // Has to reach above this value to be able to register  a new goal
-	
-	static uint8_t goal_state = 0;
-	
-	uint16_t meas = adc_read_once();
-	
-	if (!goal_state){
-		if (meas<=goal_threshold){
-			//printf("ADC Past threshold, Goal detected");
-			printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!GOAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\r\n");
-			goal_state = 1;
-			return 1;
-		}
-	}else{
-		if (meas>= clear_threshold){
-			goal_state = 0;
-			//printf("ADC high values detected, Goal cleared");
-		}
-		
-	}
+  const uint16_t goal_threshold = 50; // Below this to count as a goal
+  const uint16_t clear_threshold =
+      300; // Has to reach above this value to be able to register  a new goal
 
-	return 0;
+  static uint8_t goal_state = 0;
+
+  uint16_t meas = adc_read_once();
+
+  if (!goal_state) {
+    if (meas <= goal_threshold) {
+      // printf("ADC Past threshold, Goal detected");
+      printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!GOAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+             "!!!!!!\r\n");
+      goal_state = 1;
+      return 1;
+    }
+  } else {
+    if (meas >= clear_threshold) {
+      goal_state = 0;
+      // printf("ADC high values detected, Goal cleared");
+    }
+  }
+
+  return 0;
 }

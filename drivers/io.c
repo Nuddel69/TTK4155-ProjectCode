@@ -11,7 +11,7 @@
 #include "utils.h"
 #include <stdio.h>
 
-LOG_MODULE_DEFINE("IO")
+LOG_MODULE_DEFINE("IO");
 
 #define JOYSTICK_THRESHOLD 10
 
@@ -255,9 +255,9 @@ int io_oled_home(struct io_oled_device *dev) {
 int io_oled_goto_line(struct io_oled_device *dev, int line) {
 
   if (line > 7)
-    line = 7;                                 // Out of bounds
-  _io_oled_cmd(dev, 0xB0 | (line & 0x07));    // 0xB0-0xB7
-  dev->current_page = line;                   // Update index of current page
+    line = 7;                              // Out of bounds
+  _io_oled_cmd(dev, 0xB0 | (line & 0x07)); // 0xB0-0xB7
+  dev->current_page = line;                // Update index of current page
 
   return 0;
 }
@@ -267,7 +267,7 @@ int io_oled_goto_column(struct io_oled_device *dev, int column) {
   // Columns are split into low/high area commands 0x00-0x0F and 0x10-0x1F
   _io_oled_cmd(dev, 0x00 | (column & 0x0F));        // lower
   _io_oled_cmd(dev, 0x10 | ((column >> 4) & 0x0F)); // higher
-  dev->current_column = column;                     // Update index of current column
+  dev->current_column = column; // Update index of current column
 
   return 0;
 }
@@ -397,15 +397,15 @@ int io_oled_test(struct io_oled_device *dev) {
     _io_oled_write(dev, 0xff);
   }
 
-  io_oled_goto_line(dev, 1);          // new line
+  io_oled_goto_line(dev, 1); // new line
 
   // print half a line
   for (uint8_t i = 0; i < 64; i++) {
     _io_oled_write(dev, 0xff);
   }
 
-  io_oled_goto_line(dev, 2);          // new line
-  io_oled_goto_column(dev, 0);        // new carrige return
+  io_oled_goto_line(dev, 2);   // new line
+  io_oled_goto_column(dev, 0); // new carrige return
 
   // fill every other column in a row
   for (uint8_t i = 0; i < 128; i++) {
@@ -416,8 +416,8 @@ int io_oled_test(struct io_oled_device *dev) {
     }
   }
 
-  io_oled_goto_line(dev, 3);          // new line
-  io_oled_goto_column(dev, 0);        // new carrige return
+  io_oled_goto_line(dev, 3);   // new line
+  io_oled_goto_column(dev, 0); // new carrige return
 
   // fill a row with chess pattern
   for (uint8_t i = 0; i < 128; i++) {

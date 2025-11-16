@@ -8,7 +8,7 @@
 #include "mcp.h"
 #include "spi.h"
 
-LOG_MODULE_DEFINE("CAN")
+LOG_MODULE_DEFINE("CAN");
 
 struct can_device *can_irq;
 struct CAN_frame new_message;
@@ -22,7 +22,8 @@ struct CAN_frame rxq[CAN_RXQ_SIZE];
 int8_t can_init(struct can_device *dev) {
 
   can_irq = dev;
-  //struct CAN_frame new_message = {0x00, 0x01, '1', 0, 0}; <- Why did we add this, it does nothing
+  // struct CAN_frame new_message = {0x00, 0x01, '1', 0, 0}; <- Why did we add
+  // this, it does nothing
 
   // Set PE0 as input
   DDRE &= ~(1 << PE0);
@@ -75,7 +76,7 @@ int8_t can_write(struct can_device *dev, struct CAN_frame msg) {
   MCP2515_read(dev, MCP2515_TXB0CTRL, &buff0_status);
   if ((buff0_status & 0x8) != 0x8) {
     if (msg.dlc > 8) {
-      LOG_ERR("TX Buffer0 overflow, message too large", -2)
+      LOG_ERR("TX Buffer0 overflow, message too large", -2);
       return -2;
     }
     for (uint8_t i = 0; i < msg.dlc; i++) {
@@ -100,14 +101,14 @@ int8_t can_read_rx0(struct can_device *dev, struct CAN_frame *out) {
   MCP2515_read(dev, MCP2515_RXB0SIDH, &ID_MSB);
   MCP2515_read(dev, MCP2515_RXB0SIDL, &ID_LSB);
 
-/*
-  ID_LSB = (ID_LSB & 0xE0) >> 5;
-  out->id = ID_MSB << 3;
-  out->id |= (out->id & 0x7F8) | (ID_LSB & 0x7);
-  */
+  /*
+    ID_LSB = (ID_LSB & 0xE0) >> 5;
+    out->id = ID_MSB << 3;
+    out->id |= (out->id & 0x7F8) | (ID_LSB & 0x7);
+    */
 
- ID_LSB = (ID_LSB & 0xE0) >> 5;
- out->id = (ID_MSB << 3)| (ID_LSB & 0x7);
+  ID_LSB = (ID_LSB & 0xE0) >> 5;
+  out->id = (ID_MSB << 3) | (ID_LSB & 0x7);
 
   MCP2515_read(dev, MCP2515_RXB0DLC, &length);
   out->dlc = (length & 0xF);
@@ -119,7 +120,7 @@ int8_t can_read_rx0(struct can_device *dev, struct CAN_frame *out) {
     MCP2515_read(dev, MCP2515_RXB0D0 + i, (uint8_t *)&out->data[i]);
   }
   // Clear RX1IF to clear buffer for next message
-  MCP2515_bit_modify(dev, MCP2515_CANINTF,MCP2515_RX0IF, 0x00); // RX0IF=bit0
+  MCP2515_bit_modify(dev, MCP2515_CANINTF, MCP2515_RX0IF, 0x00); // RX0IF=bit0
   return 0;
 }
 
@@ -132,14 +133,14 @@ int8_t can_read_rx1(struct can_device *dev, struct CAN_frame *out) {
   MCP2515_read(dev, MCP2515_RXB1SIDH, &ID_MSB);
   MCP2515_read(dev, MCP2515_RXB1SIDL, &ID_LSB);
 
-/*
-  ID_LSB = (ID_LSB & 0xE0) >> 5;
-  out->id = ID_MSB << 3;
-  out->id |= (out->id & 0x7F8) | (ID_LSB & 0x7);
-  */
+  /*
+    ID_LSB = (ID_LSB & 0xE0) >> 5;
+    out->id = ID_MSB << 3;
+    out->id |= (out->id & 0x7F8) | (ID_LSB & 0x7);
+    */
 
- ID_LSB = (ID_LSB & 0xE0) >> 5;
- out->id = (ID_MSB << 3)| (ID_LSB & 0x7);
+  ID_LSB = (ID_LSB & 0xE0) >> 5;
+  out->id = (ID_MSB << 3) | (ID_LSB & 0x7);
 
   MCP2515_read(dev, MCP2515_RXB1DLC, &length);
   out->dlc = (length & 0xF);
@@ -151,7 +152,7 @@ int8_t can_read_rx1(struct can_device *dev, struct CAN_frame *out) {
     MCP2515_read(dev, MCP2515_RXB1D0 + i, (uint8_t *)&out->data[i]);
   }
   // Clear RX1IF to clear buffer for next message
-  MCP2515_bit_modify(dev, MCP2515_CANINTF,MCP2515_RX1IF, 0x00); // RX0IF=bit0
+  MCP2515_bit_modify(dev, MCP2515_CANINTF, MCP2515_RX1IF, 0x00); // RX0IF=bit0
   return 0;
 }
 
@@ -183,9 +184,10 @@ int can_rxq_pull(struct CAN_frame *out) {
 // External interrupt PE0, From MCP2515
 ISR(INT2_vect) {
 
-  //LOG_INF("External interrupt")
+  // LOG_INF("External interrupt")
   uint8_t status;
-  MCP2515_read(can_irq,MCP2515_CANINTF, &status);//MCP2515_read_status(can_irq, &status);
+  MCP2515_read(can_irq, MCP2515_CANINTF,
+               &status); // MCP2515_read_status(can_irq, &status);
 
   if (status & MCP2515_RX0IF) {
     can_read_rx0(can_irq, &new_message);
@@ -272,7 +274,7 @@ int8_t MCP2515_init(struct can_device *dev) {
   // Interrupt config: msg error, error flag change, TX0 empty, RX0 full
   MCP2515_bit_modify(dev, MCP2515_CANINTE, 0xFF, MCP2515_RX_IRQ);
   MCP2515_read(dev, MCP2515_CANINTE, &value);
-  if ((value & MCP2515_RX_IRQ )!= MCP2515_RX_IRQ) {
+  if ((value & MCP2515_RX_IRQ) != MCP2515_RX_IRQ) {
     LOG_ERR("Couldnt set IRQ config for MCP2515", -5);
     return -5;
   }
@@ -350,19 +352,18 @@ int8_t MCP2515_read(struct can_device *dev, uint8_t addr, uint8_t *out) {
 
 int8_t MCP2515_read(struct can_device *dev, uint8_t addr, uint8_t *out) {
 
-	if (!out) {
-		return -1;
-	}
+  if (!out) {
+    return -1;
+  }
 
-	unsigned char tx[3] = { MCP2515_READ, addr, 0xFF };
-	unsigned char rx[3];
+  unsigned char tx[3] = {MCP2515_READ, addr, 0xFF};
+  unsigned char rx[3];
 
-	spi_duplex(&dev->spi, tx, rx, 3);
+  spi_duplex(&dev->spi, tx, rx, 3);
 
-	*out = rx[2];   // ? third byte is the register value
-	return 0;
+  *out = rx[2]; // ? third byte is the register value
+  return 0;
 }
-
 
 // Instructs controller to begin message transmission sequence for
 // any of the transmit buffers.
@@ -396,12 +397,13 @@ int8_t MCP2515_reset(struct can_device *dev) {
 // functions.
 int8_t MCP2515_read_status(struct can_device *dev, uint8_t *out) {
 
-  //uint8_t *status;
+  // uint8_t *status;
 
-  //spi_push(&dev->spi, MCP2515_READ_STATUS, TRASHCAN);
-  //spi_recieve(&dev->spi, out);
-  
-  if (!out) return -1;
+  // spi_push(&dev->spi, MCP2515_READ_STATUS, TRASHCAN);
+  // spi_recieve(&dev->spi, out);
+
+  if (!out)
+    return -1;
 
   unsigned char tx[2] = {MCP2515_READ_STATUS, 0xFF};
   unsigned char rx[2];
@@ -412,4 +414,3 @@ int8_t MCP2515_read_status(struct can_device *dev, uint8_t *out) {
 
   return 0;
 }
-

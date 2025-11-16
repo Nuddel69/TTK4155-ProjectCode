@@ -167,6 +167,7 @@ int main(void) {
 						};		
 						
 	uint8_t can_counter;
+	uint8_t game_start = 0;
 
   while (1) {
 	
@@ -179,7 +180,19 @@ int main(void) {
 	printf("I am sending\r\n");
     can_send(&node2_msg,0);
 	can_counter++;
-
+	
+	//Test 
+	if (can_counter==50){
+		game_start==1;
+		can_counter=0;
+	}
+	
+	
+	printf("ADC------------------\r\n");
+	uint16_t adc_val = adc_read_once();
+	uint8_t goal =simple_goal_detection();
+	printf("ADC_value:%d, Goal Check:%d \r\n",adc_val,goal);
+	
     process_can_frame();
     // pwm_dir_and_speed(&motor, &motor_pid, (joy_pos.x - 27) * 50);
     int32_t inn = (int32_t)TC2->TC_CHANNEL[0].TC_CV;
@@ -197,6 +210,9 @@ int main(void) {
     coconut += 2;
 
     servo_set_range(&servo, joy_pos.y);
+	
+	
+	basic_game(&motor,&motor_pid, 0, &game_start);
 
     // uint16_t IR_val = adc_read_once();
     // printf("IR;%d \r\n",IR_val);

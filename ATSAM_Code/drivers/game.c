@@ -142,11 +142,11 @@ uint8_t legacy_game(struct motor_device *motor_dev,struct pid_controller *motor_
 uint8_t basic_game(struct motor_device *motor_dev,struct pid_controller *motor_pid, int8_t joystick, uint8_t *game_start){
 	static uint8_t reset_complete = 0;
 	static uint8_t game_state = game_standby;
-	
+	printf("Entering game");
 	switch (game_state){
 		
 		case game_standby:
-			
+			printf("entering game standby\r\n");
 			//Reset game
 			if(!reset_complete){
 				//motor_reset_pos(motor_dev);  // Implement this if we have time
@@ -163,12 +163,13 @@ uint8_t basic_game(struct motor_device *motor_dev,struct pid_controller *motor_p
 			break;
 			
 		case game_playing:
-			
+			printf("entering game playing\r\n");
 			//Give control to player
 			pwm_dir_and_speed(motor_dev,motor_pid,(joystick)*JOY_SENS);
 				
 				//End when goal is detected
 				if(simple_goal_detection()){
+					printf("GOAL------------------------------------------------------\r\n");
 					motor_stop(motor_dev);
 					CAN_MESSAGE gameover_msg = {.id =CAN_ID_GAMEOVER,.data_length = 1};
 					*game_start = 0;

@@ -50,23 +50,23 @@ struct CAN_frame dummy_msg;
 // extern struct can_device can;
 
 // Define settings sub menu
-// static struct menu_item settings_menu[] = {
-//    {"Adjust brightness", PAGE_ADJUST_BRIGHTNESS, NULL, 0},
-//    {"Calibrate joystick", PAGE_CALIBRATE_JOYSTICK, NULL, 0},
-//};
+static struct menu_item settings_menu[] = {
+    {"Adjust brightness", PAGE_ADJUST_BRIGHTNESS, NULL, 0},
+    {"Calibrate joystick", PAGE_CALIBRATE_JOYSTICK, NULL, 0},
+};
 
 // Define main menu
 static struct menu_item main_menu[] = {
     {"Start game", PAGE_PLAY_GAME, NULL, 0},
-    //{"High scores", PAGE_HIGH_SCORES, NULL, 0},
-    //{"Settings", PAGE_SETTINGS, settings_menu, 2},
+    {"High scores", PAGE_HIGH_SCORES, NULL, 0},
+    {"Settings", PAGE_SETTINGS, settings_menu, 2},
 };
 
 // Initialize menu_cfg struct with menus defined above
 struct menu_cfg menu = {
     .oled = &oled,
     .items = main_menu,
-    .length = 1,
+    .length = 3,
     .cursor_pos = 0,
     .current_page = PAGE_WELCOME,
     .root_items = main_menu,
@@ -103,46 +103,50 @@ int main() {
 
   LOG_CRITICAL("---Init complete---");
 
+  static enum page_id last_state = PAGE_WELCOME;
+
   while (1) {
-    // io_avr_buttons_read(&avr, &btn);        // Read button inputs from IO
-    // board io_joystick_read_position(&joy, &pos);  // Read joystick input from
-    // IO board menu_handler(&menu, &btn);              // Handle menu based on
-    // button inputs
-    _delay_ms(50);
     // LOG_CRITICAL("Alive...");
+
+    // Button Inputs
+    io_avr_buttons_read(&avr, &btn);       // Read button inputs from IO board
+    io_joystick_read_position(&joy, &pos); // Read joystick input from IO board
+    menu_handler(&menu, &btn);             // Handle menu based on
 
     // Can message send test
     // struct CAN_frame msg = {CAN_ID_GAMESTART, 0x08, {1, 2, 3, 4, 5, 6,7,8},
     // 1, 0}; tx_gamestart(&can);
 
     // Can message recive test
-    struct CAN_frame msg;
-    if (can_rxq_pull(&msg)) {
-      LOG_INF("Reading adress and length of message");
-      for (uint8_t i = 0; i < msg.dlc; i++) {
-      }
-      LOG_INF("Done reading data bytes in message");
-    }
+    // struct CAN_frame msg;
+    // if (can_rxq_pull(&msg)) {
+    //   LOG_INF("Reading adress and length of message");
+    //   for (uint8_t i = 0; i < msg.dlc; i++) {
+    //   }
+    //   LOG_INF("Done reading data bytes in message");
+    // }
 
     tx_joy_btn(&joy, &avr, &can);
-    /*
-static enum page_id last_state = PAGE_WELCOME;
-if (menu.current_page != last_state) {
-  if(menu.current_page == PAGE_PLAY_GAME) {
-    tx_gamestart(&can);
-  }
 
-  last_state = menu.current_page;
-}
-    */
+    if (menu.current_page != last_state) {
+      if (menu.current_page == PAGE_PLAY_GAME) {
+        tx_gamestart(&can);
+      }
 
-    // process_can_frame(&ctrl);
-    /*
-if (ctrl.game_over == 1) {
-  ctrl.game_over = 0;
-  menu.current_page = PAGE_GAME_OVER;
+      last_state = menu.current_page;
+    }
 
-}*/
+    process_can_frame(&ctrl);
+
+    if (ctrl.game_over) {
+      ctrl.game_over = 0;
+      if (menu.current_page == PAGE_PLAY_GAME) {
+        LOG_CRITICAL("Game over");
+        menu.current_page = PAGE_GAME_OVER;
+      }
+    }
+
+    _delay_ms(100);
   }
   return 0;
 }

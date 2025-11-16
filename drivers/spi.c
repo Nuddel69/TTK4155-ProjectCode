@@ -106,9 +106,9 @@ int spi_duplex(enum spi_slave *slave, unsigned char *data, unsigned char *out,
   SPDR = data[0];
   while (!(SPSR & (1 << SPIF))) {
   }
- 
-	out[0] = SPDR;
- 
+
+        out[0] = SPDR;
+
 
   _delay_us(40);
 
@@ -117,17 +117,16 @@ int spi_duplex(enum spi_slave *slave, unsigned char *data, unsigned char *out,
     SPDR = data[i];
     while (!(SPSR & (1 << SPIF))) {
     }
-	if (TRASHCAN != out)
-	{
-		out[i] = SPDR;
-	}
-    
+        if (TRASHCAN != out)
+        {
+                out[i] = SPDR;
+        }
+
   }
   spi_set_slave_select(slave, 1);
   return 0;
 }
 */
-
 
 int spi_duplex(enum spi_slave *slave, unsigned char *data, unsigned char *out,
                int length) {
@@ -152,18 +151,16 @@ int spi_duplex(enum spi_slave *slave, unsigned char *data, unsigned char *out,
   return 0;
 }
 
-
-
 int spi_push(enum spi_slave *slave, unsigned char data, unsigned char *out) {
 
   spi_set_slave_select(slave, 0);
   SPDR = data;
   while (!(SPSR & (1 << SPIF))) {
   }
-  
+
   // Only write if pointer is valid
-  if (out != TRASHCAN){
-	*out = SPDR;
+  if (out != TRASHCAN) {
+    *out = SPDR;
   }
   return 0;
 }

@@ -115,7 +115,7 @@ int io_avr_init(struct io_avr_device *dev) {
 int io_avr_buttons_read(struct io_avr_device *dev, struct io_avr_buttons *btn) {
 
   unsigned char recbuf[3];
-  spi_push(&dev->spi, IO_AVR_BUTTONS, NULL);
+  spi_push(&dev->spi, IO_AVR_BUTTONS, TRASHCAN);
   spi_recieve_n(&dev->spi, recbuf, 3);
   spi_set_slave_select(&dev->spi, 1);
 

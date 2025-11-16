@@ -134,7 +134,6 @@ int main() {
 
     io_avr_buttons_read(&avr, &btn); // Read button inputs from IO board
     process_can_frame(&ctrl);        // Parse CAN
-    tx_joy_btn(&joy, &avr, &can);    // Transmit input states over CAN
 
     // ---------------------------------------------------------------------------
     // Game Control
@@ -146,6 +145,8 @@ int main() {
         tx_gamestart(&can);
       }
       last_state = menu.current_page;
+    } else {
+      tx_joy_btn(&joy, &avr, &can); // Transmit input states over CAN
     }
 
     if (ctrl.game_over) { // State game-over
@@ -156,7 +157,7 @@ int main() {
       }
     }
 
-    _delay_ms(10);
+    _delay_ms(100);
   }
   return 0;
 }

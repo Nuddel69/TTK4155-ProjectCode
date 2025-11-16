@@ -18,7 +18,7 @@ CLOCK := 4915200 # Default clock speed at lab - can
                  # be overwritten by passing flag 
                  # CLOCK=<speed> to make command
 
-LOG := LOG_LEVEL_INFO # Log level
+LOG := LOG_LEVEL_CRITICAL # Log level
 
 CC := avr-gcc
 CFLAGS := -Iinclude -O -std=c11 -mmcu=$(TARGET_CPU) -ggdb -DF_CPU=$(CLOCK) -DLOG_LEVEL=${LOG}
@@ -34,13 +34,20 @@ $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/main.hex: $(OBJECT_FILES) | $(BUILD_DIR)
+$(BUILD_DIR)/a.out: $(OBJECT_FILES) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(OBJECT_FILES) -o $(BUILD_DIR)/a.out
+
+$(BUILD_DIR)/main.hex: $(BUILD_DIR)/a.out
 	avr-objcopy -j .text -j .data -O ihex $(BUILD_DIR)/a.out $(BUILD_DIR)/main.hex
 
 .PHONY: flash
 flash: $(BUILD_DIR)/main.hex
 	avrdude -p $(TARGET_DEVICE) -c $(PROGRAMMER) -U flash:w:$(BUILD_DIR)/main.hex:i
+	@avr-size -C -x --mcu=$(TARGET_CPU) $(BUILD_DIR)/a.out
+
+.PHONY: ram
+ram: $(BUILD_DIR)/a.out
+	@avr-size -C -x --mcu=$(TARGET_CPU) $(BUILD_DIR)/a.out
 
 .PHONY: clean
 clean:

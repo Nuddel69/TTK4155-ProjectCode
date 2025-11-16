@@ -1,0 +1,5 @@
+<map id="can_read_rx1" name="can_read_rx1">
+<area shape="rect" id="Node000001" title="Read a message from RX buffer 1." alt="" coords="98,5,197,31"/>
+<area shape="rect" id="Node000002" href="$can_8c.html#a30a0ad88a89a84c0161cf09eace108e8" title=" " alt="" coords="5,5,50,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="80,19,50,21,50,16,84,17"/>
+</map>

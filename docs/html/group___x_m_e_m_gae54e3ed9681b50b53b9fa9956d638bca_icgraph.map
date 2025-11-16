@@ -1,0 +1,5 @@
+<map id="xmem_init" name="xmem_init">
+<area shape="rect" id="Node000001" title="Initializes external SRAM (2KB or 3KB depending on XMEM_3KB)." alt="" coords="103,5,184,31"/>
+<area shape="rect" id="Node000002" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,5,55,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="84,19,55,21,55,16,89,17"/>
+</map>

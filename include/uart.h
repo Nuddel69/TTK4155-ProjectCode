@@ -1,13 +1,23 @@
+/**
+ * @file uart.h
+ * @brief UART communication driver
+ * @todo  Use SRAM to buffer UART transmission
+ * @defgroup UART UART
+ * @ingroup Communication
+ * @{
+ */
+
 #ifndef INCLUDE_INCLUDE_UART_H_
 #define INCLUDE_INCLUDE_UART_H_
 
 #include <stdint.h>
 
-/*!
- * \brief A structure for encapsuling the USART information.
+/**
+ * @brief USART configuration structure.
  *
- * \param[in] baud The desired baud rate for the connection.
- * \param[in] fosc The frequency of the crystal oscillator.
+ * @param baud Desired baud rate for UART communication.
+ * @param fosc CPU clock frequency (Hz).
+ * @param recieve_buffer Temporary buffer for received characters.
  */
 struct USART_config {
   int16_t baud;
@@ -15,36 +25,61 @@ struct USART_config {
   char recieve_buffer;
 };
 
-/*!
- * \brief Initialize the USART0 interface.
+/**
+ * @brief Initialize USART0 with the given configuration.
  *
- * \param[in] config A data structure containing the baud rate and clock speed.
+ * Enables TX and RX with frame format 8N1. TODO: Verify...
+ *
+ * @param[in] config Pointer to configuration containing baud rate and clock.
+ * @return 0 on success, non-zero on error.
  */
 int USART_init(struct USART_config *config);
 
+/**
+ * @brief Transmit CRLF as end-of-line.
+ *
+ * @return Status code from last character transmitted.
+ */
 int USART_endl(void);
 
-/*!
- * \brief Transmit a single byte.
+/**
+ * @brief Transmit a single byte via USART0.
  *
- * \param[in] data The byte to be transmitted.
+ * Blocks until the transmit buffer is ready.
+ *
+ * @param[in] data Byte to send.
+ * @return 0 on success.
  */
 int USART_Transmit(unsigned char data);
 
-/*!
- * \brief Use the transmit function to send a string, appending a newline.
+/**
+ * @brief Send a zero-terminated string over USART0.
  *
- * \param[in] data The string to be sent.
+ * Newlines (`'\n'`) are converted to CRLF.
+ *
+ * @param[in] data Pointer to zero-terminated string.
+ * @return Status code of the last transmitted character.
  */
 int USART_SendString(char data[]);
 
-/*!
- * \brief Recieve a single byte [NOT IMPLEMENTED.
+/**
+ * @brief Receive one byte from USART0. (Minimal implementation.)
  *
- * \return status code.
+ * Stores the received byte into a global buffer.
+ *
+ * @return 0 on success.
  */
 int USART_Receive(void);
 
-int USART_ReceiveHandler();
+/**
+ * @brief Handle incoming received bytes and simple command echoing.
+ *
+ * Echoes characters and echos back the full command line when CR is received.
+ *
+ * @return 0 on success.
+ */
+int USART_ReceiveHandler(void);
 
 #endif // INCLUDE_INCLUDE_UART_H_
+
+/** @} */

@@ -1,0 +1,3 @@
+<map id="can_msg" name="can_msg">
+<area shape="rect" id="Node000001" title="Represents a simple CAN message with an address, data count, and a single byte of data." alt="" coords="5,5,72,112"/>
+</map>

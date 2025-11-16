@@ -1,0 +1,16 @@
+<map id="io_oled_home" name="io_oled_home">
+<area shape="rect" id="Node000001" title="Loads homescreen to OLED." alt="" coords="5,31,107,56"/>
+<area shape="rect" id="Node000002" href="$group___i_o.html#gae71d48b02690a7642b46e55597f0a02c" title="Go to specific column in OLED." alt="" coords="155,5,298,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="107,33,142,30,137,32,108,39"/>
+<area shape="rect" id="Node000007" href="$group___i_o.html#ga79b02f39388ad5e55993eb93e02a9ea9" title="Go to specific line in OLED." alt="" coords="166,55,287,80"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="107,48,153,56,148,57,107,53"/>
+<area shape="rect" id="Node000003" href="$io_8c.html#ac19c24c90ec08573e92f44afd5e93e92" title=" " alt="" coords="346,31,447,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="298,26,333,34,328,34,298,32"/>
+<area shape="rect" id="Node000004" href="$group___s_p_i.html#gab85e239a8e73f3ca487f97c95b85783c" title="Send a single byte to a slave." alt="" coords="495,31,569,56"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="448,41,482,43,477,44,448,46"/>
+<area shape="rect" id="Node000005" href="$group___s_p_i.html#ga779792281c4502a65714a5ce3483cfe7" title="Full&#45;duplex SPI transfer." alt="" coords="617,31,700,56"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="569,41,604,43,598,44,569,46"/>
+<area shape="rect" id="Node000006" href="$group___s_p_i.html#ga872c6f32f50aa32f4fb491da525e1976" title="Set the slave&#45;select line for the given device." alt="" coords="748,31,891,56"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="700,41,735,43,730,44,701,46"/>
+<area shape="poly" id="edge7_Node000007_Node000003" title=" " alt="" coords="287,56,328,53,333,53,288,62"/>
+</map>

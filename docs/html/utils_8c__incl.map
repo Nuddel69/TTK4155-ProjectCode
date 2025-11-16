@@ -1,0 +1,29 @@
+<map id="utils.c" name="utils.c">
+<area shape="rect" id="Node000001" title=" " alt="" coords="220,5,276,31"/>
+<area shape="rect" id="Node000002" href="$utils_8h.html" title="Utility and helper functions for joystick, LED debugging, and mapping." alt="" coords="118,79,175,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="229,34,178,72,175,68,232,30"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,153,88,178"/>
+<area shape="poly" id="edge15_Node000001_Node000004" title=" " alt="" coords="217,28,165,48,136,63,108,81,81,110,62,140,57,138,77,106,105,77,133,58,163,43,221,25"/>
+<area shape="rect" id="Node000005" href="$io_8h.html" title="Driver for joystick, buttons, and OLED." alt="" coords="200,153,242,178"/>
+<area shape="poly" id="edge11_Node000001_Node000005" title=" " alt="" coords="247,29,229,138,224,136,244,33"/>
+<area shape="rect" id="Node000010" href="$adc_8h.html" title="ADC memory&#45;mapped interface." alt="" coords="317,153,370,178"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="267,29,296,50,321,78,335,107,342,138,337,136,330,109,316,80,292,54,267,34"/>
+<area shape="rect" id="Node000011" href="$uart_8h.html" title="UART communication driver." alt="" coords="253,79,307,105"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="254,29,271,65,266,64,253,34"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="382,79,445,105"/>
+<area shape="poly" id="edge14_Node000001_Node000012" title=" " alt="" coords="276,29,374,72,369,73,276,34"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="112,153,176,178"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="147,102,147,138,142,137,145,107"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="128,108,78,145,74,141,131,103"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="159,103,200,142,195,143,159,108"/>
+<area shape="rect" id="Node000006" href="$fonts_8h.html" title=" " alt="" coords="190,226,252,252"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="223,176,224,212,219,209,220,181"/>
+<area shape="rect" id="Node000008" href="$spi_8h.html" title="SPI driver." alt="" coords="116,226,166,252"/>
+<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="210,177,167,218,164,214,205,180"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="276,226,340,252"/>
+<area shape="poly" id="edge8_Node000005_Node000009" title=" " alt="" coords="236,176,284,216,279,217,235,181"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="164,300,278,326"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="223,250,223,286,219,283,219,254"/>
+<area shape="poly" id="edge10_Node000010_Node000009" title=" " alt="" coords="340,177,323,214,319,211,336,180"/>
+<area shape="poly" id="edge13_Node000011_Node000009" title=" " alt="" coords="284,103,305,212,300,210,280,107"/>
+</map>

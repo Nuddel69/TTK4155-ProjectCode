@@ -1,0 +1,44 @@
+<map id="io_oled_home" name="io_oled_home">
+<area shape="rect" id="Node000001" title="Loads homescreen to OLED." alt="" coords="855,219,957,244"/>
+<area shape="rect" id="Node000002" href="$group___m_e_n_u.html#gab20c38f81bcc31e65d712b59aeb8b452" title=" " alt="" coords="673,104,802,130"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="881,207,848,176,806,144,783,133,783,128,809,140,851,172,886,208"/>
+<area shape="rect" id="Node000010" href="$group___m_e_n_u.html#gaf7d314a68a8b7c96c1c75324a3a08665" title=" " alt="" coords="676,154,799,194"/>
+<area shape="poly" id="edge12_Node000001_Node000010" title=" " alt="" coords="849,213,799,198,799,192,854,213"/>
+<area shape="rect" id="Node000011" href="$group___m_e_n_u.html#ga77b4a3120057ff67b80513945e18f242" title=" " alt="" coords="671,317,804,343"/>
+<area shape="poly" id="edge14_Node000001_Node000011" title=" " alt="" coords="882,253,848,283,809,309,784,319,783,314,806,304,845,279,877,256"/>
+<area shape="rect" id="Node000012" href="$group___m_e_n_u.html#ga323667ae041d76575757379b87a3b47e" title="Displays the high scores page." alt="" coords="668,367,807,392"/>
+<area shape="poly" id="edge16_Node000001_Node000012" title=" " alt="" coords="893,256,858,309,835,335,809,358,789,369,787,364,806,353,832,331,854,306,888,259"/>
+<area shape="rect" id="Node000013" href="$group___i_o.html#ga84361ed114697a957f46c08dc792b127" title="Alternates screen between black and white." alt="" coords="690,219,786,244"/>
+<area shape="poly" id="edge18_Node000001_Node000013" title=" " alt="" coords="837,232,787,234,786,229,842,231"/>
+<area shape="rect" id="Node000014" href="$group___i_o.html#gaf9b0189886d13afc430d38bd74c0a959" title="Prints a known image to the OLED to confirm that it can print and navigate the screen." alt="" coords="692,268,783,294"/>
+<area shape="poly" id="edge19_Node000001_Node000014" title=" " alt="" coords="848,249,784,270,783,265,842,250"/>
+<area shape="rect" id="Node000015" href="$group___m_e_n_u.html#gaa6a3f40302cb67be700cc3c18b6d3a11" title="Displays the play game page." alt="" coords="672,416,804,442"/>
+<area shape="poly" id="edge20_Node000001_Node000015" title=" " alt="" coords="898,258,886,294,867,333,841,372,809,407,791,418,790,413,806,403,837,369,862,330,881,291,894,261"/>
+<area shape="rect" id="Node000016" href="$group___m_e_n_u.html#gafebde4e6c99295d29b1a569e105a8398" title="Displays the settings page." alt="" coords="680,5,795,31"/>
+<area shape="poly" id="edge22_Node000001_Node000016" title=" " alt="" coords="895,202,883,168,864,125,839,82,806,44,791,34,791,29,809,40,843,79,869,123,888,166,900,205"/>
+<area shape="rect" id="Node000017" href="$group___m_e_n_u.html#ga542983ffb697d77bca1411f0db65ce81" title="Displays the welcome page." alt="" coords="677,55,798,80"/>
+<area shape="poly" id="edge24_Node000001_Node000017" title=" " alt="" coords="890,204,857,149,833,119,806,94,789,84,789,78,809,89,837,116,861,146,895,205"/>
+<area shape="rect" id="Node000003" href="$group___m_e_n_u.html#gae0e1059f8be2a0f575d14ab3e8bade73" title="Dispatches to the current page display function." alt="" coords="515,161,620,187"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="680,136,609,163,607,158,685,134"/>
+<area shape="rect" id="Node000004" href="$group___m_e_n_u.html#ga2873b6345d3a98747370d5629679eacc" title="Handles menu logic (navigation, selection, page timers)." alt="" coords="103,187,205,212"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="498,181,206,199,205,194,501,176"/>
+<area shape="rect" id="Node000006" href="$group___m_e_n_u.html#ga1732058cb410ba82eb65bf924fbd36fe" title="Initializes menu and OLED display." alt="" coords="115,124,192,150"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="497,167,466,166,193,142,193,137,467,161,502,166"/>
+<area shape="rect" id="Node000007" href="$group___m_e_n_u.html#ga908651ced0b64dede433ab0b3f2b0a49" title="Sets the current page field in the menu struct to a specified page and calls the page_dispatch functi..." alt="" coords="392,212,467,238"/>
+<area shape="poly" id="edge7_Node000003_Node000007" title=" " alt="" coords="514,194,467,214,465,209,519,192"/>
+<area shape="rect" id="Node000005" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,163,55,188"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="85,188,56,183,54,178,90,185"/>
+<area shape="poly" id="edge6_Node000006_Node000005" title=" " alt="" coords="99,156,57,170,53,166,102,151"/>
+<area shape="rect" id="Node000008" href="$group___m_e_n_u.html#gaa29d91863634546acc11dfbf89096d57" title=" " alt="" coords="256,261,341,287"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="377,245,336,263,334,258,381,243"/>
+<area shape="rect" id="Node000009" href="$group___m_e_n_u.html#gad32fe316f9fefb4548a448fd64a239ab" title="Selects the current menu item based on nav button from the IO board." alt="" coords="253,212,344,238"/>
+<area shape="poly" id="edge10_Node000007_Node000009" title=" " alt="" coords="374,226,345,227,344,222,379,224"/>
+<area shape="poly" id="edge9_Node000008_Node000004" title=" " alt="" coords="256,255,181,216,181,210,261,253"/>
+<area shape="poly" id="edge11_Node000009_Node000004" title=" " alt="" coords="235,215,206,211,205,206,240,213"/>
+<area shape="poly" id="edge13_Node000010_Node000003" title=" " alt="" coords="658,175,621,177,620,172,664,174"/>
+<area shape="poly" id="edge15_Node000011_Node000003" title=" " alt="" coords="671,309,666,308,634,279,608,246,574,190,576,185,612,243,638,276,670,304,676,310"/>
+<area shape="poly" id="edge17_Node000012_Node000003" title=" " alt="" coords="669,358,666,357,629,315,600,267,581,222,571,190,573,185,586,220,605,265,633,312,670,354,674,359"/>
+<area shape="poly" id="edge21_Node000015_Node000003" title=" " alt="" coords="668,406,666,407,643,381,623,351,594,288,576,229,569,190,572,185,582,228,599,286,628,349,647,377,670,403,673,408"/>
+<area shape="poly" id="edge23_Node000016_Node000003" title=" " alt="" coords="676,37,670,44,638,73,612,106,577,163,573,159,608,102,634,69,666,40,671,40"/>
+<area shape="poly" id="edge25_Node000017_Node000003" title=" " alt="" coords="675,88,669,94,620,129,583,163,580,159,617,125,667,89,679,86"/>
+</map>

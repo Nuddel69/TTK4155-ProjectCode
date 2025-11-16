@@ -10,19 +10,24 @@
 #include "io.h"
 #include "log.h"
 
-LOG_MODULE_DEFINE("CONTROLLER")
+LOG_MODULE_DEFINE("Controller");
 
 uint8_t process_can_frame(struct control_state *ctrl) {
 
   // We only recive one type of message
+
   struct CAN_frame msg = {0};
+
   if (can_rxq_pull(&msg)) {
-    LOG_INF("Recv")
+
+    LOG_CRITICAL("Recv");
+
     if (msg.id == CAN_ID_GAMEOVER) {
+      LOG_CRITICAL("Game over");
+
       ctrl->game_over = msg.data[0];
     }
   }
-
   return 0;
 }
 
@@ -53,7 +58,7 @@ int8_t tx_joy_btn(struct io_joystick_device *joy_dev,
 int8_t tx_gamestart(struct can_device *can_dev) {
 
   // Frame Data
-  struct CAN_frame msg = {CAN_ID_GAMESTART, 0x01, {1}, 0, 0};
+  struct CAN_frame msg = {CAN_ID_GAMESTART, 0x01, {1}, 1, 0};
 
   // Transmit data
   can_write(can_dev, msg);

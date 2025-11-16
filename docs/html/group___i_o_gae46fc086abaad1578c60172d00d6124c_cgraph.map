@@ -1,0 +1,5 @@
+<map id="io_joystick_init" name="io_joystick_init">
+<area shape="rect" id="Node000001" title="Initialise and calibrate a joystick." alt="" coords="5,5,113,31"/>
+<area shape="rect" id="Node000002" href="$group___a_d_c.html#ga4b4a2ddcb45df0c8497c47d4ed800e2a" title="Initialize the external memory–mapped ADC interface." alt="" coords="161,5,235,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,16,147,18,142,18,113,21"/>
+</map>

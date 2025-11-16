@@ -1,0 +1,35 @@
+<map id="io_oled_pos" name="io_oled_pos">
+<area shape="rect" id="Node000001" title="Set specific position in OLED." alt="" coords="1031,107,1121,132"/>
+<area shape="rect" id="Node000002" href="$group___m_e_n_u.html#ga2ede905c40eff9d1a6505b4769b185ad" title="Draws the cursor (&quot;&gt;&quot;) at the current cursor position in the menu." alt="" coords="870,5,962,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1045,96,981,52,947,34,948,29,984,48,1050,97"/>
+<area shape="rect" id="Node000005" href="$group___m_e_n_u.html#gafebde4e6c99295d29b1a569e105a8398" title="Displays the settings page." alt="" coords="677,56,792,82"/>
+<area shape="poly" id="edge19_Node000001_Node000005" title=" " alt="" coords="1013,107,982,103,793,78,793,72,983,98,1018,107"/>
+<area shape="rect" id="Node000011" href="$group___m_e_n_u.html#ga542983ffb697d77bca1411f0db65ce81" title="Displays the welcome page." alt="" coords="674,107,795,132"/>
+<area shape="poly" id="edge20_Node000001_Node000011" title=" " alt="" coords="1012,120,796,122,796,117,1018,119"/>
+<area shape="rect" id="Node000012" href="$group___m_e_n_u.html#ga77b4a3120057ff67b80513945e18f242" title=" " alt="" coords="668,156,801,182"/>
+<area shape="poly" id="edge16_Node000001_Node000012" title=" " alt="" coords="1018,128,802,162,801,157,1012,128"/>
+<area shape="rect" id="Node000013" href="$group___i_o.html#ga7ee38fc13ba15b573228936130ba7a13" title="Prints an arrow at a specified postion." alt="" coords="849,208,983,234"/>
+<area shape="poly" id="edge18_Node000001_Node000013" title=" " alt="" coords="1050,141,984,191,949,210,947,205,981,187,1045,143"/>
+<area shape="rect" id="Node000003" href="$group___m_e_n_u.html#ga2873b6345d3a98747370d5629679eacc" title="Handles menu logic (navigation, selection, page timers)." alt="" coords="103,107,205,132"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="852,19,569,21,428,21,391,23,354,31,282,54,221,83,177,108,174,104,219,78,280,49,352,25,390,18,428,16,569,16,857,17"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="857,34,784,58,783,53,852,36"/>
+<area shape="poly" id="edge14_Node000002_Node000011" title=" " alt="" coords="888,39,848,70,803,97,776,109,774,103,800,92,845,65,883,41"/>
+<area shape="rect" id="Node000004" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,157,55,183"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="105,141,57,162,54,158,108,136"/>
+<area shape="rect" id="Node000006" href="$group___m_e_n_u.html#gae0e1059f8be2a0f575d14ab3e8bade73" title="Dispatches to the current page display function." alt="" coords="515,107,620,132"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="678,86,613,109,611,104,672,87"/>
+<area shape="poly" id="edge6_Node000006_Node000003" title=" " alt="" coords="506,102,466,97,360,88,253,97,198,109,197,104,253,92,360,83,467,92,511,102"/>
+<area shape="rect" id="Node000007" href="$group___m_e_n_u.html#ga1732058cb410ba82eb65bf924fbd36fe" title="Initializes menu and OLED display." alt="" coords="115,181,192,207"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="525,138,442,172,394,186,345,197,264,203,193,200,193,195,264,198,344,192,392,181,440,167,520,139"/>
+<area shape="rect" id="Node000008" href="$group___m_e_n_u.html#ga908651ced0b64dede433ab0b3f2b0a49" title="Sets the current page field in the menu struct to a specified page and calls the page_dispatch functi..." alt="" coords="392,107,467,132"/>
+<area shape="poly" id="edge9_Node000006_Node000008" title=" " alt="" coords="496,120,468,122,467,117,502,119"/>
+<area shape="poly" id="edge8_Node000007_Node000004" title=" " alt="" coords="98,185,55,178,55,172,102,182"/>
+<area shape="rect" id="Node000009" href="$group___m_e_n_u.html#gaa29d91863634546acc11dfbf89096d57" title=" " alt="" coords="256,107,341,132"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="374,120,342,122,341,117,379,119"/>
+<area shape="rect" id="Node000010" href="$group___m_e_n_u.html#gad32fe316f9fefb4548a448fd64a239ab" title="Selects the current menu item based on nav button from the IO board." alt="" coords="253,156,344,182"/>
+<area shape="poly" id="edge12_Node000008_Node000010" title=" " alt="" coords="382,138,336,158,334,153,376,139"/>
+<area shape="poly" id="edge11_Node000009_Node000003" title=" " alt="" coords="239,120,206,122,205,117,244,119"/>
+<area shape="poly" id="edge13_Node000010_Node000003" title=" " alt="" coords="242,151,194,136,194,130,247,150"/>
+<area shape="poly" id="edge15_Node000011_Node000006" title=" " alt="" coords="655,120,621,122,620,117,661,119"/>
+<area shape="poly" id="edge17_Node000012_Node000006" title=" " alt="" coords="671,151,613,136,614,130,676,151"/>
+</map>

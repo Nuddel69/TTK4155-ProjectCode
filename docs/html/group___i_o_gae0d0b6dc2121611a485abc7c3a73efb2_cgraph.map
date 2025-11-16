@@ -1,0 +1,11 @@
+<map id="io_oled_set_brightness" name="io_oled_set_brightness">
+<area shape="rect" id="Node000001" title="Set OLED brightness." alt="" coords="5,5,160,31"/>
+<area shape="rect" id="Node000002" href="$io_8c.html#ac19c24c90ec08573e92f44afd5e93e92" title=" " alt="" coords="208,5,309,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,16,195,18,189,18,160,21"/>
+<area shape="rect" id="Node000003" href="$group___s_p_i.html#gab85e239a8e73f3ca487f97c95b85783c" title="Send a single byte to a slave." alt="" coords="357,5,430,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="309,16,344,18,338,18,309,21"/>
+<area shape="rect" id="Node000004" href="$group___s_p_i.html#ga779792281c4502a65714a5ce3483cfe7" title="Full&#45;duplex SPI transfer." alt="" coords="478,5,562,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="431,16,465,18,460,18,431,21"/>
+<area shape="rect" id="Node000005" href="$group___s_p_i.html#ga872c6f32f50aa32f4fb491da525e1976" title="Set the slave&#45;select line for the given device." alt="" coords="610,5,753,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="562,16,597,18,591,18,562,21"/>
+</map>

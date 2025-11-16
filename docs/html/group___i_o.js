@@ -1,0 +1,66 @@
+var group___i_o =
+[
+    [ "oled_font", "structoled__font.html", [
+      [ "bytes_per_glyph", "structoled__font.html#a20cc5105ce94fa24aa46180f28b30a63", null ],
+      [ "height", "structoled__font.html#ae242cd5cfc327c0602c803219f1988d5", null ],
+      [ "spacing", "structoled__font.html#a008cd0536384febdf3b8e91d9f0cb76a", null ],
+      [ "table", "structoled__font.html#a1595bae0d2b559424977d55538c03456", null ]
+    ] ],
+    [ "io_avr_device", "structio__avr__device.html", [
+      [ "spi", "structio__avr__device.html#a87cacb53467460d5d279a13a5d9eaabd", null ]
+    ] ],
+    [ "io_oled_device", "structio__oled__device.html", [
+      [ "current_column", "structio__oled__device.html#af729269ff521c0ed8d400e5849eafdd8", null ],
+      [ "current_page", "structio__oled__device.html#abac78bc48e39f3dfb8b556933a5af116", null ],
+      [ "spi", "structio__oled__device.html#a1e6bcc0d9de84c864fc0cd7abb82b71a", null ]
+    ] ],
+    [ "io_joystick_device", "structio__joystick__device.html", [
+      [ "adc_channel_x", "structio__joystick__device.html#a719667397ef44f491032c419bcdfc413", null ],
+      [ "adc_channel_y", "structio__joystick__device.html#afa1692875ad3832a5ea525c04b25b489", null ],
+      [ "x_max", "structio__joystick__device.html#a1f85c917a13f771ffee26ca67ab0b7f0", null ],
+      [ "x_min", "structio__joystick__device.html#aec9820e7bbc891fd3ab37e9c71b9b720", null ],
+      [ "y_max", "structio__joystick__device.html#ac5b1e50253c55cf4b6f8741fd1e0ef7d", null ],
+      [ "y_min", "structio__joystick__device.html#a7643854bca72568c81eb81bf5b013b6b", null ]
+    ] ],
+    [ "io_joystick_position", "structio__joystick__position.html", [
+      [ "x", "structio__joystick__position.html#a34dd28ff41cbe942afce04d62c0f4685", null ],
+      [ "y", "structio__joystick__position.html#ae193e9b22110fc4f318de0b48d7ec2dd", null ]
+    ] ],
+    [ "io_joystick_direction", "group___i_o.html#ga33fdb76fa7d047db682cdc05e64fe70b", [
+      [ "LEFT", "group___i_o.html#gga33fdb76fa7d047db682cdc05e64fe70badb45120aafd37a973140edee24708065", null ],
+      [ "RIGHT", "group___i_o.html#gga33fdb76fa7d047db682cdc05e64fe70baec8379af7490bb9eaaf579cf17876f38", null ],
+      [ "UP", "group___i_o.html#gga33fdb76fa7d047db682cdc05e64fe70baba595d8bca8bc5e67c37c0a9d89becfa", null ],
+      [ "DOWN", "group___i_o.html#gga33fdb76fa7d047db682cdc05e64fe70ba9b0b4a95b99523966e0e34ffdadac9da", null ],
+      [ "NEUTRAL", "group___i_o.html#gga33fdb76fa7d047db682cdc05e64fe70baf46d14eb9d5d71afc9f6e747689fcb56", null ]
+    ] ],
+    [ "__attribute__", "group___i_o.html#ga27608800b03ff756dab0b40450432b42", null ],
+    [ "io_avr_buttons_read", "group___i_o.html#ga5e007008906f2c85a15918da73cce467", null ],
+    [ "io_avr_init", "group___i_o.html#ga3a5349ad76dc8659d367ed1fea9492b4", null ],
+    [ "io_avr_led_set", "group___i_o.html#ga04dffdcca0aa2926c36a2872f3d4f226", null ],
+    [ "io_joystick_calibrate", "group___i_o.html#ga57779178e5a5944c3ec2eed8ddd40344", null ],
+    [ "io_joystick_init", "group___i_o.html#gae46fc086abaad1578c60172d00d6124c", null ],
+    [ "io_joystick_read_direction", "group___i_o.html#gad7c47f66772784d1d84831a4dfce9f7c", null ],
+    [ "io_joystick_read_position", "group___i_o.html#ga463fba7fd292e1b15b218e6b0187011c", null ],
+    [ "io_oled_blink", "group___i_o.html#ga84361ed114697a957f46c08dc792b127", null ],
+    [ "io_oled_clear_all", "group___i_o.html#ga5c8c269bf07b59179a1e82bf08c9671f", null ],
+    [ "io_oled_clear_line", "group___i_o.html#ga810457d7d7339b737b8f37a0170fd7ae", null ],
+    [ "io_oled_goto_column", "group___i_o.html#gae71d48b02690a7642b46e55597f0a02c", null ],
+    [ "io_oled_goto_line", "group___i_o.html#ga79b02f39388ad5e55993eb93e02a9ea9", null ],
+    [ "io_oled_home", "group___i_o.html#ga81849f7495002a04d81f699c0a838edb", null ],
+    [ "io_oled_init", "group___i_o.html#gafdaeb854d3fdca796cfb0eee32a88a80", null ],
+    [ "io_oled_pos", "group___i_o.html#gad3ce2e4a94dc3e9c21ebe0ad768dec21", null ],
+    [ "io_oled_print", "group___i_o.html#gac0d332bb737c85515b5f1c104e6fd82b", null ],
+    [ "io_oled_print_arrow", "group___i_o.html#ga7ee38fc13ba15b573228936130ba7a13", null ],
+    [ "io_oled_print_with_font", "group___i_o.html#gaeb48df2179a19bed87ef5887ae7950d8", null ],
+    [ "io_oled_reset", "group___i_o.html#gaa296d8ee798ffb73185de11752c0b8ad", null ],
+    [ "io_oled_reset_brightness", "group___i_o.html#gaa467dfee2ea7170f54f4c7fca9b91ad2", null ],
+    [ "io_oled_set_brightness", "group___i_o.html#gae0d0b6dc2121611a485abc7c3a73efb2", null ],
+    [ "io_oled_test", "group___i_o.html#gaf9b0189886d13afc430d38bd74c0a959", null ],
+    [ "io_oled_write_command", "group___i_o.html#ga7bdc257b9712e62f504f33e1d543700c", null ],
+    [ "io_oled_write_data", "group___i_o.html#ga862cb906cb70d6e8565ab6f328092ef4", null ],
+    [ "io_oled_write_glyph", "group___i_o.html#gace82d095ba6075d3febecbfb7e377e3d", null ],
+    [ "io_oled_writedata", "group___i_o.html#ga36d0c1d379a7c56d1e9967d147826059", null ],
+    [ "OLED_FONT_4x6", "group___i_o.html#ga5fefe6dff9d5641849a27e976de99920", null ],
+    [ "OLED_FONT_5x7", "group___i_o.html#gaafb40ee38c09f104eece0c301a7bf4df", null ],
+    [ "OLED_FONT_8x8", "group___i_o.html#ga7457ec0609032617b1739fed86dcd2ca", null ]
+];

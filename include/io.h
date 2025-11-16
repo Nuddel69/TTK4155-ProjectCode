@@ -1,3 +1,11 @@
+/**
+ * @file io.h
+ * @brief Driver for joystick, buttons, and OLED
+ * @defgroup IO IO Devices
+ * @ingroup Hardware
+ * @{
+ */
+
 #ifndef INCLUDE_INCLUDE_IO_H_
 #define INCLUDE_INCLUDE_IO_H_
 
@@ -5,44 +13,84 @@
 #include "spi.h"
 #include <stdint.h>
 
+/**
+ * @brief Represents a font for OLED displays.
+ *
+ * Contains the font table pointer, the width of each glyph, height in pixels,
+ * and spacing between glyphs.
+ */
 struct oled_font {
-  const void *table;       // pointer to font table
-  uint8_t bytes_per_glyph; // number of columns per glyph
-  uint8_t height;          // pixel height
-  uint8_t spacing;         // columns of space between glyphs
+  const void *table;       /**< Pointer to font table in PROGMEM */
+  uint8_t bytes_per_glyph; /**< Width in columns of each glyph */
+  uint8_t height;          /**< Pixel height of the glyph */
+  uint8_t spacing;         /**< Additional spacing columns after each glyph */
 };
 
+/** @brief Predefined 8x8 font for OLED. */
 static const struct oled_font OLED_FONT_8x8 = {font8, 8, 8, 1};
+/** @brief Predefined 5x7 font for OLED. */
 static const struct oled_font OLED_FONT_5x7 = {font5, 5, 7, 1};
+/** @brief Predefined 4x6 font for OLED. */
 static const struct oled_font OLED_FONT_4x6 = {font4, 4, 6, 1};
 
+/**
+ * @brief Represents an SPI-connected AVR-I/O board.
+ */
 struct io_avr_device {
-  enum spi_slave spi;
+  enum spi_slave spi; /**< SPI slave select line used by the device */
 };
 
+/**
+ * @brief Represents an OLED display device controlled via SPI.
+ */
 struct io_oled_device {
-  enum spi_slave spi;
-  uint8_t current_page;
-  uint8_t current_column;
+  enum spi_slave spi;     /**< SPI slave for the OLED */
+  uint8_t current_page;   /**< Current page (row) position for writing */
+  uint8_t current_column; /**< Current column position for writing */
 };
 
+/**
+ * @brief Represents a joystick input device.
+ */
 struct io_joystick_device {
-  unsigned int adc_channel_x;
-  unsigned int adc_channel_y;
-  int x_min;
-  int y_min;
-  int x_max;
-  int y_max;
-};
-struct io_joystick_position {
-  int8_t x; // X value in % from the middle
-  int8_t y; // Y value in % from the middle
-};
-enum io_joystick_direction { LEFT, RIGHT, UP, DOWN, NEUTRAL };
+  unsigned int adc_channel_x; /**< ADC channel for X-axis */
+  unsigned int adc_channel_y; /**< ADC channel for Y-axis */
 
+  // Calibration
+  int x_min; /**< Minimum X raw value */
+  int y_min; /**< Minimum Y raw value */
+  int x_max; /**< Maximum X raw value */
+  int y_max; /**< Maximum Y raw value */
+};
+
+/**
+ * @brief Represents the position of a joystick relative to
+ * center.
+ */
+struct io_joystick_position {
+  int8_t x; /**< X position in % from center (-127 to 127) */
+  int8_t y; /**< Y position in % from center (-127 to 127) */
+};
+
+/**
+ * @brief Predefined joystick directions.
+ */
+enum io_joystick_direction {
+  LEFT,   /**< Joystick pushed left */
+  RIGHT,  /**< Joystick pushed right */
+  UP,     /**< Joystick pushed up */
+  DOWN,   /**< Joystick pushed down */
+  NEUTRAL /**< Joystick in neutral position */
+};
+
+/**
+ * @brief Represents button states for I/O boards (from I/O board manual).
+ *
+ * Buttons are packed as bits inside unions for convenient access.
+ */
 struct __attribute__((packed)) io_avr_buttons {
   union {
-    uint8_t right;
+    uint8_t right; /**< All right-side buttons as byte */
     struct {
       uint8_t R1 : 1;
       uint8_t R2 : 1;
@@ -53,7 +101,7 @@ struct __attribute__((packed)) io_avr_buttons {
     };
   };
   union {
-    uint8_t left;
+    uint8_t left; /**< All left-side buttons as byte */
     struct {
       uint8_t L1 : 1;
       uint8_t L2 : 1;
@@ -65,13 +113,13 @@ struct __attribute__((packed)) io_avr_buttons {
     };
   };
   union {
-    uint8_t nav;
+    uint8_t nav; /**< Navigation buttons as byte */
     struct {
-      uint8_t NB : 1;
-      uint8_t NR : 1;
-      uint8_t ND : 1;
-      uint8_t NL : 1;
-      uint8_t NU : 1;
+      uint8_t NB : 1; /**< Bottom navigation button */
+      uint8_t NR : 1; /**< Right navigation button */
+      uint8_t ND : 1; /**< Down navigation button */
+      uint8_t NL : 1; /**< Left navigation button */
+      uint8_t NU : 1; /**< Up navigation button */
     };
   };
 };
@@ -81,35 +129,35 @@ struct __attribute__((packed)) io_avr_buttons {
 //------------------//
 
 /*!
- * \brief Initialise and calibrate a joystick.
- * \param[in] dev The joystick to be initlaised.
- * \return Errno.
+ * @brief Initialise and calibrate a joystick.
+ * @param[in] dev The joystick to be initlaised.
+ * @return Errno.
  */
 int io_joystick_init(struct io_joystick_device *dev);
 
 /*!
- * \brief Read the position of a joystick as a percentage from 0 in each axis.
- * \param[in] dev The joystick to read.
- * \param[in] buffer A buffer for storing the position value.
- * \return Errno.
+ * @brief Read the position of a joystick as a percentage from 0 in each axis.
+ * @param[in] dev The joystick to read.
+ * @param[in] buffer A buffer for storing the position value.
+ * @return Errno.
  */
 int io_joystick_read_position(struct io_joystick_device *dev,
                               struct io_joystick_position *buffer);
 
 /*!
- * \brief Fetches the direction of a joystick.
- * \param[in] dev The joystick to read.
- * \param[in] direction A buffer for storing the read direction.
- * \return Errno.
+ * @brief Fetches the direction of a joystick.
+ * @param[in] dev The joystick to read.
+ * @param[in] direction A buffer for storing the read direction.
+ * @return Errno.
  */
 int io_joystick_read_direction(struct io_joystick_device *dev,
                                enum io_joystick_direction *direction);
 
 /*!
- * \brief Calibrate a joystick. Requires the joystick to be in its neutral
+ * @brief Calibrate a joystick. Requires the joystick to be in its neutral
  * position.
- * \param[in] dev The joystick to calibrate.
- * \return Errno.
+ * @param[in] dev The joystick to calibrate.
+ * @return Errno.
  */
 int io_joystick_calibrate(struct io_joystick_device *dev);
 
@@ -127,151 +175,151 @@ int io_avr_led_set(struct io_avr_device *dev, unsigned char led,
 //------------------//
 
 /*!
- * \brief Initialise OLED.
- * \param[in] dev The OLED to be initlaised.
- * \return Errno.
+ * @brief Initialise OLED.
+ * @param[in] dev The OLED to be initlaised.
+ * @return Errno.
  */
 int io_oled_init(struct io_oled_device *dev);
 
 /*!
- * \brief Sends command to OLED
- * \param[in] dev The commanded OLED.
- * \param[in] command the hex command (see p27. SSD1309 datasheet)
- * \return Errno.
+ * @brief Sends command to OLED
+ * @param[in] dev The commanded OLED.
+ * @param[in] command the hex command (see p27. SSD1309 datasheet)
+ * @return Errno.
  */
 // int io_oled_cmd(struct io_oled_device *dev, uint8_t command);
 
 /*!
- * \brief Sends data to OLED
- * \param[in] dev The OLED that should receive the data.
- * \param[in] data the data that the OLED should recive
- * \return Errno.
+ * @brief Sends data to OLED
+ * @param[in] dev The OLED that should receive the data.
+ * @param[in] data the data that the OLED should recive
+ * @return Errno.
  */
 // int io_oled_write(struct io_oled_device *dev, uint8_t data);
 
 /*!
- * \brief Resets OLED to blank page
- * \param[in] dev The OLED to be reset.
- * \return Errno.
+ * @brief Resets OLED to blank page
+ * @param[in] dev The OLED to be reset.
+ * @return Errno.
  */
 int io_oled_reset(struct io_oled_device *dev);
 
 /*!
- * \brief Loads homescreen to OLED
- * \param[in] dev The OLED to be set
- * \return Errno.
+ * @brief Loads homescreen to OLED
+ * @param[in] dev The OLED to be set
+ * @return Errno.
  */
 int io_oled_home(struct io_oled_device *dev);
 
 /*!
- * \brief Go to specific line in OLED
- * \param[in] dev The OLED who's line is to be set
- * \param[in] line the line to be set
- * \return Errno.
+ * @brief Go to specific line in OLED
+ * @param[in] dev The OLED who's line is to be set
+ * @param[in] line the line to be set
+ * @return Errno.
  */
 int io_oled_goto_line(struct io_oled_device *dev, int line);
 
 /*!
- * \brief Go to specific column in OLED
- * \param[in] dev The OLED who's column is to be set
- * \param[in] column the column which should be set
- * \return Errno.
+ * @brief Go to specific column in OLED
+ * @param[in] dev The OLED who's column is to be set
+ * @param[in] column the column which should be set
+ * @return Errno.
  */
 int io_oled_goto_column(struct io_oled_device *dev, int column);
 
 /*!
- * \brief Clear specific line in OLED
- * \param[in] dev The OLED who's line is to be cleared
- * \param[in] line the line that to be cleared
- * \return Errno.
+ * @brief Clear specific line in OLED
+ * @param[in] dev The OLED who's line is to be cleared
+ * @param[in] line the line that to be cleared
+ * @return Errno.
  */
 int io_oled_clear_line(struct io_oled_device *dev, int line);
 
 /*!
- * \brief Writes data to OLED at current position
- * \param[in] dev The OLED where the data should be sent
- * \param[in] data The data to be sendt to the OLED
- * \return Errno.
+ * @brief Writes data to OLED at current position
+ * @param[in] dev The OLED where the data should be sent
+ * @param[in] data The data to be sendt to the OLED
+ * @return Errno.
  */
 volatile int io_oled_writedata(struct io_oled_device *dev, int data);
 
 /*!
- * \brief Set specific position in OLED
- * \param[in] dev The OLED who's position is to be set
- * \param[in] row The row of the position to be set
- * \param[in] collumn the collumn of the position the be set
- * \return Errno.
+ * @brief Set specific position in OLED
+ * @param[in] dev The OLED who's position is to be set
+ * @param[in] row The row of the position to be set
+ * @param[in] collumn the collumn of the position the be set
+ * @return Errno.
  */
 int io_oled_pos(struct io_oled_device *dev, int row, int column);
 
 /*!
- * \brief Write string to OLED
- * \param[in] dev The OLED who should print the line
- * \param[in] text the string that should be written to the OLED
- * \return Errno.
+ * @brief Write string to OLED
+ * @param[in] dev The OLED who should print the line
+ * @param[in] text the string that should be written to the OLED
+ * @return Errno.
  */
 int io_oled_print(struct io_oled_device *dev, char *text);
 
 /*!
- * \brief Set OLED brightness
- * \param[in] dev The OLED who's britness should be set
- * \param[in] brightness the brightness level to be set
- * \return Errno.
+ * @brief Set OLED brightness
+ * @param[in] dev The OLED who's britness should be set
+ * @param[in] brightness the brightness level to be set
+ * @return Errno.
  */
 int io_oled_set_brightness(struct io_oled_device *dev, uint8_t brightness);
 
 /*!
- * \brief Reset OLED brightness
- * \param[in] dev The OLED who's britness should be set
- * \return Errno.
+ * @brief Reset OLED brightness
+ * @param[in] dev The OLED who's britness should be set
+ * @return Errno.
  */
 int io_oled_reset_brightness(struct io_oled_device *dev);
 
 /*!
- * \brief Prints an arrow at a specified postion
- * \param[in] dev The OLED who's britness should be set
- * \param[in] row select row where the arrow should be placed
- * \param[in] column select column where the arrow should be placed
- * \return Errno.
+ * @brief Prints an arrow at a specified postion
+ * @param[in] dev The OLED who's britness should be set
+ * @param[in] row select row where the arrow should be placed
+ * @param[in] column select column where the arrow should be placed
+ * @return Errno.
  */
 int io_oled_print_arrow(struct io_oled_device *dev, uint8_t row, uint8_t col);
 
 /*!
- * \brief Prints a single glyph in a specifiec font
- * \param[in] dev the OLED that should be written to
- * \param[in] font the specified font, see font.h
- * \param[in] character_id the character that should be written
- * \return Errno.
+ * @brief Prints a single glyph in a specifiec font
+ * @param[in] dev the OLED that should be written to
+ * @param[in] font the specified font, see font.h
+ * @param[in] character_id the character that should be written
+ * @return Errno.
  */
 uint8_t io_oled_write_glyph(struct io_oled_device *dev,
                             const struct oled_font *font, char character_id);
 
 /*!
- * \brief Prints an arrow at a specified postion
- * \param[in] dev the OLED device that should be written to
- * \param[in] font the specified font, see font.h
- * \param[in] text the string that should be printed to the OLED, has to end in
+ * @brief Prints an arrow at a specified postion
+ * @param[in] dev the OLED device that should be written to
+ * @param[in] font the specified font, see font.h
+ * @param[in] text the string that should be printed to the OLED, has to end in
  * newline
- * \return .
+ * @return .
  */
 int io_oled_print_with_font(struct io_oled_device *dev,
                             const struct oled_font *font, char *text);
 
 /*!
- * \brief Prints a known image to the OLED to confirm that it can print and
+ * @brief Prints a known image to the OLED to confirm that it can print and
  * navigate the screen
- * \param[in] dev the OLED device that should be tested
+ * @param[in] dev the OLED device that should be tested
  * newline
- * \return .
+ * @return .
  */
 int io_oled_test(struct io_oled_device *dev);
 
 /*!
- * \brief Alternates screen between black and white
- * \param[in] dev the OLED device that should be blinked
- * \param[in] blinks number of blinks
+ * @brief Alternates screen between black and white
+ * @param[in] dev the OLED device that should be blinked
+ * @param[in] blinks number of blinks
  * newline
- * \return .
+ * @return .
  */
 int io_oled_blink(struct io_oled_device *dev, uint8_t blinks);
 
@@ -282,3 +330,5 @@ int io_oled_write_command(struct io_oled_device *dev, uint8_t command);
 int io_oled_clear_all(struct io_oled_device *dev);
 
 #endif // INCLUDE_INCLUDE_IO_H_
+
+/** @} */

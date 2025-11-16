@@ -1,0 +1,12 @@
+<map id="set_page" name="set_page">
+<area shape="rect" id="Node000001" title="Sets the current page field in the menu struct to a specified page and calls the page_dispatch functi..." alt="" coords="392,31,467,56"/>
+<area shape="rect" id="Node000002" href="$group___m_e_n_u.html#gaa29d91863634546acc11dfbf89096d57" title=" " alt="" coords="256,5,341,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="374,33,341,29,342,24,379,33"/>
+<area shape="rect" id="Node000005" href="$group___m_e_n_u.html#gad32fe316f9fefb4548a448fd64a239ab" title="Selects the current menu item based on nav button from the IO board." alt="" coords="253,55,344,80"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="379,53,345,62,344,56,374,53"/>
+<area shape="rect" id="Node000003" href="$group___m_e_n_u.html#ga2873b6345d3a98747370d5629679eacc" title="Handles menu logic (navigation, selection, page timers)." alt="" coords="103,31,205,56"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="238,29,206,37,205,32,244,28"/>
+<area shape="rect" id="Node000004" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,31,55,56"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="85,45,55,46,54,41,89,42"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="235,57,205,55,205,49,240,57"/>
+</map>

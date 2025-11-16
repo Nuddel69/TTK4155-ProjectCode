@@ -1,0 +1,21 @@
+<map id="include/controller.h" name="include/controller.h">
+<area shape="rect" id="Node000001" title="Handles CAN communication for game control, joystick, and buttons." alt="" coords="188,5,318,31"/>
+<area shape="rect" id="Node000002" href="$can_8h.html" title="CAN driver." alt="" coords="190,79,244,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="249,29,232,67,228,64,245,33"/>
+<area shape="rect" id="Node000007" href="$io_8h.html" title="Driver for joystick, buttons, and OLED." alt="" coords="272,79,314,105"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="261,29,282,66,276,65,259,34"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="104,153,168,178"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="206,104,162,144,159,140,201,107"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,153,80,178"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="189,107,87,149,85,144,191,102"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="266,153,331,178"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="232,103,276,142,271,142,230,108"/>
+<area shape="rect" id="Node000006" href="$spi_8h.html" title="SPI driver." alt="" coords="192,153,242,178"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="219,103,220,138,215,136,216,107"/>
+<area shape="poly" id="edge10_Node000007_Node000005" title=" " alt="" coords="296,103,299,138,294,136,293,107"/>
+<area shape="poly" id="edge9_Node000007_Node000006" title=" " alt="" coords="283,104,242,144,239,140,278,107"/>
+<area shape="rect" id="Node000008" href="$fonts_8h.html" title=" " alt="" coords="354,153,416,178"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="309,103,361,143,355,143,308,108"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="328,226,442,252"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="387,177,387,212,383,209,383,180"/>
+</map>

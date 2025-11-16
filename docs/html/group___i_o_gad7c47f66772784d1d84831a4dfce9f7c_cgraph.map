@@ -1,0 +1,13 @@
+<map id="io_joystick_read_direction" name="io_joystick_read_direction">
+<area shape="rect" id="Node000001" title="Fetches the direction of a joystick." alt="" coords="5,55,177,80"/>
+<area shape="rect" id="Node000002" href="$group___i_o.html#ga463fba7fd292e1b15b218e6b0187011c" title="Read the position of a joystick as a percentage from 0 in each axis." alt="" coords="225,55,392,80"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="177,65,211,67,206,68,177,70"/>
+<area shape="rect" id="Node000003" href="$group___a_d_c.html#gae1fe48e0e630fdd0ac8c0ad64b743501" title="Perform a full four&#45;channel ADC conversion and return all results." alt="" coords="440,29,542,55"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="392,53,422,52,427,51,393,59"/>
+<area shape="rect" id="Node000006" href="$group___u_t_i_l_s.html#ga8a8ae806dbf378f16671ed928f30a47e" title="Maps a value from one range to another (taken from https://docs.arduino.cc/language&#45;reference/en/func..." alt="" coords="468,79,514,104"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="393,76,455,87,450,87,392,81"/>
+<area shape="rect" id="Node000004" href="$group___a_d_c.html#ga91244ce6c2196ed56e931b5879f9fa7c" title="Read the current ADC channel sample." alt="" coords="598,5,701,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="542,32,580,29,585,28,543,37"/>
+<area shape="rect" id="Node000005" href="$group___a_d_c.html#gaf31429808ec59a3bea07199672b88aa2" title="Start a conversion on the external ADC and wait for completion." alt="" coords="590,55,709,80"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="543,48,578,56,572,56,542,53"/>
+</map>

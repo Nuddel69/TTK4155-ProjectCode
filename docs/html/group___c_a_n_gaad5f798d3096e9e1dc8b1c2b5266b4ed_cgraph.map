@@ -1,0 +1,7 @@
+<map id="MCP2515_read" name="MCP2515_read">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,117,31"/>
+<area shape="rect" id="Node000002" href="$group___s_p_i.html#ga779792281c4502a65714a5ce3483cfe7" title="Full&#45;duplex SPI transfer." alt="" coords="165,5,248,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,16,152,18,147,18,117,21"/>
+<area shape="rect" id="Node000003" href="$group___s_p_i.html#ga872c6f32f50aa32f4fb491da525e1976" title="Set the slave&#45;select line for the given device." alt="" coords="296,5,439,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="248,16,283,18,278,18,249,21"/>
+</map>

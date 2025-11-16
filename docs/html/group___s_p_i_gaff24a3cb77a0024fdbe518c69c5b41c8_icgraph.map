@@ -1,0 +1,17 @@
+<map id="spi_init" name="spi_init">
+<area shape="rect" id="Node000001" title="Initialize SPI in master mode." alt="" coords="382,55,445,80"/>
+<area shape="rect" id="Node000002" href="$group___i_o.html#ga3a5349ad76dc8659d367ed1fea9492b4" title=" " alt="" coords="103,5,183,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="365,51,334,45,254,31,184,24,183,18,255,26,335,40,370,51"/>
+<area shape="rect" id="Node000004" href="$group___i_o.html#gafdaeb854d3fdca796cfb0eee32a88a80" title="Initialise OLED." alt="" coords="240,55,326,80"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="364,68,326,70,326,65,369,67"/>
+<area shape="rect" id="Node000006" href="$group___c_a_n.html#gadcd46b554aaf37f0e37ca6a0873cbc00" title=" " alt="" coords="231,104,334,130"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="370,84,319,106,318,101,365,85"/>
+<area shape="rect" id="Node000003" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,55,55,80"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="96,40,57,59,54,55,99,36"/>
+<area shape="rect" id="Node000005" href="$group___m_e_n_u.html#ga1732058cb410ba82eb65bf924fbd36fe" title="Initializes menu and OLED display." alt="" coords="104,55,182,80"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="221,68,182,70,182,65,227,67"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="86,69,55,70,54,65,90,66"/>
+<area shape="rect" id="Node000007" href="$group___c_a_n.html#ga85b93d5fb5ceef27603a4ae38920a5c3" title="Initialize a CAN device." alt="" coords="110,104,176,130"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="213,117,176,119,176,114,218,117"/>
+<area shape="poly" id="edge8_Node000007_Node000003" title=" " alt="" coords="95,98,55,81,56,76,100,96"/>
+</map>

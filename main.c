@@ -1,5 +1,4 @@
 #include <stddef.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <util/delay.h>
 
@@ -18,36 +17,21 @@
 
 LOG_MODULE_DEFINE("main");
 
+// ---------------------------------------------------------------------------
 // Device Configs
+// ---------------------------------------------------------------------------
 struct USART_config config = {BAUD, F_CPU};
-
-/* Joystick Samples
- *
- * Idle:
- * x: 160
- * y: 165
- *
- * Min:
- * x: 66
- * y: 72
- *
- * Max:
- * x: 250
- * y: 246
- *
- */
 struct io_joystick_device joy = {0, 1, 67, 69, 247, 247};
 struct io_oled_device oled = {SSB2};
 struct io_avr_device avr = {SSB3};
 struct can_device can = {SSE2};
 
+// ---------------------------------------------------------------------------
 // Data Containers
+// ---------------------------------------------------------------------------
 struct io_joystick_position pos;
-struct CAN_frame can_msg = {0xFACB, 0x08, "CAN Dumb", 0, 0};
 struct io_avr_buttons btn;
 struct CAN_frame dummy_msg;
-
-// extern struct can_device can;
 
 // Define settings sub menu
 static struct menu_item settings_menu[] = {
@@ -75,10 +59,21 @@ struct menu_cfg menu = {
     .parent_length = 0,
 };
 
+// ---------------------------------------------------------------------------
+// Game state
+// ---------------------------------------------------------------------------
 struct control_state ctrl = {0};
+static enum page_id last_state = PAGE_WELCOME;
 
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
 int main() {
   int status = 0;
+
+  // ---------------------------------------------------------------------------
+  // Initializations
+  // ---------------------------------------------------------------------------
 
   status = USART_init(&config);
   STATUS_ASSERT(status);
@@ -103,42 +98,29 @@ int main() {
 
   LOG_CRITICAL("---Init complete---");
 
-  static enum page_id last_state = PAGE_WELCOME;
-
   while (1) {
-    // LOG_CRITICAL("Alive...");
 
-    // Button Inputs
-    io_avr_buttons_read(&avr, &btn);       // Read button inputs from IO board
-    io_joystick_read_position(&joy, &pos); // Read joystick input from IO board
-    menu_handler(&menu, &btn);             // Handle menu based on
+    // ---------------------------------------------------------------------------
+    // Input/Output Control
+    // ---------------------------------------------------------------------------
 
-    // Can message send test
-    // struct CAN_frame msg = {CAN_ID_GAMESTART, 0x08, {1, 2, 3, 4, 5, 6,7,8},
-    // 1, 0}; tx_gamestart(&can);
+    io_avr_buttons_read(&avr, &btn); // Read button inputs from IO board
+    process_can_frame(&ctrl);        // Parse CAN
+    tx_joy_btn(&joy, &avr, &can);    // Transmit input states over CAN
 
-    // Can message recive test
-    // struct CAN_frame msg;
-    // if (can_rxq_pull(&msg)) {
-    //   LOG_INF("Reading adress and length of message");
-    //   for (uint8_t i = 0; i < msg.dlc; i++) {
-    //   }
-    //   LOG_INF("Done reading data bytes in message");
-    // }
+    // ---------------------------------------------------------------------------
+    // Game Control
+    // ---------------------------------------------------------------------------
 
-    tx_joy_btn(&joy, &avr, &can);
-
-    if (menu.current_page != last_state) {
+    menu_handler(&menu, &btn);             // Handle menu state
+    if (menu.current_page != last_state) { // Check for game start
       if (menu.current_page == PAGE_PLAY_GAME) {
         tx_gamestart(&can);
       }
-
       last_state = menu.current_page;
     }
 
-    process_can_frame(&ctrl);
-
-    if (ctrl.game_over) {
+    if (ctrl.game_over) { // State game-over
       ctrl.game_over = 0;
       if (menu.current_page == PAGE_PLAY_GAME) {
         LOG_CRITICAL("Game over");
@@ -146,7 +128,7 @@ int main() {
       }
     }
 
-    _delay_ms(100);
+    _delay_ms(10);
   }
   return 0;
 }

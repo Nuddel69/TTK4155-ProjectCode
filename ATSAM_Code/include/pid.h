@@ -14,11 +14,11 @@
 
 #define JOY_SENS 20
 
-#define KP_DEFAULT 1
-#define KI_DEFAULT 0
-#define KD_DEFAULT 0
+#define KP_DEFAULT 20
+#define KI_DEFAULT 2
+#define KD_DEFAULT 10
 
-#define PID_MAX_OUT 8000
+#define PID_MAX_OUT 20000
 #define PID_MAX_WINDUP 1000
 
 struct pid_controller {

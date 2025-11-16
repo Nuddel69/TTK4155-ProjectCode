@@ -10,8 +10,14 @@
 #include "pid.h"
 #include "can_controller.h"
 #include "time.h"
-#include "can_controller.h"
 #include "controller.h"
+
+static uint8_t reset_complete = 0;
+static uint8_t button_r6_fired = 0;
+static uint8_t game_state = game_standby;
+
+//CAN_MESSAGE	game_over_msg = {0x02,0x8,{1,2,3,4,5,6,7,8}};
+						
 /*
 
 uint8_t legacy_game(struct motor_device *motor_dev,struct pid_controller *motor_pid){
@@ -139,51 +145,80 @@ uint8_t legacy_game(struct motor_device *motor_dev,struct pid_controller *motor_
 */
 
 
-uint8_t basic_game(struct motor_device *motor_dev,struct pid_controller *motor_pid, int8_t joystick, uint8_t *game_start){
-	static uint8_t reset_complete = 0;
-	static uint8_t game_state = game_standby;
-	printf("Entering game");
+uint8_t basic_game(struct game_config *config){
+	
+
+
 	switch (game_state){
 		
 		case game_standby:
-			printf("entering game standby\r\n");
 			//Reset game
 			if(!reset_complete){
 				//motor_reset_pos(motor_dev);  // Implement this if we have time
-				motor_stop(motor_dev);
+				motor_stop(config->motor_dev);
 				reset_complete = 1;
+				printf("In standby reset complete");
 			}
 			
 			//Wait for startsignal from node 1
-			if (*game_start){
-				*game_start = 0;
+			if (*(config->game_start)){
+				printf("moving to game playing\r\n");
+				 game_state = game_playing;
+				 *(config->game_start) = 0;
 				//pid_reset(motor_pid); //implement if we have time
-				game_state = game_playing;
 			}
-			break;
+			return 0;
 			
 		case game_playing:
-			printf("entering game playing\r\n");
+
+			//printf("entering game playing\r\n");
 			//Give control to player
-			pwm_dir_and_speed(motor_dev,motor_pid,(joystick)*JOY_SENS);
+			pwm_dir_and_speed(config->motor_dev,config->motor_pid,(-config->joy->x)*JOY_SENS);
+			
+			if (config->btn->R6 && !button_r6_fired) {
+				solenoid_pulse(config->solenoid_dev, 40);
+				button_r6_fired = 1;
+			    }
+			    if (!config->btn->R6 && button_r6_fired) {
+				    button_r6_fired = 0;
+			    }
+			servo_set_range(config->servo_dev, config->joy->y);
+			
 				
 				//End when goal is detected
-				if(simple_goal_detection()){
+				if((config->btn->L5)||(simple_goal_detection())){  //Added a dedicated button to lose as the IR on some of the motor boxes is broken
 					printf("GOAL------------------------------------------------------\r\n");
-					motor_stop(motor_dev);
-					CAN_MESSAGE gameover_msg = {.id =CAN_ID_GAMEOVER,.data_length = 1};
-					*game_start = 0;
-					gameover_msg.data[0]=0;
-					can_send(&gameover_msg,0);
+					motor_stop(config->motor_dev);
+					printf("SENDING GAME OVER----------------------------------------------");
+					CAN_MESSAGE	game_over_msg = {0x02,0x8,{1,2,3,4,5,6,7,8}};
+					can_send(&game_over_msg,0);
+					*(config->game_start) = 0;
 					game_state = game_standby;
 					reset_complete = 0;
+					printf("moving to game standby\r\n");
+					
 				}
-				break;
+				return 0;
 			
-			
+	//Catchall
 		default:
-			printf("Undefined game state");
+			printf("Undefined game state\r\n");
+		return 0;
 		
 	}
 	return 0;
 }
+
+/*
+CAN_MESSAGE	game_over_msg = {game_over_msg.id=0x02,
+	game_over_msg.data_length=0x8,
+	game_over_msg.data[0]=1,
+	game_over_msg.data[1]=2,
+	game_over_msg.data[2]=3,
+	game_over_msg.data[3]=4,
+	game_over_msg.data[4]=5,
+	game_over_msg.data[5]=6,
+	game_over_msg.data[6]=7,
+	game_over_msg.data[7]=8
+};
+*/

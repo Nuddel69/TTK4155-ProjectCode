@@ -56,7 +56,7 @@ uint16_t adc_read_once(void) {
   return (uint16_t)(ADC->ADC_CDR[0] & 0x0FFF);
 }
 
-int attempt_score(uint8_t *score) {
+uint8_t advanced_goal_goal_detection(uint8_t *score) {
 
   // STATE
   static uint16_t baseline = 0; // EMA baseline
@@ -125,8 +125,8 @@ int attempt_score(uint8_t *score) {
 uint8_t simple_goal_detection(void){
 	//Loss if beam broken(adc<20), not reacting if adc>35
 	
-	const uint16_t goal_threshold = 20; //Below this to count as a goal
-	const uint16_t clear_threshold = 35; // Has to reach above this value to be able to register  a new goal
+	const uint16_t goal_threshold = 50; //Below this to count as a goal
+	const uint16_t clear_threshold = 300; // Has to reach above this value to be able to register  a new goal
 	
 	static uint8_t goal_state = 0;
 	
@@ -134,15 +134,18 @@ uint8_t simple_goal_detection(void){
 	
 	if (!goal_state){
 		if (meas<=goal_threshold){
+			//printf("ADC Past threshold, Goal detected");
+			printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!GOAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\r\n");
 			goal_state = 1;
 			return 1;
 		}
 	}else{
 		if (meas>= clear_threshold){
 			goal_state = 0;
+			//printf("ADC high values detected, Goal cleared");
 		}
-		return 0;
+		
 	}
 
-	
+	return 0;
 }

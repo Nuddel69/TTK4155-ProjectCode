@@ -93,45 +93,143 @@ $(function(){initNavTree('index.html','',''); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md__r_e_a_d_m_e"></a></p>
+<ul>
+<li>TTK4155 Embedded computer Project<ul>
+<li>Useful notes to self<ul>
+<li>Commands</li>
+</ul>
+</li>
+<li>Issues encountered and their solution<ul>
+<li>2.1 USART flipping bits in the RS232 line driver<ul>
+<li>2.1.1 **The solution**</li>
+</ul>
+</li>
+<li>2.2 Half the addresses on the RAM getting overwritten<ul>
+<li>2.2.1 **The solution**</li>
+</ul>
+</li>
+<li>2.3 SPI only sending a single (if lucky) packet<ul>
+<li>2.3.1 **The solution**</li>
+</ul>
+</li>
+<li>2.4 Delay not timing correctly when using different crystal<ul>
+<li>2.4.1 **The solution**</li>
+</ul>
+</li>
+<li>2.5 CAN init freezing halfway through<ul>
+<li>2.5.1 **The solution**</li>
+</ul>
+</li>
+<li>2.6 CAN freezing in loopback<ul>
+<li>2.6.1 **The solution**</li>
+</ul>
+</li>
+<li>2.7 CAN only receiving overload frames in normal mode<ul>
+<li>2.7.1 **The solution**</li>
+</ul>
+</li>
+<li>2.8 Node 2 only receiving a fraction of frames<ul>
+<li>2.8.1 **The solution**</li>
+</ul>
+</li>
+<li>2.9 Node 2 PWM unstable<ul>
+<li>2.9.1 **The solution**</li>
+</ul>
+</li>
+<li>2.10 Encoder only writing 0<ul>
+<li>2.10.1 **The solution**</li>
+</ul>
+</li>
+<li>2.11 Node 1 randomly crashing and freezing<ul>
+<li>2.11.1 **The solution**</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Debugging flowchart - expanded as we encounter more problems</li>
+</ul>
+</li>
+</ul>
 <p>Repo containing code and infrastructure for building the semester project in the NTNU subject TTK4155 Embedded and Industrial Computer Systems Design</p>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md1"></a>
 Useful notes to self</h1>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md2"></a>
 Commands</h2>
 <ul>
-<li><p class="startli">Picocom (use tab-completion for the serial device): <span class="tt">picocom /dev/&lt;SERIAL_DEVICE&gt; --baud 9600 --parity n --databits 8 --stopbits 2</span></p>
-<p class="startli">The shortened version <span class="tt">picocom /dev/&lt;SERIAL_DEVICE&gt; -b 9600 -y n -d 8 -p 2</span></p>
+<li><p class="startli">Picocom (use tab-completion for the serial device): <span class="tt">picocom /dev/&lt;SERIAL_DEVICE&gt; --baud 9600 --parity n --databits 8 --stopbits 1</span></p>
+<p class="startli">The shortened version <span class="tt">picocom /dev/&lt;SERIAL_DEVICE&gt; -b 9600 -y n -d 8 -p 1</span></p>
 </li>
 </ul>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
 Issues encountered and their solution</h1>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md4"></a>
-USART flipping bits in the RS232 line driver</h2>
+2.1 USART flipping bits in the RS232 line driver</h2>
 <p>We were sending the letter 'k' but recieving 'J'. Using a scope on the TX output of the uC showed the correct databits, but after the MAX233 we were reading something else.</p>
-<p><b>The solution</b></p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
+2.1.1 <b>The solution</b></h3>
 <p>We were setting the wrong baud rate and the synchronisation issues revealed themselves later down the chain of components. Turns out, you should set both UBRRH and UBRRL regardless of the size of the UBRR number.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
-Half the addresses on the RAM getting overwritten</h2>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
+2.2 Half the addresses on the RAM getting overwritten</h2>
 <p>While all our addresses were passing the write test, half were failing on read. We figured it might be caused by a single bit not flipping and thus the addresses using the faulty bit were being overwritten. Tried using known good code, redid the wiring a dozen times, stuck decoupling caps <em>everywhere</em> and swapped out both the latch and uC, all to no avail.</p>
 <p>We probed again and noticed a single bit not latching. While all other outputs on the latch were switching between 0V and 3.5V (nominal according to the datasheet), the faulty one switched between 3.5v and 5v, leading to reading a constant logic high. Strange considering this was our sixth latch so the odds of it being faulty were astronomically small.</p>
-<p><b>The solution</b></p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
+2.2.1 <b>The solution</b></h3>
 <p>One of the breadboard holes between the uC and had a small particle stuck inside. While the contacts for both the uC and latch were good, this particle likely shorted two paths causing noise and undefined behaviour. Angrily stabbing the offending hole with a dupont wire fixed the issue.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
-SPI only sending a single (if lucky) packet</h2>
-<p>Our early attempts at getting SPI up and running were met with a single packet read on the oscilloscope, before code execution got stuck in the SPI transmission done loop.</p>
-<p><b>The solution</b></p>
-<p>As the uC supports slave mode as well, it features a SS pin. If triggered, the uC will automatically enter slave mode, regardless of register config. In order to avoid accidentally pulling the wrong logic on this, it can either be pulled HIGH or explicitly defined as output. The latter allows us to keep using the pin as a output, hence proving the better solution.</p>
-<h2 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
-Delay not timing correctly when using different crystal</h2>
-<p>While this lab is based around a 4.915200MHz crystal, there was an attempt at using a 16MHz crystal as well. After adjusting the fuses to support an 8+MHz external clock the code was acting strange. A delay was only lasting an eighth of the time passed to the function. Setting the clock-divider fuse solved it, but caused issues for the UART baudrate.</p>
-<p><b>The solution</b></p>
-<p>The <span class="tt">delay</span> library has a software defined macro <span class="tt">F_CPU</span> defining the clock speed. We´ve been lucky this is compatible with our usual clock, but now it had to be defined from the compiler. Adding <span class="tt">-DF_CPU=&lt;clock&gt;</span> to the compilation command solved it (see commit <span class="tt">#7f15e61</span>).</p>
 <h2 class="doxsection"><a class="anchor" id="autotoc_md8"></a>
-CAN init freezing halfway through</h2>
+2.3 SPI only sending a single (if lucky) packet</h2>
+<p>Our early attempts at getting SPI up and running were met with a single packet read on the oscilloscope, before code execution got stuck in the SPI transmission done loop.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md9"></a>
+2.3.1 <b>The solution</b></h3>
+<p>As the uC supports slave mode as well, it features a SS pin. If triggered, the uC will automatically enter slave mode, regardless of register config. In order to avoid accidentally pulling the wrong logic on this, it can either be pulled HIGH or explicitly defined as output. The latter allows us to keep using the pin as a output, hence proving the better solution.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md10"></a>
+2.4 Delay not timing correctly when using different crystal</h2>
+<p>While this lab is based around a 4.915200MHz crystal, there was an attempt at using a 16MHz crystal as well. After adjusting the fuses to support an 8+MHz external clock the code was acting strange. A delay was only lasting an eighth of the time passed to the function. Setting the clock-divider fuse solved it, but caused issues for the UART baudrate.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md11"></a>
+2.4.1 <b>The solution</b></h3>
+<p>The <span class="tt">delay</span> library has a software defined macro <span class="tt">F_CPU</span> defining the clock speed. We´ve been lucky this is compatible with our usual clock, but now it had to be defined from the compiler. Adding <span class="tt">-DF_CPU=&lt;clock&gt;</span> to the compilation command solved it (see commit <span class="tt">#7f15e61</span>).</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md12"></a>
+2.5 CAN init freezing halfway through</h2>
 <p>Halfway through initialising the CAN controller, the entire MCU froze. Upon probing the SPI connection to the controller, the clock line seemed to stop at arbitrary points while MOSI was still transmitting.</p>
-<p><b>The solution</b></p>
-<p>The <span class="tt">spi_write_n</span> was causing problems. It implicitly passes <span class="tt">NULL</span> as the output buffer and trashes whatever the SPI device responds with when sending. When sending n bytes, the function indexes into the output buffer in order to store the data. Indexing past NULL-ptr accesses and overwrites important system-memory and causes undefined behaviour. This is equivalent to a segmentation fault on an operating system and was fixed by only writing the output buffer if not NULL.</p>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md9"></a>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md13"></a>
+2.5.1 <b>The solution</b></h3>
+<p>The <span class="tt">spi_write_n</span> was causing problems. It implicitly passes <span class="tt">NULL</span> as the output buffer and trashes whatever the SPI device responds with when sending. When sending n bytes, the function indexes into the output buffer in order to store the data. Indexing past NULL-ptr accesses and overwrites important system- memory and causes undefined behaviour. This is equivalent to a segmentation fault on an operating system and was fixed by only writing the output buffer if not NULL.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md14"></a>
+2.6 CAN freezing in loopback</h2>
+<p>When first implementing CAN on node 1 we had problems with the TX-buffer filling. After sending one message it froze and reported full buffer.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md15"></a>
+2.6.1 <b>The solution</b></h3>
+<p>We forgot to read the CAN frame we were sending...</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md16"></a>
+2.7 CAN only receiving overload frames in normal mode</h2>
+<p>After switching from loopback to normal mode we were finally reading messages on the TX-bus. The messages however, were all overload frames.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md17"></a>
+2.7.1 <b>The solution</b></h3>
+<p>CAN-bus is a network and requires at least two nodes to acknowledge eachother's messages.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md18"></a>
+2.8 Node 2 only receiving a fraction of frames</h2>
+<p>We were sending frames about 6.5 times a second from Node 1. Node 2, however was only receiving one every 5 seconds. We verified the connection, and with an oscilloscope we noticed most of the frames got NACK.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md19"></a>
+2.8.1 <b>The solution</b></h3>
+<p>When testing the driver we implemented both polling and interrupt CAN. Turns out, these interfere with each other and cause problems in the long run. Switching to interrupt only solved the problem.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md20"></a>
+2.9 Node 2 PWM unstable</h2>
+<p>After getting the PWM up and running the duty-cycle was inverted. Not thinking twice we inverted the result of the equation and went on our merry way. When integrating the motor, the PWM signal was acting up whenever we switched the duty-cycle to something other than alternating between two values. Changing the period was especially troublesome. It went as far so as to act differently depending on flashed, when we flashed and what the Arduino had for dinner the night before.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md21"></a>
+2.9.1 <b>The solution</b></h3>
+<p>When setting the DTY and PRD we were, out of habit, OR-ing the registers. This is obvious in hindsight, but means our values would be OR-ed together with whatever garbage is in the registers when initialised. Changing this to regular <span class="tt">=</span> solved the problems.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md22"></a>
+2.10 Encoder only writing 0</h2>
+<p>The motor encoder was only reading 0, despite manual movement of the motor.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md23"></a>
+2.10.1 <b>The solution</b></h3>
+<p>We were writing to the wrong register, thus setting the incorrect clock speed.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md24"></a>
+2.11 Node 1 randomly crashing and freezing</h2>
+<p>We had persistent issues with node 1 crashing and freezing at inconvenient places. At first it seemed to be an issues with the CAN driver, as the node worked when removing CAN. However, when adding LOG statements to figure it out, the same problem arose.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md25"></a>
+2.11.1 <b>The solution</b></h3>
+<p>By chance we noticed the memory section in Microchip Studio. This reported 98% data memory and 30-something% program memory. As most of the group were flashing using <span class="tt">avr-gcc</span> and <span class="tt">avrdude</span> we configured the <span class="tt">makefile</span> to run <span class="tt">avr-size</span> on the binary after each flash. Sure enough, we had completely filled the internal memory of the MCU. Of course, we could add a linker script for mapping the external SRAM and assign an attribute to some of the larger structs and buffers. Instead, however, we opted to buffer most of the already known strings used by our logging module to the PROGMEM. This freed up most of our memory and we're now diligently keeping and eye on the ram of our controller.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md26"></a>
 Debugging flowchart - expanded as we encounter more problems</h1>
 <div class="fragment"><div class="line">flowchart TD</div>
 <div class="line">    A([&quot;Start: Bygger&#39;n not bygger&#39;ning&quot;]) --&gt; B[&quot;Visually Inspect Wiring&quot;]</div>
@@ -141,22 +239,22 @@ Debugging flowchart - expanded as we encounter more problems</h1>
 <div class="line">    C --&gt;|Think So?| D</div>
 <div class="line">    C --&gt;|Probably?| D</div>
 <div class="line">    D --&gt; P</div>
-<div class="line">    </div>
+<div class="line"> </div>
 <div class="line">    C --&gt;|Yes| E[&quot;Probe Data In to MCU&quot;]</div>
 <div class="line">    E --&gt; F{&quot;Data In as Expected?&quot;}</div>
 <div class="line">    F --&gt;|No| D</div>
 <div class="line">    F --&gt;|Yes| G[&quot;Probe Data Out of MCU&quot;]</div>
-<div class="line">    </div>
+<div class="line"> </div>
 <div class="line">    G --&gt; H{&quot;Data Out as Expected?&quot;}</div>
 <div class="line">    H --&gt;|No| I[&quot;Check Your Code&quot;]</div>
 <div class="line">    H --&gt;|Yes| CLK[&quot;Check Clock (Baud Rate / CLK Pin)&quot;]</div>
-<div class="line">    </div>
+<div class="line"> </div>
 <div class="line">    CLK --&gt; J[&quot;Check Your Wiring Again&quot;]</div>
-<div class="line">    </div>
+<div class="line"> </div>
 <div class="line">    I --&gt; K{&quot;Code Looks Correct?&quot;}</div>
 <div class="line">    K --&gt;|No| L[&quot;Debug &amp; Fix Code&quot;]</div>
 <div class="line">    K --&gt;|Yes| M[&quot;Try Known-Working Code from Internet&quot;]</div>
-<div class="line">    </div>
+<div class="line"> </div>
 <div class="line">    J --&gt; N[&quot;Check Breadboard Connections&quot;]</div>
 <div class="line">    M --&gt; N</div>
 <div class="line">    N --&gt; O[&quot;Probe Breadboard Holes (Bad Contacts / Particles?)&quot;]</div>

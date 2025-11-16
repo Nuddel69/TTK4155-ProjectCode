@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['debugging_20flowchart_20expanded_20as_20we_20encounter_20more_20problems_0',['Debugging flowchart - expanded as we encounter more problems',['../index.html#autotoc_md9',1,'']]],
-  ['delay_20not_20timing_20correctly_20when_20using_20different_20crystal_1',['Delay not timing correctly when using different crystal',['../index.html#autotoc_md7',1,'']]],
-  ['different_20crystal_2',['Delay not timing correctly when using different crystal',['../index.html#autotoc_md7',1,'']]],
-  ['driver_3',['USART flipping bits in the RS232 line driver',['../index.html#autotoc_md4',1,'']]]
+  ['3_201_20the_20solution_0',['2.3.1 &lt;b&gt;The solution&lt;/b&gt;',['../index.html#autotoc_md9',1,'']]],
+  ['3_20spi_20only_20sending_20a_20single_20if_20lucky_20packet_1',['2.3 SPI only sending a single (if lucky) packet',['../index.html#autotoc_md8',1,'']]]
 ];

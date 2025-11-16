@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['if_20lucky_20packet_0',['SPI only sending a single (if lucky) packet',['../index.html#autotoc_md6',1,'']]],
-  ['in_20the_20rs232_20line_20driver_1',['USART flipping bits in the RS232 line driver',['../index.html#autotoc_md4',1,'']]],
-  ['init_20freezing_20halfway_20through_2',['CAN init freezing halfway through',['../index.html#autotoc_md8',1,'']]],
-  ['issues_20encountered_20and_20their_20solution_3',['Issues encountered and their solution',['../index.html#autotoc_md3',1,'']]]
+  ['8_201_20the_20solution_0',['2.8.1 &lt;b&gt;The solution&lt;/b&gt;',['../index.html#autotoc_md19',1,'']]],
+  ['8_20node_202_20only_20receiving_20a_20fraction_20of_20frames_1',['2.8 Node 2 only receiving a fraction of frames',['../index.html#autotoc_md18',1,'']]]
 ];

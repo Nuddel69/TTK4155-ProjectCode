@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['game_20controller_20can_0',['Game Controller / CAN',['../group___c_o_n_t_r_o_l_l_e_r.html',1,'']]],
-  ['game_5fover_1',['game_over',['../structcontrol__state.html#ad003446fd9ee43aa16c902f082d6469a',1,'control_state']]],
-  ['game_5fover_5fdisplay_2',['game_over_display',['../group___m_e_n_u.html#ga77b4a3120057ff67b80513945e18f242',1,'game_over_display(struct menu_cfg *menu):&#160;menu.c'],['../group___m_e_n_u.html#ga77b4a3120057ff67b80513945e18f242',1,'game_over_display(struct menu_cfg *menu):&#160;menu.c']]],
-  ['getting_20overwritten_3',['Half the addresses on the RAM getting overwritten',['../index.html#autotoc_md5',1,'']]]
+  ['7_201_20the_20solution_0',['2.7.1 &lt;b&gt;The solution&lt;/b&gt;',['../index.html#autotoc_md17',1,'']]],
+  ['7_20can_20only_20receiving_20overload_20frames_20in_20normal_20mode_1',['2.7 CAN only receiving overload frames in normal mode',['../index.html#autotoc_md16',1,'']]]
 ];

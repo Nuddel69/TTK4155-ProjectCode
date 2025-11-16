@@ -183,7 +183,7 @@ Functions</h2></td></tr>
 <div class="line"><span class="lineno">   21</span>  UCSR0B = (1 &lt;&lt; RXEN0) | (1 &lt;&lt; TXEN0) <span class="comment">/*| (1 &lt;&lt; RXCIE0)*/</span>;</div>
 <div class="line"><span class="lineno">   22</span> </div>
 <div class="line"><span class="lineno">   23</span>  <span class="comment">// Format 9600 8N1</span></div>
-<div class="line"><span class="lineno">   24</span>  UCSR0C = (1 &lt;&lt; URSEL0) | (1 &lt;&lt; USBS0) | (3 &lt;&lt; UCSZ00);</div>
+<div class="line"><span class="lineno">   24</span>  UCSR0C = (1 &lt;&lt; URSEL0) | (0 &lt;&lt; USBS0) | (3 &lt;&lt; UCSZ00);</div>
 <div class="line"><span class="lineno">   25</span> </div>
 <div class="line"><span class="lineno">   26</span>  <span class="comment">// sei();</span></div>
 <div class="line"><span class="lineno">   27</span>  <span class="comment">// fdevopen(USART_Transmit, USART_Receive);</span></div>

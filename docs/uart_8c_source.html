@@ -116,7 +116,7 @@ $(function(){initNavTree('uart_8c_source.html','',''); });
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  UCSR0B = (1 &lt;&lt; RXEN0) | (1 &lt;&lt; TXEN0) <span class="comment">/*| (1 &lt;&lt; RXCIE0)*/</span>;</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <span class="comment">// Format 9600 8N1</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  UCSR0C = (1 &lt;&lt; URSEL0) | (1 &lt;&lt; USBS0) | (3 &lt;&lt; UCSZ00);</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  UCSR0C = (1 &lt;&lt; URSEL0) | (0 &lt;&lt; USBS0) | (3 &lt;&lt; UCSZ00);</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  <span class="comment">// sei();</span></div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  <span class="comment">// fdevopen(USART_Transmit, USART_Receive);</span></div>

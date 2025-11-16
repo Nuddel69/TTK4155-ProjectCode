@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['line_20driver_0',['USART flipping bits in the RS232 line driver',['../index.html#autotoc_md4',1,'']]],
-  ['list_1',['Todo List',['../todo.html',1,'']]],
-  ['lucky_20packet_2',['SPI only sending a single (if lucky) packet',['../index.html#autotoc_md6',1,'']]]
+  ['9_201_20the_20solution_0',['2.9.1 &lt;b&gt;The solution&lt;/b&gt;',['../index.html#autotoc_md21',1,'']]],
+  ['9_20node_202_20pwm_20unstable_1',['2.9 Node 2 PWM unstable',['../index.html#autotoc_md20',1,'']]]
 ];

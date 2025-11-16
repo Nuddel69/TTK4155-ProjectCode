@@ -200,7 +200,7 @@ Functions</h2></td></tr>
 <div class="fragment"><div class="line"><span class="lineno">   78</span>                                            {</div>
 <div class="line"><span class="lineno">   79</span> </div>
 <div class="line"><span class="lineno">   80</span>  <span class="comment">// Frame Data</span></div>
-<div class="line"><span class="lineno">   81</span>  <span class="keyword">struct </span><a class="code hl_struct" href="struct_c_a_n__frame.html">CAN_frame</a> msg = {<a class="code hl_define" href="group___c_a_n.html#gafd38f6ade714c9d567c9a547c5c8f9e8">CAN_ID_ERROR</a>, 0x08, {0}, 1, 0};</div>
+<div class="line"><span class="lineno">   81</span>  <span class="keyword">struct </span><a class="code hl_struct" href="struct_c_a_n__frame.html">CAN_frame</a> msg = {<a class="code hl_define" href="group___c_a_n.html#gafd38f6ade714c9d567c9a547c5c8f9e8">CAN_ID_ERROR</a>, 0x08, {0}, 0, 0};</div>
 <div class="line"><span class="lineno">   82</span> </div>
 <div class="line"><span class="lineno">   83</span>  <span class="comment">// Transmit data</span></div>
 <div class="line"><span class="lineno">   84</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="group___c_a_n.html#ga16db028c809949d0b13e06a2295474ce">can_write</a>(can_dev, msg);</div>
@@ -240,7 +240,7 @@ Functions</h2></td></tr>
 <div class="fragment"><div class="line"><span class="lineno">   58</span>                                                {</div>
 <div class="line"><span class="lineno">   59</span> </div>
 <div class="line"><span class="lineno">   60</span>  <span class="comment">// Frame Data</span></div>
-<div class="line"><span class="lineno">   61</span>  <span class="keyword">struct </span><a class="code hl_struct" href="struct_c_a_n__frame.html">CAN_frame</a> msg = {<a class="code hl_define" href="group___c_a_n.html#ga802ae712ff831c94da366885eac41cef">CAN_ID_GAMESTART</a>, 0x01, {1}, 1, 0};</div>
+<div class="line"><span class="lineno">   61</span>  <span class="keyword">struct </span><a class="code hl_struct" href="struct_c_a_n__frame.html">CAN_frame</a> msg = {<a class="code hl_define" href="group___c_a_n.html#ga802ae712ff831c94da366885eac41cef">CAN_ID_GAMESTART</a>, 0x01, {1}, 0, 0};</div>
 <div class="line"><span class="lineno">   62</span> </div>
 <div class="line"><span class="lineno">   63</span>  <span class="comment">// Transmit data</span></div>
 <div class="line"><span class="lineno">   64</span>  <a class="code hl_function" href="group___c_a_n.html#ga16db028c809949d0b13e06a2295474ce">can_write</a>(can_dev, msg);</div>
@@ -352,7 +352,7 @@ Functions</h2></td></tr>
 <div class="fragment"><div class="line"><span class="lineno">   68</span>                                            {</div>
 <div class="line"><span class="lineno">   69</span> </div>
 <div class="line"><span class="lineno">   70</span>  <span class="comment">// Frame Data</span></div>
-<div class="line"><span class="lineno">   71</span>  <span class="keyword">struct </span><a class="code hl_struct" href="struct_c_a_n__frame.html">CAN_frame</a> msg = {<a class="code hl_define" href="group___c_a_n.html#ga1181b5c54c9f738c9b922c1e8eb63acf">CAN_ID_RESET</a>, 0x01, {0}, 1, 0};</div>
+<div class="line"><span class="lineno">   71</span>  <span class="keyword">struct </span><a class="code hl_struct" href="struct_c_a_n__frame.html">CAN_frame</a> msg = {<a class="code hl_define" href="group___c_a_n.html#ga1181b5c54c9f738c9b922c1e8eb63acf">CAN_ID_RESET</a>, 0x01, {0}, 0, 0};</div>
 <div class="line"><span class="lineno">   72</span> </div>
 <div class="line"><span class="lineno">   73</span>  <span class="comment">// Transmit data</span></div>
 <div class="line"><span class="lineno">   74</span>  <a class="code hl_function" href="group___c_a_n.html#ga16db028c809949d0b13e06a2295474ce">can_write</a>(can_dev, msg);</div>

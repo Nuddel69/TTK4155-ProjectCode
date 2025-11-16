@@ -1,11 +1,13 @@
 var searchData=
 [
-  ['oled_0',['oled',['../structmenu__cfg.html#afcdf6be8dd37bf48199f3716ca9be675',1,'menu_cfg::oled'],['../main_8c.html#aeb1dc0fa33bd5d3bdac87ef02e8ff3c2',1,'oled:&#160;main.c']]],
-  ['oled_5ffont_1',['oled_font',['../structoled__font.html',1,'']]],
-  ['oled_5ffont_5f4x6_2',['OLED_FONT_4x6',['../group___i_o.html#ga5fefe6dff9d5641849a27e976de99920',1,'io.h']]],
-  ['oled_5ffont_5f5x7_3',['OLED_FONT_5x7',['../group___i_o.html#gaafb40ee38c09f104eece0c301a7bf4df',1,'io.h']]],
-  ['oled_5ffont_5f8x8_4',['OLED_FONT_8x8',['../group___i_o.html#ga7457ec0609032617b1739fed86dcd2ca',1,'io.h']]],
-  ['on_20the_20ram_20getting_20overwritten_5',['Half the addresses on the RAM getting overwritten',['../index.html#autotoc_md5',1,'']]],
-  ['only_20sending_20a_20single_20if_20lucky_20packet_6',['SPI only sending a single (if lucky) packet',['../index.html#autotoc_md6',1,'']]],
-  ['overwritten_7',['Half the addresses on the RAM getting overwritten',['../index.html#autotoc_md5',1,'']]]
+  ['data_0',['data',['../structcan__msg.html#a2670d3333c286e6b7bf132131a6cdd57',1,'can_msg::data'],['../struct_c_a_n__frame.html#aefc09997c333abde0137c87bbe12ee9a',1,'CAN_frame::data']]],
+  ['debugging_20flowchart_20expanded_20as_20we_20encounter_20more_20problems_1',['Debugging flowchart - expanded as we encounter more problems',['../index.html#autotoc_md26',1,'']]],
+  ['delay_20not_20timing_20correctly_20when_20using_20different_20crystal_2',['2.4 Delay not timing correctly when using different crystal',['../index.html#autotoc_md10',1,'']]],
+  ['devices_3',['IO Devices',['../group___i_o.html',1,'']]],
+  ['different_20crystal_4',['2.4 Delay not timing correctly when using different crystal',['../index.html#autotoc_md10',1,'']]],
+  ['dlc_5',['dlc',['../struct_c_a_n__frame.html#a7f012d12d17e659f0aa8e02cb5ff8213',1,'CAN_frame']]],
+  ['down_6',['DOWN',['../group___i_o.html#gga33fdb76fa7d047db682cdc05e64fe70ba9b0b4a95b99523966e0e34ffdadac9da',1,'io.h']]],
+  ['draw_5fcursor_7',['draw_cursor',['../group___m_e_n_u.html#ga2ede905c40eff9d1a6505b4769b185ad',1,'draw_cursor(struct menu_cfg *menu):&#160;menu.c'],['../group___m_e_n_u.html#ga2ede905c40eff9d1a6505b4769b185ad',1,'draw_cursor(struct menu_cfg *menu):&#160;menu.c']]],
+  ['driver_8',['2.1 USART flipping bits in the RS232 line driver',['../index.html#autotoc_md4',1,'']]],
+  ['dummy_5fmsg_9',['dummy_msg',['../main_8c.html#a72400e533968e84cb8e388c7541261bd',1,'main.c']]]
 ];

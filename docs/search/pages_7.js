@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['half_20the_20addresses_20on_20the_20ram_20getting_20overwritten_0',['Half the addresses on the RAM getting overwritten',['../index.html#autotoc_md5',1,'']]],
-  ['halfway_20through_1',['CAN init freezing halfway through',['../index.html#autotoc_md8',1,'']]]
+  ['7_201_20the_20solution_0',['2.7.1 &lt;b&gt;The solution&lt;/b&gt;',['../index.html#autotoc_md17',1,'']]],
+  ['7_20can_20only_20receiving_20overload_20frames_20in_20normal_20mode_1',['2.7 CAN only receiving overload frames in normal mode',['../index.html#autotoc_md16',1,'']]]
 ];

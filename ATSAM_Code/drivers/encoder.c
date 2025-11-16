@@ -16,8 +16,7 @@ int8_t encoder_init(void) {
   // All registers listed on page 629++(GPIO) 879(TC) and in the datasheet.
 
   // Disable write protect for PMC
-  //PMC->PMC_WPMR = PMC_WPMR_WPKEY(0x504D43);
-  PMC->PMC_WPMR = PMC_WPMR_WPKEY_PASSWD;
+  PMC->PMC_WPMR = TC_WPMR_WPKEY(0x54494D);
 
   // Enable clock
   // TC2 clock (ID 1(33)), in PCER1
@@ -56,8 +55,7 @@ int8_t encoder_init(void) {
   }
 
   // CH0 clock must be enabled to access WPMR, disable WP, key "TIM" in ASCII
-  //TC2->TC_WPMR = TC_WPMR_WPKEY(0x54494D);
-  TC2->TC_WPMR = TC_WPMR_WPKEY_PASSWD;
+  TC2->TC_WPMR = TC_WPMR_WPKEY(0x54494D);
   TC2->TC_CHANNEL[0].TC_CCR = TC_CCR_CLKEN;
 
   // Configure TC2 for Quadrature decode on CH0 , see page 901++

@@ -12,7 +12,6 @@
 #include <stdint.h>
 #include "motor.h"
 #include "pid.h"
-#include "controller.h"
 
 enum{
 	game_standby,
@@ -21,6 +20,7 @@ enum{
 	game_over,
 	};
 
-uint8_t game(struct motor_device *motor_dev,struct pid_controller *motor_pid, struct control_state *ctrl);
+uint8_t legacy_game(struct motor_device *motor_dev,struct pid_controller *motor_pid);
+uint8_t basic_game(struct motor_device *motor_dev,struct pid_controller *motor_pid);
 
 #endif /* GAME_H_ */

@@ -21,6 +21,6 @@ enum{
 	};
 
 uint8_t legacy_game(struct motor_device *motor_dev,struct pid_controller *motor_pid);
-uint8_t basic_game(struct motor_device *motor_dev,struct pid_controller *motor_pid);
+uint8_t basic_game(struct motor_device *motor_dev,struct pid_controller *motor_pid, int8_t joystick, uint8_t *game_start);
 
 #endif /* GAME_H_ */

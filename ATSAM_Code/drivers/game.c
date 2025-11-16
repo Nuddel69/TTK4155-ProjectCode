@@ -12,8 +12,9 @@
 #include "time.h"
 #include "can_controller.h"
 #include "controller.h"
+/*
 
-uint8_t legacy_game(struct motor_device *motor_dev,struct pid_controller *motor_pid, struct control_state *ctrl){
+uint8_t legacy_game(struct motor_device *motor_dev,struct pid_controller *motor_pid){
 
 
 	static uint8_t just_died = 0;
@@ -135,6 +136,8 @@ uint8_t legacy_game(struct motor_device *motor_dev,struct pid_controller *motor_
 	}
 	return 0;
 }
+*/
+
 
 uint8_t basic_game(struct motor_device *motor_dev,struct pid_controller *motor_pid, int8_t joystick, uint8_t *game_start){
 	static uint8_t reset_complete = 0;
@@ -167,7 +170,7 @@ uint8_t basic_game(struct motor_device *motor_dev,struct pid_controller *motor_p
 				//End when goal is detected
 				if(simple_goal_detection()){
 					motor_stop(motor_dev);
-					CAN_MESSAGE gameover_msg = {.id = CAN_ID_GAMEOVER.length = 1};
+					CAN_MESSAGE gameover_msg = {.id =CAN_ID_GAMEOVER,.data_length = 1};
 					*game_start = 0;
 					gameover_msg.data[0]=0;
 					can_send(&gameover_msg,0);

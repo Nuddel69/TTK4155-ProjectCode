@@ -82,13 +82,6 @@ int process_can_frame() {
 
       break;
     }
-    case CAN_ID_READY: { // This ID is reserved for sending trigger signal
-                            // for the solonoid
-
-      // TODO: trigger solonoid
-
-      break;
-    }
     case CAN_ID_SCORE: { // This ID is reserved for sending gamescore
 
       break;
@@ -101,6 +94,7 @@ int process_can_frame() {
     }
     }
   }
+  return 0;
 }
 
 // struct PWM_device servo_pwm = ;

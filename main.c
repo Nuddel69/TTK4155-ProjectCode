@@ -80,7 +80,7 @@ struct menu_cfg menu = {
     .cursor_pos = 0,
     .current_page = PAGE_WELCOME,
     .root_items = main_menu,
-    .root_length = 3,
+    .root_length = 1,
     .parent_menu = NULL,
     .parent_length = 0,
 };
@@ -123,6 +123,8 @@ int main() {
   STATUS_ASSERT(status)
 
   LOG_CRITICAL("---Init complete---");
+
+  static enum page_id last_state = PAGE_WELCOME;
 
   while (1) {
 

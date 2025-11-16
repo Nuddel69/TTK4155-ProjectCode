@@ -4,6 +4,7 @@
 #include <util/delay.h>
 
 #include "can.h"
+#include "controller.h"
 #include "io.h"
 #include "log.h"
 #include "menu.h"
@@ -12,7 +13,6 @@
 #include "uart.h"
 #include "utils.h"
 #include "xmem.h"
-#include "controller.h"
 
 #define BAUD 9600
 
@@ -47,10 +47,10 @@ struct CAN_frame can_msg = {0xFACB, 0x08, "CAN Dumb", 0, 0};
 struct io_avr_buttons btn;
 struct CAN_frame dummy_msg;
 
-//extern struct can_device can;
+// extern struct can_device can;
 
 // Define settings sub menu
-//static struct menu_item settings_menu[] = {
+// static struct menu_item settings_menu[] = {
 //    {"Adjust brightness", PAGE_ADJUST_BRIGHTNESS, NULL, 0},
 //    {"Calibrate joystick", PAGE_CALIBRATE_JOYSTICK, NULL, 0},
 //};
@@ -75,7 +75,7 @@ struct menu_cfg menu = {
     .parent_length = 0,
 };
 
-struct control_state ctrl = {0, 0, 1, 0};
+struct control_state ctrl = {0};
 
 int main() {
   int status = 0;
@@ -106,18 +106,20 @@ int main() {
   static enum page_id last_state = PAGE_WELCOME;
 
   while (1) {
-    io_avr_buttons_read(&avr, &btn);        // Read button inputs from IO board
-    io_joystick_read_position(&joy, &pos);  // Read joystick input from IO board
-    menu_handler(&menu, &btn);              // Handle menu based on button inputs
+    io_avr_buttons_read(&avr, &btn);       // Read button inputs from IO board
+    io_joystick_read_position(&joy, &pos); // Read joystick input from IO board
+    menu_handler(&menu, &btn);             // Handle menu based on button inputs
 
     _delay_ms(100);
-	
+
     // Can message send test
-	  //struct CAN_frame msg = {CAN_ID_GAMESTART, 0x08, {1, 2, 3, 4, 5, 6,7,8}, 1, 0};
-	  //tx_gamestart(&can);
+    // struct CAN_frame msg = {CAN_ID_GAMESTART, 0x08, {1, 2, 3, 4, 5, 6,7,8},
+    // 1, 0}; tx_gamestart(&can);
+
+    // tx_joy_btn(&joy, &avr, &can);
 
     if (menu.current_page != last_state) {
-      if(menu.current_page == PAGE_PLAY_GAME) {
+      if (menu.current_page == PAGE_PLAY_GAME) {
         tx_gamestart(&can);
       }
 
@@ -129,7 +131,6 @@ int main() {
     if (ctrl.game_over == 1) {
       LOG_INF("GAME OVER flag received!")
       ctrl.game_over = 0;
-      ctrl.lifes = 1;
       menu.current_page = PAGE_GAME_OVER;
     }
   }

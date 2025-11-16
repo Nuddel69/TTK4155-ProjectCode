@@ -8,21 +8,20 @@
 #include "controller.h"
 #include "can.h"
 #include "io.h"
+#include "log.h"
+
+LOG_MODULE_DEFINE("CONTROLLER")
 
 uint8_t process_can_frame(struct control_state *ctrl) {
 
-
-//We only recive one type of message
-  struct CAN_frame msg;
-  if (can_rxq_pull(&msg)){
-
-      ctrl->lifes = msg.data[0];
-      ctrl->score = msg.data[1];
+  // We only recive one type of message
+  struct CAN_frame msg = {0};
+  if (can_rxq_pull(&msg)) {
+    LOG_INF("Recv")
+    if (msg.id == CAN_ID_GAMEOVER) {
+      ctrl->game_over = msg.data[0];
+    }
   }
-
-      if (ctrl->lifes <= 0) {
-        ctrl->game_over = 1;
-	  }
 
   return 0;
 }
@@ -42,7 +41,7 @@ int8_t tx_joy_btn(struct io_joystick_device *joy_dev,
       CAN_ID_JOYPOS,
       0x08,
       {joy_pos.x, joy_pos.y, btn.right, btn.left, btn.nav, 0, 0, 0},
-	  0,
+      0,
       0};
 
   // Transmit data
@@ -53,8 +52,8 @@ int8_t tx_joy_btn(struct io_joystick_device *joy_dev,
 
 int8_t tx_gamestart(struct can_device *can_dev) {
 
-	// Frame Data
-	struct CAN_frame msg = {CAN_ID_GAMESTART, 0x01, {1}, 1, 0};
+  // Frame Data
+  struct CAN_frame msg = {CAN_ID_GAMESTART, 0x01, {1}, 0, 0};
 
   // Transmit data
   can_write(can_dev, msg);
@@ -63,8 +62,8 @@ int8_t tx_gamestart(struct can_device *can_dev) {
 
 int8_t tx_reset(struct can_device *can_dev) {
 
-	// Frame Data
-	struct CAN_frame msg = {CAN_ID_RESET, 0x01, {0}, 1, 0};
+  // Frame Data
+  struct CAN_frame msg = {CAN_ID_RESET, 0x01, {0}, 1, 0};
 
   // Transmit data
   can_write(can_dev, msg);
@@ -77,6 +76,5 @@ int8_t tx_error(struct can_device *can_dev) {
   struct CAN_frame msg = {CAN_ID_ERROR, 0x08, {0}, 1, 0};
 
   // Transmit data
-  return can_write(&can_dev, msg);
-  
+  return can_write(can_dev, msg);
 }

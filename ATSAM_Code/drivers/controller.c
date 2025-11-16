@@ -4,6 +4,8 @@
  * Created: 15.11.2025 13:22:16
  *  Author: wighu
  */
+
+/*
 #include <stdio.h>
 
 #include "can_controller.h"
@@ -79,3 +81,4 @@ uint8_t process_can_frame(struct control_state *ctrl) {
   }
   return 0;
   }
+*/

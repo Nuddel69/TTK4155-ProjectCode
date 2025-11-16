@@ -8,7 +8,7 @@
 
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
-
+/*
 #include "can_controller.h"
 #include "can_interrupt.h"
 
@@ -26,5 +26,6 @@ struct control_state{
 };
 
 uint8_t process_can_frame(struct control_state *crtl);
-
+*/
 #endif /* CONTROLLER_H_ */
+

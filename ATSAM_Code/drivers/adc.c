@@ -125,7 +125,7 @@ uint8_t advanced_goal_goal_detection(uint8_t *score) {
 uint8_t simple_goal_detection(void){
 	//Loss if beam broken(adc<20), not reacting if adc>35
 	
-	const uint16_t goal_threshold = 200; //Below this to count as a goal
+	const uint16_t goal_threshold = 50; //Below this to count as a goal
 	const uint16_t clear_threshold = 300; // Has to reach above this value to be able to register  a new goal
 	
 	static uint8_t goal_state = 0;

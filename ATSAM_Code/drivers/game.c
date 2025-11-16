@@ -161,10 +161,10 @@ uint8_t basic_game(struct game_config *config){
 			}
 			
 			//Wait for startsignal from node 1
-			if (config->game_start){
+			if (*(config->game_start)){
 				printf("moving to game playing\r\n");
 				 game_state = game_playing;
-				config->game_start = 0;
+				 *(config->game_start) = 0;
 				//pid_reset(motor_pid); //implement if we have time
 			}
 			return 0;
@@ -186,14 +186,13 @@ uint8_t basic_game(struct game_config *config){
 			
 				
 				//End when goal is detected
-				if(config->btn->L5){ 
-				//if(simple_goal_detection()){  //Added a dedicated button to lose as the IR on some of the motor boxes is broken
+				if((config->btn->L5)||(simple_goal_detection())){  //Added a dedicated button to lose as the IR on some of the motor boxes is broken
 					printf("GOAL------------------------------------------------------\r\n");
 					motor_stop(config->motor_dev);
 					printf("SENDING GAME OVER----------------------------------------------");
 					CAN_MESSAGE	game_over_msg = {0x02,0x8,{1,2,3,4,5,6,7,8}};
 					can_send(&game_over_msg,0);
-					config->game_start = 0;
+					*(config->game_start) = 0;
 					game_state = game_standby;
 					reset_complete = 0;
 					printf("moving to game standby\r\n");

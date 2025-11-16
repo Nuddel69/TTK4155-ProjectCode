@@ -15,7 +15,7 @@
 
 #define CAN_ID_ERROR     0x01
 #define CAN_ID_GAMEOVER  0x02
-#define CAN_ID_GAMESTART 0x00
+#define CAN_ID_GAMESTART 0x03
 #define CAN_ID_JOYPOS    0x04
 #define CAN_ID_SOLONOID  0x05
 #define CAN_ID_MOTORPOS  0x06

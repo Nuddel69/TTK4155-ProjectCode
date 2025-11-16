@@ -40,7 +40,7 @@ int process_can_frame() {
   CAN_MESSAGE msg;
   if (can_rxq_pull(&msg)) {
 		//printf("Rx msg with id %d\r\n",msg.id);
-    switch (msg.id) {
+    switch (msg.id) {		
 
     case CAN_ID_ERROR: { // This ID is reserved for errors, BOTH node1 and node2
 
@@ -58,6 +58,7 @@ int process_can_frame() {
 		//CAN_MESSAGE	msg = {0x02,0x8,0xFF};				 
 		//can_send(&msg,0);
 		game_start=1;
+		printf("STARTING NEW GAME\r\n");
 
       // TODO: start game
 
@@ -65,13 +66,12 @@ int process_can_frame() {
     }
     case CAN_ID_JOYPOS: { // This ID is reserved for sending Joystick position
                           // and button state
-
       joy_pos.x = (int8_t)msg.data[0];
       joy_pos.y = (int8_t)msg.data[1];
       btn.right = (uint8_t)msg.data[2];
       btn.left = (uint8_t)msg.data[3];
       btn.nav = (uint8_t)msg.data[4];
-
+	  
       // printf("%c[2J",27);
       //printf("Buttons R=0x%02X L=0x%02X N=0x%02X, pos x:%d, y:%d\r\n",
       //      btn.right, btn.left, btn.nav, joy_pos.x, joy_pos.y);
@@ -168,9 +168,9 @@ int main(void) {
   printf("-----Node2 Init complete------\r\n");
 
   //uint8_t coconut = 0;
+  
   while (1) {
-	
-	
+	process_can_frame();
 	//Reset encoder 0 position when pressing button 
 	if (btn.R4 && !button_r4_fired) {
 		printf("Resetting encoder ref");
@@ -181,18 +181,9 @@ int main(void) {
     if (!btn.R4 && button_r4_fired) {
 		button_r4_fired = 0;
     }
-
-    // servo_set_percentage(&servo, coconut % 100);
-    //coconut += 2;
-
-    //servo_set_range(&servo, joy_pos.y);
-	
 	
 	basic_game(&game_conf);
 
-    // uint16_t IR_val = adc_read_once();
-    // printf("IR;%d \r\n",IR_val);
-    // time_spinFor(100);
   }
   return 0;
 }

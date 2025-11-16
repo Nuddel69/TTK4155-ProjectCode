@@ -1,0 +1,16 @@
+<map id="include/menu.h" name="include/menu.h">
+<area shape="rect" id="Node000001" title="Hierarchical OLED menu system with navigation and page handling." alt="" coords="162,5,272,31"/>
+<area shape="rect" id="Node000002" href="$io_8h.html" title="Driver for joystick, buttons, and OLED." alt="" coords="132,79,174,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="208,29,176,69,172,66,205,33"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="192,153,256,178"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="220,29,225,138,220,137,216,33"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="254,79,319,105"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="229,29,267,68,262,68,228,34"/>
+<area shape="rect" id="Node000003" href="$fonts_8h.html" title=" " alt="" coords="32,153,93,178"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="136,107,91,145,88,141,139,103"/>
+<area shape="rect" id="Node000005" href="$spi_8h.html" title="SPI driver." alt="" coords="118,153,167,178"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="153,103,149,138,144,136,150,107"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="165,102,204,141,199,142,164,107"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,226,120,252"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="64,177,65,211,60,210,61,181"/>
+</map>

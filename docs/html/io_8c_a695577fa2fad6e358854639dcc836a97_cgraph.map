@@ -1,0 +1,9 @@
+<map id="_io_oled_write" name="_io_oled_write">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,110,31"/>
+<area shape="rect" id="Node000002" href="$group___s_p_i.html#gab85e239a8e73f3ca487f97c95b85783c" title="Send a single byte to a slave." alt="" coords="158,5,231,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="110,16,145,18,139,18,110,21"/>
+<area shape="rect" id="Node000003" href="$group___s_p_i.html#ga779792281c4502a65714a5ce3483cfe7" title="Full&#45;duplex SPI transfer." alt="" coords="279,5,362,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="231,16,266,18,261,18,231,21"/>
+<area shape="rect" id="Node000004" href="$group___s_p_i.html#ga872c6f32f50aa32f4fb491da525e1976" title="Set the slave&#45;select line for the given device." alt="" coords="410,5,554,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="363,16,397,18,392,18,363,21"/>
+</map>

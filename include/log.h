@@ -1,3 +1,11 @@
+/**
+ * @file log.h
+ * @brief Logging interface for debug messages
+ * @defgroup LOG Logging
+ * @ingroup Helpers
+ * @{
+ */
+
 #ifndef INCLUDE_INCLUDE_LOG_H_
 #define INCLUDE_INCLUDE_LOG_H_
 
@@ -75,3 +83,5 @@ static inline void _log_print_P(PGM_P p) {
 #endif
 
 #endif // INCLUDE_LOG_H_
+
+/** @} */

@@ -1,0 +1,7 @@
+<map id="MCP2515_init" name="MCP2515_init">
+<area shape="rect" id="Node000001" title=" " alt="" coords="217,5,320,31"/>
+<area shape="rect" id="Node000002" href="$group___c_a_n.html#ga85b93d5fb5ceef27603a4ae38920a5c3" title="Initialize a CAN device." alt="" coords="103,5,169,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="199,18,170,21,169,16,204,18"/>
+<area shape="rect" id="Node000003" href="$main_8c.html#ae66f6b31b5ad750f1fe042a706a4e3d4" title=" " alt="" coords="5,5,55,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="85,19,55,21,55,16,90,17"/>
+</map>

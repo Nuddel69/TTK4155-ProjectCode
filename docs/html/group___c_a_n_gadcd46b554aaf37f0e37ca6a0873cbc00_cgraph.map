@@ -1,0 +1,28 @@
+<map id="MCP2515_init" name="MCP2515_init">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,155,109,180"/>
+<area shape="rect" id="Node000002" href="$group___c_a_n.html#ga7f9dc54c89479dfa9c109788899d2caf" title=" " alt="" coords="320,5,466,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="64,153,100,106,125,81,155,60,191,44,229,32,306,20,302,23,231,37,193,49,158,64,129,85,104,110,69,156"/>
+<area shape="rect" id="Node000005" href="$group___c_a_n.html#gaad5f798d3096e9e1dc8b1c2b5266b4ed" title=" " alt="" coords="338,56,449,82"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="69,153,105,120,130,104,156,90,197,77,241,69,324,65,320,68,242,75,199,83,158,95,132,108,109,124,73,156"/>
+<area shape="rect" id="Node000006" href="$group___c_a_n.html#gaeece0d8e505341c8b4a24a11b09b8bd3" title=" " alt="" coords="157,105,272,131"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="99,152,158,134,155,138,102,156"/>
+<area shape="rect" id="Node000008" href="$group___c_a_n.html#gac7a9dee27cde1709d7bc3970db3c72d0" title=" " alt="" coords="157,155,272,180"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="108,165,144,166,139,169,110,170"/>
+<area shape="rect" id="Node000009" href="$group___s_p_i.html#ga52c5638173ca149f299ad1893588ede7" title="Send a sequence of bytes to a slave without reading response." alt="" coords="350,155,437,180"/>
+<area shape="poly" id="edge15_Node000001_Node000009" title=" " alt="" coords="101,178,157,190,214,195,272,190,337,181,332,183,272,195,214,200,156,195,101,184"/>
+<area shape="rect" id="Node000010" href="$group___s_p_i.html#gaff24a3cb77a0024fdbe518c69c5b41c8" title="Initialize SPI in master mode." alt="" coords="525,205,587,231"/>
+<area shape="poly" id="edge12_Node000001_Node000010" title=" " alt="" coords="88,178,122,190,157,200,255,213,352,219,512,220,507,221,352,224,254,218,156,205,120,195,89,183"/>
+<area shape="rect" id="Node000011" href="$group___s_p_i.html#ga5f0372eb56859fc73751b3517e30d339" title="Check if the SPI subsystem is initialized." alt="" coords="176,307,253,332"/>
+<area shape="poly" id="edge14_Node000001_Node000011" title=" " alt="" coords="68,178,105,229,130,258,158,285,174,299,169,298,155,290,126,262,101,232,66,183"/>
+<area shape="rect" id="Node000003" href="$group___s_p_i.html#ga779792281c4502a65714a5ce3483cfe7" title="Full&#45;duplex SPI transfer." alt="" coords="514,105,598,131"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="440,29,468,41,503,66,534,94,528,94,500,70,465,46,441,34"/>
+<area shape="rect" id="Node000004" href="$group___s_p_i.html#ga872c6f32f50aa32f4fb491da525e1976" title="Set the slave&#45;select line for the given device." alt="" coords="646,181,789,207"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="586,129,677,174,672,174,585,134"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="438,80,502,101,497,102,438,85"/>
+<area shape="rect" id="Node000007" href="$group___s_p_i.html#gab85e239a8e73f3ca487f97c95b85783c" title="Send a single byte to a slave." alt="" coords="356,105,430,131"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="272,116,344,117,339,119,273,121"/>
+<area shape="poly" id="edge8_Node000007_Node000003" title=" " alt="" coords="430,116,501,117,496,119,431,121"/>
+<area shape="poly" id="edge10_Node000008_Node000009" title=" " alt="" coords="271,165,336,167,331,168,272,170"/>
+<area shape="poly" id="edge11_Node000009_Node000003" title=" " alt="" coords="437,152,502,134,497,136,438,157"/>
+<area shape="poly" id="edge13_Node000010_Node000004" title=" " alt="" coords="587,211,633,207,628,208,588,216"/>
+</map>

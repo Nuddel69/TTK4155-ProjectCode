@@ -1,3 +1,29 @@
+/**
+ * @file main.c
+ * @brief Main entry point for the TTK4155 Node 1 firmware
+ *
+ * This file initializes all peripherals and modules, then enters the main
+ * game loop. The loop handles:
+ *  - Reading input from the I/O board
+ *  - Sending and receiving state-information over CAN
+ *  - Updating menu states and page transitions
+ *  - Managing game start and game over conditions
+ *
+ * Modules used:
+ *  - IO
+ *  - USART
+ *  - SPI
+ *  - TIMER
+ *  - CAN
+ *  - CONTROLLER
+ *  - MENU
+ *  - XMEM
+ *  - UTILS
+ *  - LOG
+ *
+ * @ingroup Application
+ */
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <util/delay.h>
@@ -132,3 +158,5 @@ int main() {
   }
   return 0;
 }
+
+/** @} */

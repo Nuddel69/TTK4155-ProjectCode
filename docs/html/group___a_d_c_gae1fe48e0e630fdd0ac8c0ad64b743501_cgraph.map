@@ -1,0 +1,7 @@
+<map id="ADC_read_all" name="ADC_read_all">
+<area shape="rect" id="Node000001" title="Perform a full four&#45;channel ADC conversion and return all results." alt="" coords="5,31,108,56"/>
+<area shape="rect" id="Node000002" href="$group___a_d_c.html#ga91244ce6c2196ed56e931b5879f9fa7c" title="Read the current ADC channel sample." alt="" coords="163,5,266,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="107,33,151,28,146,30,109,38"/>
+<area shape="rect" id="Node000003" href="$group___a_d_c.html#gaf31429808ec59a3bea07199672b88aa2" title="Start a conversion on the external ADC and wait for completion." alt="" coords="156,55,274,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="108,49,143,56,138,57,108,54"/>
+</map>

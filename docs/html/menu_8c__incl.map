@@ -1,0 +1,26 @@
+<map id="drivers/menu.c" name="drivers/menu.c">
+<area shape="rect" id="Node000001" title=" " alt="" coords="60,5,167,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="43,153,107,178"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="82,34,54,53,41,65,31,80,27,95,31,111,52,141,47,142,26,113,22,95,26,78,37,62,51,48,85,29"/>
+<area shape="rect" id="Node000003" href="$menu_8h.html" title="Hierarchical OLED menu system with navigation and page handling." alt="" coords="40,79,104,105"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="106,34,89,67,84,64,108,29"/>
+<area shape="rect" id="Node000004" href="$io_8h.html" title="Driver for joystick, buttons, and OLED." alt="" coords="131,153,173,178"/>
+<area shape="poly" id="edge14_Node000001_Node000004" title=" " alt="" coords="142,29,174,49,188,62,199,78,203,95,199,113,179,143,175,140,194,111,197,95,194,80,184,65,170,53,143,34"/>
+<area shape="rect" id="Node000009" href="$utils_8h.html" title="Utility and helper functions for joystick, LED debugging, and mapping." alt="" coords="128,79,184,105"/>
+<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="121,29,144,65,139,66,120,34"/>
+<area shape="poly" id="edge8_Node000003_Node000002" title=" " alt="" coords="73,102,76,138,71,137,72,108"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="86,103,130,141,125,143,86,108"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="5,226,70,252"/>
+<area shape="poly" id="edge9_Node000003_Node000008" title=" " alt="" coords="59,108,46,128,33,153,30,183,33,211,28,212,24,183,28,152,42,125,61,103"/>
+<area shape="rect" id="Node000005" href="$fonts_8h.html" title=" " alt="" coords="184,226,246,252"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="163,176,197,214,191,215,162,181"/>
+<area shape="rect" id="Node000007" href="$spi_8h.html" title="SPI driver." alt="" coords="110,226,160,252"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="151,176,144,212,139,210,148,181"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="131,181,72,220,68,216,134,177"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="158,300,272,326"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="217,250,217,286,213,283,213,254"/>
+<area shape="poly" id="edge11_Node000009_Node000002" title=" " alt="" coords="141,107,102,144,98,141,144,103"/>
+<area shape="poly" id="edge13_Node000009_Node000004" title=" " alt="" coords="157,102,156,138,151,136,154,107"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="198,153,280,178"/>
+<area shape="poly" id="edge12_Node000009_Node000010" title=" " alt="" coords="170,103,216,142,211,143,170,108"/>
+</map>

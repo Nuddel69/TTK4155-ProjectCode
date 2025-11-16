@@ -1,0 +1,21 @@
+<map id="io_oled_clear_all" name="io_oled_clear_all">
+<area shape="rect" id="Node000001" title="Clears all lines on the OLED (fills entire display with black)." alt="" coords="5,55,123,80"/>
+<area shape="rect" id="Node000002" href="$group___i_o.html#ga810457d7d7339b737b8f37a0170fd7ae" title="Clear specific line in OLED." alt="" coords="171,55,295,80"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="123,65,158,67,153,68,123,70"/>
+<area shape="rect" id="Node000003" href="$io_8c.html#a695577fa2fad6e358854639dcc836a97" title=" " alt="" coords="534,5,639,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="285,51,343,40,434,27,521,22,516,23,435,33,343,45,287,57"/>
+<area shape="rect" id="Node000007" href="$group___i_o.html#gae71d48b02690a7642b46e55597f0a02c" title="Go to specific column in OLED." alt="" coords="343,55,486,80"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="295,65,330,67,325,68,296,70"/>
+<area shape="rect" id="Node000009" href="$group___i_o.html#ga79b02f39388ad5e55993eb93e02a9ea9" title="Go to specific line in OLED." alt="" coords="354,104,475,130"/>
+<area shape="poly" id="edge9_Node000002_Node000009" title=" " alt="" coords="283,78,352,99,347,99,283,84"/>
+<area shape="rect" id="Node000004" href="$group___s_p_i.html#gab85e239a8e73f3ca487f97c95b85783c" title="Send a single byte to a slave." alt="" coords="687,31,760,56"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="639,25,674,34,669,34,639,31"/>
+<area shape="rect" id="Node000005" href="$group___s_p_i.html#ga779792281c4502a65714a5ce3483cfe7" title="Full&#45;duplex SPI transfer." alt="" coords="808,31,891,56"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="760,41,795,43,790,44,761,46"/>
+<area shape="rect" id="Node000006" href="$group___s_p_i.html#ga872c6f32f50aa32f4fb491da525e1976" title="Set the slave&#45;select line for the given device." alt="" coords="939,31,1083,56"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="892,41,926,43,921,44,892,46"/>
+<area shape="rect" id="Node000008" href="$io_8c.html#ac19c24c90ec08573e92f44afd5e93e92" title=" " alt="" coords="536,55,637,80"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="487,65,523,67,518,68,487,70"/>
+<area shape="poly" id="edge8_Node000008_Node000004" title=" " alt="" coords="637,56,669,53,674,52,638,61"/>
+<area shape="poly" id="edge10_Node000009_Node000008" title=" " alt="" coords="462,101,522,86,527,85,463,106"/>
+</map>

@@ -1,0 +1,29 @@
+<map id="drivers/xmem.c" name="drivers/xmem.c">
+<area shape="rect" id="Node000001" title=" " alt="" coords="131,5,242,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,226,70,252"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="169,34,147,54,122,81,99,114,79,150,50,213,45,211,74,148,95,112,118,77,144,50,172,29"/>
+<area shape="rect" id="Node000003" href="$log_8h.html" title="Logging interface for debug messages." alt="" coords="132,79,181,105"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="183,29,170,66,165,64,181,34"/>
+<area shape="rect" id="Node000004" href="$uart_8h.html" title="UART communication driver." alt="" coords="192,153,246,178"/>
+<area shape="poly" id="edge13_Node000001_Node000004" title=" " alt="" coords="190,29,216,137,210,137,188,34"/>
+<area shape="rect" id="Node000012" href="$xmem_8h.html" title="External SRAM interface for ATmega microcontrollers." alt="" coords="289,79,357,105"/>
+<area shape="poly" id="edge14_Node000001_Node000012" title=" " alt="" coords="210,29,289,70,284,72,210,34"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="167,102,201,140,195,141,166,108"/>
+<area shape="rect" id="Node000006" href="$utils_8h.html" title="Utility and helper functions for joystick, LED debugging, and mapping." alt="" coords="95,153,151,178"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="152,102,137,140,133,137,149,107"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="248,300,312,326"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="228,176,257,225,277,286,272,285,252,227,226,181"/>
+<area shape="poly" id="edge6_Node000006_Node000002" title=" " alt="" coords="107,181,65,218,61,215,110,177"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="160,226,243,252"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="136,176,180,215,174,216,136,182"/>
+<area shape="rect" id="Node000008" href="$io_8h.html" title="Driver for joystick, buttons, and OLED." alt="" coords="94,226,136,252"/>
+<area shape="poly" id="edge8_Node000006_Node000008" title=" " alt="" coords="122,176,120,212,115,210,121,181"/>
+<area shape="poly" id="edge12_Node000008_Node000005" title=" " alt="" coords="137,247,240,292,236,295,136,252"/>
+<area shape="rect" id="Node000009" href="$fonts_8h.html" title=" " alt="" coords="44,300,106,326"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="110,250,91,288,87,285,107,254"/>
+<area shape="rect" id="Node000011" href="$spi_8h.html" title="SPI driver." alt="" coords="130,300,180,326"/>
+<area shape="poly" id="edge11_Node000008_Node000011" title=" " alt="" coords="122,250,143,286,138,287,121,255"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="18,374,132,399"/>
+<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="77,324,77,359,72,357,73,328"/>
+<area shape="poly" id="edge15_Node000012_Node000005" title=" " alt="" coords="323,103,288,286,283,284,318,106"/>
+</map>

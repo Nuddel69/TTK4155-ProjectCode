@@ -1,0 +1,11 @@
+<map id="io_oled_write_glyph" name="io_oled_write_glyph">
+<area shape="rect" id="Node000001" title="Prints a single glyph in a specifiec font." alt="" coords="5,5,141,31"/>
+<area shape="rect" id="Node000002" href="$io_8c.html#a695577fa2fad6e358854639dcc836a97" title=" " alt="" coords="189,5,293,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="141,16,176,18,170,18,141,21"/>
+<area shape="rect" id="Node000003" href="$group___s_p_i.html#gab85e239a8e73f3ca487f97c95b85783c" title="Send a single byte to a slave." alt="" coords="341,5,414,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="294,16,328,18,323,18,294,21"/>
+<area shape="rect" id="Node000004" href="$group___s_p_i.html#ga779792281c4502a65714a5ce3483cfe7" title="Full&#45;duplex SPI transfer." alt="" coords="462,5,546,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="415,16,449,18,444,18,415,21"/>
+<area shape="rect" id="Node000005" href="$group___s_p_i.html#ga872c6f32f50aa32f4fb491da525e1976" title="Set the slave&#45;select line for the given device." alt="" coords="594,5,737,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="546,16,581,18,575,18,546,21"/>
+</map>

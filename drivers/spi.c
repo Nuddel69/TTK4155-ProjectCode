@@ -79,25 +79,26 @@ int spi_set_slave_select(enum spi_slave *slave, unsigned char state) {
 }
 
 int spi_send_n(enum spi_slave *slave, unsigned char *data, int length) {
-  spi_duplex(slave, data, NULL, length);
+  spi_duplex(slave, data, TRASHCAN, length);
   return 0;
 }
 
 int spi_send(enum spi_slave *slave, unsigned char data) {
-  spi_duplex(slave, &data, NULL, 1);
+  spi_duplex(slave, &data, TRASHCAN, 1);
   return 0;
 }
 
 int spi_recieve(enum spi_slave *slave, unsigned char *out) {
-  spi_duplex(slave, NULL, out, 1);
+  spi_duplex(slave, TRASHCAN, out, 1);
   return 0;
 }
 
 int spi_recieve_n(enum spi_slave *slave, unsigned char *out, int length) {
-  spi_duplex(slave, NULL, out, length);
+  spi_duplex(slave, TRASHCAN, out, length);
   return 0;
 }
 
+/*
 int spi_duplex(enum spi_slave *slave, unsigned char *data, unsigned char *out,
                int length) {
   spi_set_slave_select(slave, 0);
@@ -105,7 +106,9 @@ int spi_duplex(enum spi_slave *slave, unsigned char *data, unsigned char *out,
   SPDR = data[0];
   while (!(SPSR & (1 << SPIF))) {
   }
-  out[0] = SPDR;
+ 
+	out[0] = SPDR;
+ 
 
   _delay_us(40);
 
@@ -114,7 +117,7 @@ int spi_duplex(enum spi_slave *slave, unsigned char *data, unsigned char *out,
     SPDR = data[i];
     while (!(SPSR & (1 << SPIF))) {
     }
-	if (NULL != out)
+	if (TRASHCAN != out)
 	{
 		out[i] = SPDR;
 	}
@@ -123,6 +126,33 @@ int spi_duplex(enum spi_slave *slave, unsigned char *data, unsigned char *out,
   spi_set_slave_select(slave, 1);
   return 0;
 }
+*/
+
+
+int spi_duplex(enum spi_slave *slave, unsigned char *data, unsigned char *out,
+               int length) {
+  spi_set_slave_select(slave, 0);
+
+  for (int i = 0; i < length; i++) {
+    unsigned char tx = 0xFF;
+    if (data != TRASHCAN) {
+      tx = data[i];
+    }
+
+    SPDR = tx;
+    while (!(SPSR & (1 << SPIF))) {
+    }
+
+    if (out != TRASHCAN) {
+      out[i] = SPDR;
+    }
+  }
+
+  spi_set_slave_select(slave, 1);
+  return 0;
+}
+
+
 
 int spi_push(enum spi_slave *slave, unsigned char data, unsigned char *out) {
 
@@ -130,6 +160,10 @@ int spi_push(enum spi_slave *slave, unsigned char data, unsigned char *out) {
   SPDR = data;
   while (!(SPSR & (1 << SPIF))) {
   }
-  *out = SPDR;
+  
+  // Only write if pointer is valid
+  if (out != TRASHCAN){
+	*out = SPDR;
+  }
   return 0;
 }

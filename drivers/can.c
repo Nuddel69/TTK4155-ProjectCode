@@ -183,7 +183,7 @@ int can_rxq_pull(struct CAN_frame *out) {
 // External interrupt PE0, From MCP2515
 ISR(INT2_vect) {
 
-  LOG_INF("External interrupt")
+  //LOG_INF("External interrupt")
   uint8_t status;
   MCP2515_read(can_irq,MCP2515_CANINTF, &status);//MCP2515_read_status(can_irq, &status);
 
@@ -330,6 +330,7 @@ int8_t MCP2515_write_n(struct can_device *dev, uint8_t addr, uint8_t *data) {
 }
 
 // Read a specefic RX BUFFER see operation on pg 66 in CAN controller datasheet
+/*
 int8_t MCP2515_read(struct can_device *dev, uint8_t addr, uint8_t *out) {
 
   // Make sure we are writing to somthing
@@ -339,13 +340,29 @@ int8_t MCP2515_read(struct can_device *dev, uint8_t addr, uint8_t *out) {
 
   unsigned char tx[3] = {MCP2515_READ, addr, 0xff};
   unsigned char rx[3];
-  // spi_duplex(&dev->spi, tx, rx, 3);
-  spi_push(&dev->spi, tx[0], NULL);
-  spi_push(&dev->spi, tx[1], NULL);
-  spi_recieve(&dev->spi, out);
+  spi_duplex(&dev->spi, tx, rx, 3);
+  //spi_push(&dev->spi, tx[0], TRASHCAN);
+  //spi_push(&dev->spi, tx[1], TRASHCAN);
+  //spi_recieve(&dev->spi, out);
 
   return 0;
+}*/
+
+int8_t MCP2515_read(struct can_device *dev, uint8_t addr, uint8_t *out) {
+
+	if (!out) {
+		return -1;
+	}
+
+	unsigned char tx[3] = { MCP2515_READ, addr, 0xFF };
+	unsigned char rx[3];
+
+	spi_duplex(&dev->spi, tx, rx, 3);
+
+	*out = rx[2];   // ? third byte is the register value
+	return 0;
 }
+
 
 // Instructs controller to begin message transmission sequence for
 // any of the transmit buffers.
@@ -361,7 +378,7 @@ int8_t MCP2515_bit_modify(struct can_device *dev, uint8_t reg, uint8_t mask,
                           uint8_t set_val) {
 
   unsigned char cmd[4] = {MCP2515_BITMOD, reg, mask, set_val};
-  spi_duplex(&dev->spi, cmd, NULL, 4);
+  spi_duplex(&dev->spi, cmd, TRASHCAN, 4);
   // spi_send_n(&dev->spi, cmd, 4);
 
   return 0;
@@ -379,10 +396,20 @@ int8_t MCP2515_reset(struct can_device *dev) {
 // functions.
 int8_t MCP2515_read_status(struct can_device *dev, uint8_t *out) {
 
-  uint8_t *status;
+  //uint8_t *status;
 
-  spi_push(&dev->spi, MCP2515_READ_STATUS, NULL);
-  spi_recieve(&dev->spi, out);
+  //spi_push(&dev->spi, MCP2515_READ_STATUS, TRASHCAN);
+  //spi_recieve(&dev->spi, out);
+  
+  if (!out) return -1;
+
+  unsigned char tx[2] = {MCP2515_READ_STATUS, 0xFF};
+  unsigned char rx[2];
+
+  spi_duplex(&dev->spi, tx, rx, 2);
+
+  *out = rx[1];
 
   return 0;
 }
+

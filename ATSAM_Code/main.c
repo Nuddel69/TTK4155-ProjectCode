@@ -31,14 +31,10 @@
 #define baudrate 9600
 #define F_CPU 84000000
 
-// TEMP message for testing sending to node 1
-CAN_MESSAGE dummy_msg = {0x8, 8, {"HiWorld"}};
-
 struct io_joystick_position joy_pos = {0, 0};
 struct io_avr_buttons btn;
 
 int process_can_frame() {
-	printf("I am listening\r\n");
   CAN_MESSAGE msg;
   if (can_rxq_pull(&msg)) {
 		printf("Rx msg with id %d",msg.id);
@@ -156,10 +152,33 @@ int main(void) {
   printf("-----Node2 Init complete------\r\n");
 
   uint8_t coconut = 0;
+  
+  //Dummy message for testing
+  	CAN_MESSAGE	node2_msg = {node2_msg.id=0x02,
+						node2_msg.data_length=0x8,
+						node2_msg.data[0]=1,
+						node2_msg.data[1]=2,
+						node2_msg.data[2]=0xAA,
+						node2_msg.data[3]=4,
+						node2_msg.data[4]=5,
+						node2_msg.data[5]=6,
+						node2_msg.data[6]=7,
+						node2_msg.data[7]=8
+						};		
+						
+	uint8_t can_counter;
+
   while (1) {
-	  
-	CAN_MESSAGE	msg = {0x02,0x8,0xFF};				 
-    can_send(&msg,0);
+	
+	time_spinFor(msecs(500));
+	
+	//Send test
+	node2_msg.data[0]=can_counter;
+	node2_msg.data[1]=50-can_counter;
+	node2_msg.data[2] ^=0xFF;
+	printf("I am sending\r\n");
+    can_send(&node2_msg,0);
+	can_counter++;
 
     process_can_frame();
     // pwm_dir_and_speed(&motor, &motor_pid, (joy_pos.x - 27) * 50);

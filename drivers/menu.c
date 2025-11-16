@@ -227,7 +227,7 @@ int page_select(struct menu_cfg *menu, struct io_avr_buttons *btn) {
         menu->parent_length = menu->length;
 
         // --- Case 1: The selected item has a submenu ---
-        if(selected_item->submenu != NULL) {
+        if(selected_item->submenu != TRASHCAN) {
             // Set submenu info
             menu->items = selected_item->submenu;
             menu->length = selected_item->submenu_length;
@@ -306,7 +306,7 @@ int page_back(struct menu_cfg *menu, struct io_avr_buttons *btn) {
     if(btn->NL && !prev_NL) {
 
         // If we have a parent menu, go back to that
-        if(menu->parent_menu != NULL) {
+        if(menu->parent_menu != TRASHCAN) {
             // Restore parent
             menu->items = menu->parent_menu;
             menu->length = menu->parent_length;
@@ -314,7 +314,7 @@ int page_back(struct menu_cfg *menu, struct io_avr_buttons *btn) {
 
             // If we just went back to the root, clear parent pointers
             if(menu->items == menu->root_items) {
-                menu->parent_menu = NULL;
+                menu->parent_menu = TRASHCAN;
                 menu->parent_length = 0;
                 return(set_page(menu, PAGE_WELCOME));
             }
@@ -357,7 +357,7 @@ int menu_handler(struct menu_cfg *menu, struct io_avr_buttons *btn) {
             menu->cursor_pos = 0;
 
             // Clear parent
-            menu->parent_menu = NULL;
+            menu->parent_menu = TRASHCAN;
             menu->parent_length = 0;
 
             // Move back to welcome page

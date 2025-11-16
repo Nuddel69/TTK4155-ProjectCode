@@ -104,30 +104,41 @@ int main() {
   LOG_INF("---Init complete---")
 
   while (1) {
-    io_avr_buttons_read(&avr, &btn);        // Read button inputs from IO board
-    io_joystick_read_position(&joy, &pos);  // Read joystick input from IO board
-    menu_handler(&menu, &btn);              // Handle menu based on button inputs
-
-    _delay_ms(100);
+    //io_avr_buttons_read(&avr, &btn);        // Read button inputs from IO board
+    //io_joystick_read_position(&joy, &pos);  // Read joystick input from IO board
+    //menu_handler(&menu, &btn);              // Handle menu based on button inputs
+    _delay_ms(50);
 	
     // Can message send test
 	  //struct CAN_frame msg = {CAN_ID_GAMESTART, 0x08, {1, 2, 3, 4, 5, 6,7,8}, 1, 0};
 	  //tx_gamestart(&can);
-
+	  
+	// Can message recive test
+		struct CAN_frame msg;
+		if (can_rxq_pull(&msg)) {
+			LOG_INF("Reading adress and length of message")
+			for (uint8_t i = 0; i<msg.dlc; i++){
+			}
+			LOG_INF("Done reading data bytes in message")
+		} 
+	/*
     static enum page_id last_state = PAGE_WELCOME;
     if (menu.current_page != last_state) {
       if(menu.current_page == PAGE_PLAY_GAME) {
         tx_gamestart(&can);
       }
-
+	
       last_state = menu.current_page;
     }
+	*/
 
-    process_can_frame(&ctrl);
-
+    //process_can_frame(&ctrl);
+	/*
     if (ctrl.game_over == 1) {
       ctrl.game_over = 0;
       menu.current_page = PAGE_GAME_OVER;
-    }
+	 
+    }*/
   }
+  return 0;
 }
